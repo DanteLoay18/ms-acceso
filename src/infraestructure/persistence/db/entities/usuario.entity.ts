@@ -8,20 +8,35 @@ export class Usuario{
     @Prop({ type: 'UUID', default:uuidv4})
     _id: string;
 
-    @Prop()
+    @Prop({
+        type:String,
+        unique:true, 
+        required:true    
+    })
     email: string;
-    @Prop()
+    
+    @Prop({
+        type:String,
+        required:true
+    })
     password: string;
 
     @Prop({
-        unique:true
+        type:String,
+        required:true
     })
     nombres: string;
 
-    @Prop()
+    @Prop({
+        type:String,
+        required:true
+    })
     apellidos: string;
 
-    @Prop()
+    @Prop({
+        type:Boolean,
+        required:true
+    })
     esEliminado:boolean;
 }
 

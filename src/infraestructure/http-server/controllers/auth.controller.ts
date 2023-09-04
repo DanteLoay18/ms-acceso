@@ -1,11 +1,17 @@
-import { ApiInternalServerErrorResponse, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { Controller, Post, Body, Get, Param, ParseUUIDPipe } from "@nestjs/common";
+import { ApiBearerAuth, ApiInternalServerErrorResponse, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Controller, Post, Body, Get, Param, UseGuards } from "@nestjs/common";
 
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 
 import { AppResponse } from "../model/app.response";
 import { RegisterUsuarioRequest } from "../model/register-usuario.request";
 import { RegisterUsuarioCommand } from '../../../core/application/feautures/Auth/write/register/registerUsuario.command';
+import { LoginUsuarioCommand } from "src/core/application/feautures/Auth/write/login";
+import { LoginUsuarioRequest } from "../model/login-usuario.request";
+import { AuthGuard } from "@nestjs/passport";
+import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.decorator";
+import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
+
 
 @ApiTags('Auth')
 @Controller('/auth')
@@ -17,26 +23,33 @@ export class UserController{
     ) {}
     
     @ApiInternalServerErrorResponse({ description: 'Error server'})
-    // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
+    @ApiBearerAuth() 
+    @UseGuards(AuthGuard())
     @Post('register')
-    async createUser(@Body() registerUserRequest: RegisterUsuarioRequest): Promise<AppResponse> {
-        const {nombres, apellidos, email, password}=  await this.command.execute(new RegisterUsuarioCommand(registerUserRequest))
+    async createUsuario(
+        @GetUser() usuario:Usuario,
+        @Body() registerUserRequest: RegisterUsuarioRequest
+        ) {
+        
+        const {nombres, apellidos, email}=  await this.command.execute(new RegisterUsuarioCommand(registerUserRequest))
         return {
-            status: 200,
-            message: 'Product Created',
-            data: {nombres, apellidos, email, password}
+            nombres, 
+            apellidos,
+            email
         }
     }
+    
 
-    // @ApiInternalServerErrorResponse({ description: 'Error server'})
-    // // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
-    // @Get(':id')
-    // async findOneById(@Param('id', new ParseUUIDPipe({version:'4'})) id: string): Promise<AppResponse> {
-    //     const {nombre, apellidos} = await this.query.execute(new UsuarioQueryById(id));
-    //     return {
-    //         status: 200,
-    //         message: 'Product Created',
-    //         data: {nombre, apellidos}
-    //     }
-    // }
+    @ApiInternalServerErrorResponse({ description: 'Error server'})
+    // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
+    @Post('login')
+    async loginUsuario(@Body() loginUsuarioDto:LoginUsuarioRequest) {
+        const {token,_doc}=await this.command.execute(new LoginUsuarioCommand(loginUsuarioDto));
+        delete _doc.password;
+        delete _doc._id;
+        return {
+            token,
+            ..._doc
+        };
+    }
 }

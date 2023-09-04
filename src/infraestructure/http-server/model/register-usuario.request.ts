@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsBoolean } from "class-validator";
+import { IsString, IsBoolean, IsEmail } from "class-validator";
 
 export class RegisterUsuarioRequest {
 
@@ -19,6 +19,7 @@ export class RegisterUsuarioRequest {
         description: 'Categoria id',
     })
     @IsString()
+    @IsEmail()
     email: string;
 
     @ApiProperty({

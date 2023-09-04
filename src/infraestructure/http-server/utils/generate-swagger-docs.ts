@@ -7,6 +7,7 @@ export function generateSwaggerDocs(app: INestApplication) {
         .setTitle('Auth Application')
         .setDescription('Proyecto basado en la base de datos auth con arquitectura hexagonal')
         .setVersion('1.0')
+        .addBearerAuth()
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

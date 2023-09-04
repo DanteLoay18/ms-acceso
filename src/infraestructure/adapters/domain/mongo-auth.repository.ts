@@ -11,11 +11,12 @@ export class MongoAuthRepository implements AuthRepository {
     constructor(@InjectModel(Usuario.name) private userRepository: Model<Usuario>) { }
     
     
+    
     register(usuario: Usuario): Promise<Usuario> {
         return this.userRepository.create(usuario);
     }
-    login(username: string, password: string): Promise<Usuario> {
-        throw new Error("Method not implemented.");
+    findOneByName(email: string): Promise<Usuario> {
+        return this.userRepository.findOne({email});
     }
 
    

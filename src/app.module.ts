@@ -8,7 +8,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [ CoreModule, 
-             HttpServerModule, 
+             HttpServerModule,
+              
              SharedModule,
              CqrsModule],
   controllers: [],
