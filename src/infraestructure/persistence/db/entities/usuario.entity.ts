@@ -38,6 +38,36 @@ export class Usuario{
         required:true
     })
     esEliminado:boolean;
+
+    @Prop({
+        type:Boolean,
+        required:true
+    })
+    esBloqueado:boolean;
+
+    @Prop({
+        type:Date,
+        required:true
+    })
+    fechaCreacion:Date;
+
+    @Prop({
+        type:Date,
+        required:true
+    })
+    fechaModificacion:Date;
+
+    @Prop({
+        type:'UUID',
+        ref:'Usuario'
+    })
+    usuarioCreacion: string;
+
+    @Prop({
+        type:'UUID',
+        ref:'Usuario'
+    })
+    usuarioModificacion: string;
 }
 
 export const UsuarioSchema= SchemaFactory.createForClass(Usuario)

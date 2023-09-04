@@ -6,4 +6,5 @@ export class RegisterUsuarioDto{
     email:   string;
     password:   string;
     apellidos:  string;
+    
 }

@@ -30,8 +30,8 @@ export class UserController{
         @GetUser() usuario:Usuario,
         @Body() registerUserRequest: RegisterUsuarioRequest
         ) {
-        
-        const {nombres, apellidos, email}=  await this.command.execute(new RegisterUsuarioCommand(registerUserRequest))
+        console.log(usuario)
+        const {nombres, apellidos, email}=  await this.command.execute(new RegisterUsuarioCommand(registerUserRequest, usuario))
         return {
             nombres, 
             apellidos,

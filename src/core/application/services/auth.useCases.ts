@@ -6,14 +6,15 @@ import * as bcrypt from 'bcrypt'
 import { LoginUsuarioDto } from "src/core/shared/dtos/login-usuario.dto";
 import { JwtPayload } from "src/infraestructure/adapters/jwt/interfaces/jwt-payload.interface";
 import { JwtService } from "@nestjs/jwt";
+import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 @Injectable()
 export class AuthUseCases{
     constructor(private readonly authService:AuthService,
                 private readonly jwtService: JwtService){}
 
-    async registerUsuario(registerUsuarioDto:RegisterUsuarioDto){
+    async registerUsuario(registerUsuarioDto:RegisterUsuarioDto, usuarioDto:UsuarioDto){
         try {
-            const {password,...rest} = Usuario.create(registerUsuarioDto.nombres, registerUsuarioDto.apellidos, registerUsuarioDto.email,registerUsuarioDto.password);
+            const {password,...rest} = Usuario.create(registerUsuarioDto.nombres, registerUsuarioDto.apellidos, registerUsuarioDto.email,registerUsuarioDto.password,usuarioDto._id);
             
 
             return this.authService.registerUsuario(

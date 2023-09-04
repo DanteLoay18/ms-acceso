@@ -10,7 +10,7 @@ export class RegisterUsuarioHandler implements ICommandHandler<RegisterUsuarioCo
 
     async execute(command: RegisterUsuarioCommand) {
         
-        return this.authUseCases.registerUsuario(command.registerUsuarioDto)
+        return this.authUseCases.registerUsuario(command.registerUsuarioDto, command.usuarioDto)
     }
 
 }

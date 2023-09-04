@@ -16,7 +16,10 @@ export class MongoAuthRepository implements AuthRepository {
         return this.userRepository.create(usuario);
     }
     findOneByName(email: string): Promise<Usuario> {
-        return this.userRepository.findOne({email});
+        return this.userRepository.findOne({email}).populate([
+                                                                {path:'usuarioCreacion',select: 'email nombres apellidos '},
+                                                                {path:'usuarioModificacion',select: 'email nombres apellidos '}
+                                                                 ]) ;
     }
 
    
