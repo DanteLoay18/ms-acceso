@@ -1,17 +1,14 @@
+import { Base } from "src/core/shared/domain/base";
 
 
-export class Usuario{
-    _id:        string;
+export class Usuario extends Base{
+
+
     nombres:     string;
     email:   string;
     password:   string;
     apellidos:  string;
-    esEliminado:boolean;
-    esBloqueado:boolean;
-    fechaCreacion:Date;
-    fechaModificacion:Date;
-    usuarioCreacion: string;
-    usuarioModificacion: string;
+    
 
     static create(nombres: string, apellidos:string, email:string, password:string, usuarioCreacion:string){
         const usuario = new Usuario();

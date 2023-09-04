@@ -5,14 +5,21 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt/strategies/jwt.strategy';
+import { MongoUsuarioRepository } from './domain/mongo-usuario.repository';
 
 export const AUTH_REPOSITORY = 'AUTH_REPOSITORY'
+export const USUARIO_REPOSITORY = 'USUARIO_REPOSITORY'
 const providers = [
     MongoAuthRepository,
+    MongoUsuarioRepository,
     JwtStrategy,
     {
         provide: AUTH_REPOSITORY,
         useExisting: MongoAuthRepository,
+    },
+    {
+        provide: USUARIO_REPOSITORY,
+        useExisting: MongoUsuarioRepository,
     }
 ]
 

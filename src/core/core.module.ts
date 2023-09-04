@@ -1,20 +1,29 @@
 import { Module } from '@nestjs/common';
 import { AuthUseCases } from './application/services/auth.useCases';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AUTH_REPOSITORY, AdaptersModule } from 'src/infraestructure/adapters/adapters.module';
+import { AUTH_REPOSITORY, AdaptersModule, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
 import { PersistenceModule } from 'src/infraestructure/persistence/persistence.module';
 import { AuthService } from './domain/services/auth.service';
 import { AuthRepository } from './domain/ports/outbound/auth.repository';
 import { RegisterUsuarioCommand, RegisterUsuarioHandler } from './application/feautures/Auth/write/register';
 import { LoginUsuarioCommand, LoginUsuarioHandler } from './application/feautures/Auth/write/login';
 import { JwtService } from '@nestjs/jwt';
+import { UsuarioByIdQuery, UsuarioByIdQueryHandler } from './application/feautures/Usuario/read/usuarioById.query';
+import { UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read/usuariosAll.query';
+import { UsuarioService } from './domain/services/usuario.service';
+import { UsuarioRepository } from './domain/ports/outbound/usuario.repository';
+import { UsuarioUseCases } from './application/services/usuario.useCases';
 
 const providers = [
     AuthUseCases,
     RegisterUsuarioCommand,
     RegisterUsuarioHandler,
     LoginUsuarioCommand,
-    LoginUsuarioHandler
+    LoginUsuarioHandler,
+    UsuarioByIdQuery,
+    UsuarioByIdQueryHandler,
+    UsuariosAllQuery,
+    UsuariosAllQueryHandler
   ]
 
 
@@ -41,6 +50,22 @@ const providers = [
             useFactory: (authService: AuthService, jwtService: JwtService) => new AuthUseCases(authService,jwtService),
             inject: [
               AuthService, JwtService
+            ] 
+        },
+        {
+            provide:UsuarioService,
+            useFactory:(
+                usuarioRepository:UsuarioRepository
+            )=> new UsuarioService(usuarioRepository),
+            inject:[
+                USUARIO_REPOSITORY
+            ]
+        },
+        {
+            provide: UsuarioUseCases,
+            useFactory: (usuarioService: UsuarioService) => new UsuarioUseCases(usuarioService),
+            inject: [
+                UsuarioService
             ] 
         },
     ],
