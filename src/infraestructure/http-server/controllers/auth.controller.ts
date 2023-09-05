@@ -3,15 +3,15 @@ import { Controller, Post, Body, UseGuards, Put, Param } from '@nestjs/common';
 
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 
-import { RegisterUsuarioRequest } from "../model/register-usuario.request";
 import { RegisterUsuarioCommand } from '../../../core/application/feautures/Auth/write/register/registerUsuario.command';
 import { LoginUsuarioCommand } from "src/core/application/feautures/Auth/write/login";
-import { LoginUsuarioRequest } from "../model/login-usuario.request";
+import { LoginUsuarioRequest } from "../model/usuario/login-usuario.request";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.decorator";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UpdateUsuarioPasswordCommand } from "src/core/application/feautures/Auth/write/update/updatePassword.command";
-import { UpdatePasswordRequest } from "../model/update-password.request";
+import { RegisterUsuarioRequest, UpdatePasswordRequest } from "../model";
+
 
 
 @ApiTags('Auth')

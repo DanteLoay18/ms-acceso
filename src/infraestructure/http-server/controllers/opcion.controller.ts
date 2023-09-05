@@ -6,8 +6,7 @@ import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.de
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { OpcionByIdQuery, OpcionesAllQuery } from "src/core/application/feautures/Opcion/read";
 import { CreateOpcionCommand, DeleteOpcionCommand, UpdateOpcionCommand } from "src/core/application/feautures/Opcion/write";
-import { CreateOpcionRequest } from "../model/opcion/create-opcion.request";
-import { UpdateOpcionRequest } from "../model/opcion/update-opcion.request";
+import { CreateOpcionRequest, UpdateOpcionRequest } from "../model";
 
 @ApiTags('Opcion')
 @Controller('/opcion')

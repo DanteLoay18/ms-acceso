@@ -1,12 +1,10 @@
 
 import { Prop,Schema, SchemaFactory } from '@nestjs/mongoose';
-import { v4 as uuidv4 } from 'uuid';
+
+import { Base } from '../helpers';
 
 @Schema()
-export class Usuario{
-
-    @Prop({ type: 'UUID', default:uuidv4})
-    _id: string;
+export class Usuario extends Base{
 
     @Prop({
         type:String,
@@ -51,41 +49,7 @@ export class Usuario{
     })
     avatarText:string;
 
-    @Prop({
-        type:Boolean,
-        required:true
-    })
-    esEliminado:boolean;
-
-    @Prop({
-        type:Boolean,
-        required:true
-    })
-    esBloqueado:boolean;
-
-    @Prop({
-        type:Date,
-        required:true
-    })
-    fechaCreacion:Date;
-
-    @Prop({
-        type:Date,
-        required:true
-    })
-    fechaModificacion:Date;
-
-    @Prop({
-        type:'UUID',
-        ref:'Usuario'
-    })
-    usuarioCreacion: string;
-
-    @Prop({
-        type:'UUID',
-        ref:'Usuario'
-    })
-    usuarioModificacion: string;
+   
 
     
 }

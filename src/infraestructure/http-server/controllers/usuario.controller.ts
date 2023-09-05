@@ -7,9 +7,9 @@ import { UsuarioByIdQuery } from "src/core/application/feautures/Usuario/read/us
 import { UpdateUsuarioCommand } from "src/core/application/feautures/Usuario/write/update/updateUsuario.command";
 import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.decorator";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
-import { UpdateUsuarioRequest } from "../model/update-usuario.request";
 import { DeleteUsuarioCommand } from "src/core/application/feautures/Usuario/write/delete/deleteUsuario.command";
 import { ResetPasswordUsuarioCommand } from "src/core/application/feautures/Usuario/write/update-password/resetPassword.command";
+import { UpdateUsuarioRequest } from "../model";
 
 @ApiTags('Usuario')
 @Controller('/usuario')
