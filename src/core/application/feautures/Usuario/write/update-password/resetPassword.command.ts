@@ -1,4 +1,4 @@
-import { UpdateUsuarioDto } from "src/core/shared/dtos/update-usuario.dto";
+
 import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 
 

@@ -1,4 +1,5 @@
-import { RegisterUsuarioDto } from "src/core/shared/dtos/register-usuario.dto";
+
+import { RegisterUsuarioDto } from "src/core/shared/dtos";
 import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 
 export class RegisterUsuarioCommand {

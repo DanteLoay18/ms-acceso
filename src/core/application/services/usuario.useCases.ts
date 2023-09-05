@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException,  } from "@nestjs/common";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UsuarioService } from "src/core/domain/services/usuario.service";
-import { UpdateUsuarioDto } from "src/core/shared/dtos/update-usuario.dto";
 import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 import * as bcrypt from 'bcrypt';
+import { UpdateUsuarioDto } from "src/core/shared/dtos";
 
 
 @Injectable()

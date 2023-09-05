@@ -1,13 +1,12 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { AuthService } from "src/core/domain/services/auth.service";
-import { RegisterUsuarioDto } from "src/core/shared/dtos/register-usuario.dto";
 import * as bcrypt from 'bcrypt'
-import { LoginUsuarioDto } from "src/core/shared/dtos/login-usuario.dto";
+import { LoginUsuarioDto } from "src/core/shared/dtos/usuario/login-usuario.dto";
 import { JwtPayload } from "src/infraestructure/adapters/jwt/interfaces/jwt-payload.interface";
 import { JwtService } from "@nestjs/jwt";
-import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 import { UsuarioUseCases } from "./usuario.useCases";
+import { RegisterUsuarioDto, UsuarioDto } from "src/core/shared/dtos";
 @Injectable()
 export class AuthUseCases{
     constructor(private readonly authService:AuthService,
