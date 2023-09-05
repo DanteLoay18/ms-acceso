@@ -16,4 +16,8 @@ export class UsuarioService{
     updateUsuario(usuario:Usuario){
         return this.usuarioRepository.updateUsuario(usuario);
     }
+
+    bloquearUsuario(id:string, esBloqueado:boolean){
+        return this.usuarioRepository.actualizarBloqueo(id, esBloqueado);
+    }
 }

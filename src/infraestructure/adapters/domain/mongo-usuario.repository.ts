@@ -8,6 +8,7 @@ import { UsuarioRepository } from "src/core/domain/ports/outbound/usuario.reposi
 export class MongoUsuarioRepository implements UsuarioRepository {
     
     constructor(@InjectModel(Usuario.name) private usuarioRepository: Model<Usuario>) { }
+   
     
     
     
@@ -21,7 +22,14 @@ export class MongoUsuarioRepository implements UsuarioRepository {
         throw new Error("Method not implemented.");
     }
     
-    
+    actualizarBloqueo(id:string,esBloqueado: boolean): Promise<Usuario> {
+        console.log(esBloqueado)
+        return this.usuarioRepository.findByIdAndUpdate(id, {
+
+                                                                esBloqueado  
+                                                                }, {new:true})
+
+    }
     
    
 

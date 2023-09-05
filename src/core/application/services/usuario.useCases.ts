@@ -30,6 +30,13 @@ export class UsuarioUseCases{
        
     }
 
+    async bloquearUsuario(id:string, esBloqueado:boolean){
+        try {
+            return await this.usuarioService.bloquearUsuario(id, esBloqueado);
+        } catch (error) {
+            this.handleExceptions(error)
+        }
+    }
     
 
 

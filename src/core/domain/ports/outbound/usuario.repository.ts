@@ -5,5 +5,6 @@ export interface UsuarioRepository{
 
     findOneById(id:string):Promise<Usuario>;
     findAll():Promise<Usuario[]>;
-    updateUsuario(usuario:Usuario):Promise<Usuario>
+    updateUsuario(usuario:Usuario):Promise<Usuario>;
+    actualizarBloqueo(id:string,esBloqueado:boolean):Promise<Usuario>
 }

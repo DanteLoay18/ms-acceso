@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { AuthService } from "src/core/domain/services/auth.service";
 import { RegisterUsuarioDto } from "src/core/shared/dtos/register-usuario.dto";
@@ -60,23 +60,28 @@ export class AuthUseCases{
         
         
         try {
+            
             const usuarioEncontrado = await this.usuarioUseCases.getUsuarioById(id);
             
             if(!usuarioEncontrado)
                 throw new NotFoundException(`Usuario con el ${id} no encontrado`);
+            if(usuarioEncontrado.esBloqueado)
+                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+
+            await this.usuarioUseCases.bloquearUsuario(id, true);
 
             const usuario = Usuario.updatePassword(password,usuarioModificacion._id)
             
             return await this.authService.updatePassword(id, {
-                                                                ...usuario,
-                                                                password: bcrypt.hashSync(password,10),
-                                                            });
+                ...usuario,
+                password: bcrypt.hashSync(password,10),
+            });
 
         } catch (error) {
             this.handleExceptions(error);
         }
         finally{
-
+            await this.usuarioUseCases.bloquearUsuario(id, false);
         }
 
         
@@ -98,8 +103,7 @@ export class AuthUseCases{
         
         
 
-        console.log(error);
-        throw new InternalServerErrorException('Please check server logs')
+        throw new BadRequestException(error.message)
       }
     
     
