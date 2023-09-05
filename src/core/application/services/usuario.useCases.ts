@@ -1,30 +1,36 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
-import { RegisterUsuarioDto } from "src/core/shared/dtos/register-usuario.dto";
-import * as bcrypt from 'bcrypt'
-import { LoginUsuarioDto } from "src/core/shared/dtos/login-usuario.dto";
-import { JwtPayload } from "src/infraestructure/adapters/jwt/interfaces/jwt-payload.interface";
-import { JwtService } from "@nestjs/jwt";
-import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException,  } from "@nestjs/common";
 import { UsuarioService } from "src/core/domain/services/usuario.service";
+
+
 @Injectable()
 export class UsuarioUseCases{
     constructor(private readonly usuarioService:UsuarioService){}
 
     async getUsuarioById(id:string){
-        const user= this.usuarioService.findOneById(id);
+        try{
+            const user= await this.usuarioService.findOneById(id);
 
-        if(!user)
-            throw new NotFoundException(`El usuario con el id ${id} no existe`)
+            if(!user)
+                throw new NotFoundException(`El usuario con el id ${id} no existe`)
 
-        return user;
+            return user;
+        }catch(error){
+            this.handleExceptions(error)
+        }
+        
     }
 
     async getAllUsuarios(){
         
-
-        return this.usuarioService.findAll();
+        try{
+            return await this.usuarioService.findAll();
+        }catch(error){
+            this.handleExceptions(error)
+        }
+       
     }
+
+    
 
 
     private handleExceptions(error:any){

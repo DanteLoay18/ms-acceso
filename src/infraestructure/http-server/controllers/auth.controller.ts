@@ -1,9 +1,8 @@
-import { ApiBearerAuth, ApiInternalServerErrorResponse, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { Controller, Post, Body, Get, Param, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiInternalServerErrorResponse,  ApiProperty,  ApiTags } from "@nestjs/swagger";
+import { Controller, Post, Body, UseGuards, Put, Param } from '@nestjs/common';
 
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 
-import { AppResponse } from "../model/app.response";
 import { RegisterUsuarioRequest } from "../model/register-usuario.request";
 import { RegisterUsuarioCommand } from '../../../core/application/feautures/Auth/write/register/registerUsuario.command';
 import { LoginUsuarioCommand } from "src/core/application/feautures/Auth/write/login";
@@ -11,6 +10,8 @@ import { LoginUsuarioRequest } from "../model/login-usuario.request";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.decorator";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
+import { UpdateUsuarioPasswordCommand } from "src/core/application/feautures/Auth/write/update/updatePassword.command";
+import { UpdatePasswordRequest } from "../model/update-password.request";
 
 
 @ApiTags('Auth')
@@ -51,5 +52,17 @@ export class UserController{
             token,
             ..._doc
         };
+    }
+
+
+    @ApiInternalServerErrorResponse({ description: 'Error server'})
+    @ApiBearerAuth() 
+    @UseGuards(AuthGuard())
+    // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
+    @Put(':id')
+    async updatePassword(@Param('id') id:string, @Body() {password}:UpdatePasswordRequest, @GetUser() usuario:Usuario,) {
+
+        return await this.command.execute(new UpdateUsuarioPasswordCommand(id, password, usuario));
+        
     }
 }

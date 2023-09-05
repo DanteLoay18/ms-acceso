@@ -13,4 +13,8 @@ export class AuthService{
         return this.authRepository.findOneByName(username);
     }
 
+     updatePassword(id:string,usuario:Usuario){
+        
+        return  this.authRepository.updatePassword(id,usuario);
+    }
 }

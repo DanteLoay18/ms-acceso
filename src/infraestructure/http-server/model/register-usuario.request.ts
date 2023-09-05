@@ -1,39 +1,28 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsBoolean, IsEmail } from "class-validator";
+import { IsString, IsEmail } from "class-validator";
 
 export class RegisterUsuarioRequest {
 
     @ApiProperty({
-        description: 'Categoria id',
+        description: 'Nombre Usuario',
     })
     @IsString()
     nombres: string;
    
     @ApiProperty({
-        description: 'Categoria Name',
+        description: 'Apellidos Usuario',
     })
     @IsString()
     apellidos: string;
 
     @ApiProperty({
-        description: 'Categoria id',
+        description: 'Email Usuario',
     })
     @IsString()
     @IsEmail()
     email: string;
 
-    @ApiProperty({
-        description: 'Categoria id',
-    })
-    @IsString()
-    password: string;
-    // @ApiProperty({
-    //     description: 'Categoria Description',
-    // })
-    // @IsBoolean()
-    // activo:boolean;
-
-    
+      
 
     
 }

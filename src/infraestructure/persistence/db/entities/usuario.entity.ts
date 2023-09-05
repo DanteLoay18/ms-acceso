@@ -34,6 +34,24 @@ export class Usuario{
     apellidos: string;
 
     @Prop({
+        type:String,
+        required:true
+    })
+    defaultPassword: string;
+
+    @Prop({
+        type:Boolean,
+        required:true
+    })
+    isDefaultPassword:boolean;
+
+    @Prop({
+        type:String,
+        required:true
+    })
+    avatarText:string;
+
+    @Prop({
         type:Boolean,
         required:true
     })
@@ -68,6 +86,8 @@ export class Usuario{
         ref:'Usuario'
     })
     usuarioModificacion: string;
+
+    
 }
 
 export const UsuarioSchema= SchemaFactory.createForClass(Usuario)

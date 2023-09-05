@@ -13,6 +13,8 @@ import { UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautur
 import { UsuarioService } from './domain/services/usuario.service';
 import { UsuarioRepository } from './domain/ports/outbound/usuario.repository';
 import { UsuarioUseCases } from './application/services/usuario.useCases';
+import { UpdateUsuarioPasswordCommand } from './application/feautures/Auth/write/update/updatePassword.command';
+import { UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write/update/updatePassword.handler';
 
 const providers = [
     AuthUseCases,
@@ -23,7 +25,9 @@ const providers = [
     UsuarioByIdQuery,
     UsuarioByIdQueryHandler,
     UsuariosAllQuery,
-    UsuariosAllQueryHandler
+    UsuariosAllQueryHandler,
+    UpdateUsuarioPasswordCommand,
+    UpdateUsuarioPasswordHandler
   ]
 
 
@@ -47,9 +51,9 @@ const providers = [
         },
         {
             provide: AuthUseCases,
-            useFactory: (authService: AuthService, jwtService: JwtService) => new AuthUseCases(authService,jwtService),
+            useFactory: (authService: AuthService, jwtService: JwtService, usuarioUseCases:UsuarioUseCases) => new AuthUseCases(authService,jwtService,usuarioUseCases),
             inject: [
-              AuthService, JwtService
+              AuthService, JwtService,UsuarioUseCases
             ] 
         },
         {

@@ -9,4 +9,5 @@ export abstract class Base {
     usuarioModificacion: string;
     
     
+    
 }
