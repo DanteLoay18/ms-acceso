@@ -35,6 +35,7 @@ export class UsuarioUseCases{
     }
     async updateUsuario(id:string, updateUsarioDto:UpdateUsuarioDto, usuarioModificacion:UsuarioDto ){
         
+        //TODO: AGREGAR LOS PERFILES EN LA ACTUALIZACION MAS NO AL CREARLO
         try {
             
             const usuarioEncontrado = await this.getUsuarioById(id);

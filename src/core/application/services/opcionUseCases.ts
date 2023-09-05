@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
-import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 import { OpcionService } from "src/core/domain/services/opcion.service";
-import { UpdateOpcionDto } from "src/core/shared/dtos/update-opcion.dto";
 import { Opcion } from "src/core/domain/entity/collections/opcion.collection";
-import { CreateOpcionDto } from "src/core/shared/dtos";
+import { CreateOpcionDto, UpdateOpcionDto, UsuarioDto } from "src/core/shared/dtos";
 
 
 @Injectable()

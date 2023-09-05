@@ -6,7 +6,7 @@ import { Base } from '../helpers';
 @Schema()
 export class Sistema extends Base{
 
-    @Prop({ required: true })
+    @Prop({ required: true , unique:true})
     nombre: string;
    
     @Prop({ required: true })

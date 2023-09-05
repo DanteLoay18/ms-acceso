@@ -7,15 +7,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt/strategies/jwt.strategy';
 import { MongoUsuarioRepository } from './domain/mongo-usuario.repository';
 import { MongoOpcionRepository } from './domain/mongo-opcion.repository';
+import { MongoSistemaRepository } from './domain/mongo-sistema.repository';
 
 export const AUTH_REPOSITORY = 'AUTH_REPOSITORY';
 export const USUARIO_REPOSITORY = 'USUARIO_REPOSITORY';
 export const OPCION_REPOSITORY = 'OPCION_REPOSITORY';
-
+export const SISTEMA_REPOSITORY = 'SISTEMA_REPOSITORY';
 const providers = [
     MongoAuthRepository,
     MongoUsuarioRepository,
     MongoOpcionRepository,
+    MongoSistemaRepository,
     JwtStrategy,
     {
         provide: AUTH_REPOSITORY,
@@ -28,6 +30,10 @@ const providers = [
     {
         provide: OPCION_REPOSITORY,
         useExisting: MongoOpcionRepository,
+    },
+    {
+        provide: SISTEMA_REPOSITORY,
+        useExisting: MongoSistemaRepository,
     }
 ]
 

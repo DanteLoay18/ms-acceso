@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AUTH_REPOSITORY, AdaptersModule, OPCION_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
+import { AUTH_REPOSITORY, AdaptersModule, OPCION_REPOSITORY, SISTEMA_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
 import { PersistenceModule } from 'src/infraestructure/persistence/persistence.module';
 
 import { JwtService } from '@nestjs/jwt';
@@ -14,6 +14,11 @@ import { OpcionUseCases } from './application/services/opcionUseCases';
 import { CreateOpcionCommand, CreateOpcionHandler, DeleteOpcionCommand, DeleteOpcionHandler, UpdateOpcionCommand, UpdateOpcionHandler } from './application/feautures/Opcion/write';
 import { OpcionByIdQuery, OpcionByIdQueryHandler, OpcionesAllQuery, OpcionesAllQueryHandler } from './application/feautures/Opcion/read';
 import { OpcionService } from './domain/services/opcion.service';
+import { SistemaUseCases } from './application/services/sistema.useCases';
+import { CreateSistemaCommand, CreateSistemaHandler, DeleteSistemaCommand, DeleteSistemaHandler, UpdateSistemaCommand, UpdateSistemaHandler } from './application/feautures/Sistema/write';
+import { SistemaByIdQuery, SistemaByIdQueryHandler, SistemasAllQuery, SistemasAllQueryHandler } from './application/feautures/Sistema/read';
+import { SistemaService } from './domain/services/sistema.service';
+import { SistemaRepository } from './domain/ports/outbound/sistema.repository';
 
 const USER_PROVIDERS=[
     AuthUseCases,
@@ -50,9 +55,24 @@ const OPCION_PROVIDERS=[
     OpcionesAllQueryHandler
 ]
 
+const SISTEMA_PROVIDERS=[
+    SistemaUseCases,
+    CreateSistemaCommand,
+    CreateSistemaHandler,
+    UpdateSistemaCommand,
+    UpdateSistemaHandler,
+    DeleteSistemaCommand,
+    DeleteSistemaHandler,
+    SistemaByIdQuery,
+    SistemaByIdQueryHandler,
+    SistemasAllQuery,
+    SistemasAllQueryHandler
+]
+
 const providers = [
     ...USER_PROVIDERS,
-    ...OPCION_PROVIDERS
+    ...OPCION_PROVIDERS,
+    ...SISTEMA_PROVIDERS
 ]
 
 
@@ -111,6 +131,22 @@ const providers = [
             useFactory: (opcionService: OpcionService) => new OpcionUseCases(opcionService),
             inject: [
               OpcionService
+            ] 
+        },
+        {
+            provide:SistemaService,
+            useFactory:(
+                sistemaRepository:SistemaRepository
+            )=> new SistemaService(sistemaRepository),
+            inject:[
+                SISTEMA_REPOSITORY
+            ]
+        },
+        {
+            provide: SistemaUseCases,
+            useFactory: (sistemaService: SistemaService) => new SistemaUseCases(sistemaService),
+            inject: [
+                SistemaService
             ] 
         },
     ],
