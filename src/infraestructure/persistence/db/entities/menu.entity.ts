@@ -20,7 +20,7 @@ export class Menu extends Base{
     opciones: string[];
 
     @Prop({required:true})
-    nivel:number;
+    esSubmenu:boolean;
     
 }
 

@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AUTH_REPOSITORY, AdaptersModule, OPCION_REPOSITORY, SISTEMA_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
+import { AUTH_REPOSITORY, AdaptersModule, MENU_REPOSITORY, OPCION_REPOSITORY, SISTEMA_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
 import { PersistenceModule } from 'src/infraestructure/persistence/persistence.module';
 
 import { JwtService } from '@nestjs/jwt';
-import { AuthUseCases, UsuarioUseCases } from './application/services';
+import { AuthUseCases, MenuUseCases, UsuarioUseCases } from './application/services';
 import { LoginUsuarioCommand, LoginUsuarioHandler, RegisterUsuarioCommand, RegisterUsuarioHandler, UpdateUsuarioPasswordCommand, UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write';
 import { UsuarioByIdQuery, UsuarioByIdQueryHandler, UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read';
 import { DeleteUsuarioCommand, DeleteUsuarioHandler, ResetPasswordUsuarioCommand, ResetPasswordUsuarioHandler, UpdateUsuarioCommand, UpdateUsuarioHandler } from './application/feautures/Usuario/write';
-import { AuthService, UsuarioService } from './domain/services';
-import { AuthRepository, OpcionRepository, UsuarioRepository } from './domain/ports/outbound';
+import { AuthService, MenuService, UsuarioService } from './domain/services';
+import { AuthRepository, MenuRepository, OpcionRepository, UsuarioRepository } from './domain/ports/outbound';
 import { OpcionUseCases } from './application/services/opcionUseCases';
 import { CreateOpcionCommand, CreateOpcionHandler, DeleteOpcionCommand, DeleteOpcionHandler, UpdateOpcionCommand, UpdateOpcionHandler } from './application/feautures/Opcion/write';
 import { OpcionByIdQuery, OpcionByIdQueryHandler, OpcionesAllQuery, OpcionesAllQueryHandler } from './application/feautures/Opcion/read';
@@ -19,6 +19,8 @@ import { CreateSistemaCommand, CreateSistemaHandler, DeleteSistemaCommand, Delet
 import { SistemaByIdQuery, SistemaByIdQueryHandler, SistemasAllQuery, SistemasAllQueryHandler } from './application/feautures/Sistema/read';
 import { SistemaService } from './domain/services/sistema.service';
 import { SistemaRepository } from './domain/ports/outbound/sistema.repository';
+import { CreateMenuCommand, CreateMenuHandler, DeleteMenuCommand, DeleteMenuHandler, UpdateMenuCommand, UpdateMenuHandler } from './application/feautures/Menu/write';
+import { MenuByIdQuery, MenuByIdQueryHandler, MenusAllQuery, MenusAllQueryHandler } from './application/feautures/Menu/read';
 
 const USER_PROVIDERS=[
     AuthUseCases,
@@ -69,10 +71,25 @@ const SISTEMA_PROVIDERS=[
     SistemasAllQueryHandler
 ]
 
+const MENU_PROVIDERS=[
+    MenuUseCases,
+    CreateMenuCommand,
+    CreateMenuHandler,
+    UpdateMenuCommand,
+    UpdateMenuHandler,
+    DeleteMenuCommand,
+    DeleteMenuHandler,
+    MenuByIdQuery,
+    MenuByIdQueryHandler,
+    MenusAllQuery,
+    MenusAllQueryHandler
+]
+
 const providers = [
     ...USER_PROVIDERS,
     ...OPCION_PROVIDERS,
-    ...SISTEMA_PROVIDERS
+    ...SISTEMA_PROVIDERS,
+    ...MENU_PROVIDERS
 ]
 
 
@@ -147,6 +164,24 @@ const providers = [
             useFactory: (sistemaService: SistemaService) => new SistemaUseCases(sistemaService),
             inject: [
                 SistemaService
+            ] 
+        },
+        {
+            provide:MenuService,
+            useFactory:(
+                menuRepository:MenuRepository
+            )=> new MenuService(menuRepository),
+            inject:[
+                MENU_REPOSITORY
+            ]
+        },
+        {
+            provide: MenuUseCases,
+            useFactory: (menuService: MenuService, sistemaService:SistemaService, opcionService:OpcionService) => new MenuUseCases(menuService,sistemaService,opcionService),
+            inject: [
+                MenuService,
+                SistemaService,
+                OpcionService
             ] 
         },
     ],

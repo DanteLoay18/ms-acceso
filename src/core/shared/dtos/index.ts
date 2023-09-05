@@ -1,3 +1,5 @@
+export * from './menu/create-menu.dto';
+export * from './menu/update-menu.dto';
 export * from './opcion/create-opcion.dto';
 export * from './opcion/update-opcion.dto';
 export * from './sistema/create-sistema.dto';

@@ -4,6 +4,7 @@ import { UserController } from './controllers/auth.controller';
 import { UsuarioController } from './controllers/usuario.controller';
 import { OpcionController } from './controllers/opcion.controller';
 import { SistemaController } from './controllers/sistema.controller';
+import { MenuController } from './controllers/menu.controller';
 
 @Module({
     imports:[CoreModule],
@@ -11,7 +12,8 @@ import { SistemaController } from './controllers/sistema.controller';
         UserController,
         UsuarioController,
         OpcionController,
-        SistemaController
+        SistemaController,
+        MenuController
     ]
 })
 export class HttpServerModule {}

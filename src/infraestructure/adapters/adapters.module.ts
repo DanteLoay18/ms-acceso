@@ -8,16 +8,19 @@ import { JwtStrategy } from './jwt/strategies/jwt.strategy';
 import { MongoUsuarioRepository } from './domain/mongo-usuario.repository';
 import { MongoOpcionRepository } from './domain/mongo-opcion.repository';
 import { MongoSistemaRepository } from './domain/mongo-sistema.repository';
+import { MongoMenuRepository } from './domain/mongo-menu.repository';
 
 export const AUTH_REPOSITORY = 'AUTH_REPOSITORY';
 export const USUARIO_REPOSITORY = 'USUARIO_REPOSITORY';
 export const OPCION_REPOSITORY = 'OPCION_REPOSITORY';
 export const SISTEMA_REPOSITORY = 'SISTEMA_REPOSITORY';
+export const MENU_REPOSITORY = 'MENU_REPOSITORY';
 const providers = [
     MongoAuthRepository,
     MongoUsuarioRepository,
     MongoOpcionRepository,
     MongoSistemaRepository,
+    MongoMenuRepository,
     JwtStrategy,
     {
         provide: AUTH_REPOSITORY,
@@ -34,6 +37,10 @@ const providers = [
     {
         provide: SISTEMA_REPOSITORY,
         useExisting: MongoSistemaRepository,
+    },
+    {
+        provide: MENU_REPOSITORY,
+        useExisting: MongoMenuRepository,
     }
 ]
 
