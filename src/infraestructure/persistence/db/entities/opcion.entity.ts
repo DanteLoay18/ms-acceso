@@ -3,7 +3,7 @@ import { Prop,Schema, SchemaFactory } from '@nestjs/mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 @Schema()
-export class Usuario{
+export class Opcion{
 
     @Prop({ type: 'UUID', default:uuidv4})
     _id: string;
@@ -13,43 +13,25 @@ export class Usuario{
         unique:true, 
         required:true    
     })
-    email: string;
-    
-    @Prop({
-        type:String,
-        required:true
-    })
-    password: string;
+    nombre: string;
 
     @Prop({
         type:String,
         required:true
     })
-    nombres: string;
-
-    @Prop({
-        type:String,
-        required:true
-    })
-    apellidos: string;
-
-    @Prop({
-        type:String,
-        required:true
-    })
-    defaultPassword: string;
+    icono: string;
 
     @Prop({
         type:Boolean,
         required:true
     })
-    isDefaultPassword:boolean;
-
+    tieneOpciones:boolean;
+    
     @Prop({
-        type:String,
+        type:Boolean,
         required:true
     })
-    avatarText:string;
+    esEmergente:boolean;
 
     @Prop({
         type:Boolean,
@@ -90,4 +72,4 @@ export class Usuario{
     
 }
 
-export const UsuarioSchema= SchemaFactory.createForClass(Usuario)
+export const OpcionSchema= SchemaFactory.createForClass(Opcion)

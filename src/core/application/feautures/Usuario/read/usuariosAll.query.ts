@@ -4,8 +4,6 @@ import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 
 export class UsuariosAllQuery {
     
-    constructor() { }
-    
 }
 
 

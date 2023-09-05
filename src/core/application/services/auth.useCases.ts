@@ -24,8 +24,6 @@ export class AuthUseCases{
             if(usuarioEncontradoEmail || usuarioEncontradoNombres)
             throw new BadRequestException(`Los datos ingresados ya estan registrados`);
 
-
-            await this.findOneByTerm(registerUsuarioDto.email)
             const usuario = Usuario.create(registerUsuarioDto.nombres, registerUsuarioDto.apellidos, registerUsuarioDto.email, usuarioDto._id);
             
 

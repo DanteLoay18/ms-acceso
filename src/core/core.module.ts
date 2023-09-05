@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AUTH_REPOSITORY, AdaptersModule, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
+import { AUTH_REPOSITORY, AdaptersModule, OPCION_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
 import { PersistenceModule } from 'src/infraestructure/persistence/persistence.module';
 
 import { JwtService } from '@nestjs/jwt';
@@ -9,8 +9,11 @@ import { LoginUsuarioCommand, LoginUsuarioHandler, RegisterUsuarioCommand, Regis
 import { UsuarioByIdQuery, UsuarioByIdQueryHandler, UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read';
 import { DeleteUsuarioCommand, DeleteUsuarioHandler, ResetPasswordUsuarioCommand, ResetPasswordUsuarioHandler, UpdateUsuarioCommand, UpdateUsuarioHandler } from './application/feautures/Usuario/write';
 import { AuthService, UsuarioService } from './domain/services';
-import { AuthRepository, UsuarioRepository } from './domain/ports/outbound';
-
+import { AuthRepository, OpcionRepository, UsuarioRepository } from './domain/ports/outbound';
+import { OpcionUseCases } from './application/services/opcionUseCases';
+import { CreateOpcionCommand, CreateOpcionHandler, DeleteOpcionCommand, DeleteOpcionHandler, UpdateOpcionCommand, UpdateOpcionHandler } from './application/feautures/Opcion/write';
+import { OpcionByIdQuery, OpcionByIdQueryHandler, OpcionesAllQuery, OpcionesAllQueryHandler } from './application/feautures/Opcion/read';
+import { OpcionService } from './domain/services/opcion.service';
 
 const USER_PROVIDERS=[
     AuthUseCases,
@@ -33,8 +36,23 @@ const USER_PROVIDERS=[
     ResetPasswordUsuarioHandler
 ]
 
+const OPCION_PROVIDERS=[
+    OpcionUseCases,
+    CreateOpcionCommand,
+    CreateOpcionHandler,
+    UpdateOpcionCommand,
+    UpdateOpcionHandler,
+    DeleteOpcionCommand,
+    DeleteOpcionHandler,
+    OpcionByIdQuery,
+    OpcionByIdQueryHandler,
+    OpcionesAllQuery,
+    OpcionesAllQueryHandler
+]
+
 const providers = [
-    ...USER_PROVIDERS
+    ...USER_PROVIDERS,
+    ...OPCION_PROVIDERS
 ]
 
 
@@ -77,6 +95,22 @@ const providers = [
             useFactory: (usuarioService: UsuarioService) => new UsuarioUseCases(usuarioService),
             inject: [
                 UsuarioService
+            ] 
+        },
+        {
+            provide:OpcionService,
+            useFactory:(
+                opcionRepository:OpcionRepository
+            )=> new OpcionService(opcionRepository),
+            inject:[
+                OPCION_REPOSITORY
+            ]
+        },
+        {
+            provide: OpcionUseCases,
+            useFactory: (opcionService: OpcionService) => new OpcionUseCases(opcionService),
+            inject: [
+              OpcionService
             ] 
         },
     ],
