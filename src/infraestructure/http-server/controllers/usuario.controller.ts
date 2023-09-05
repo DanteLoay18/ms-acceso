@@ -9,6 +9,7 @@ import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.de
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UpdateUsuarioRequest } from "../model/update-usuario.request";
 import { DeleteUsuarioCommand } from "src/core/application/feautures/Usuario/write/delete/deleteUsuario.command";
+import { ResetPasswordUsuarioCommand } from "src/core/application/feautures/Usuario/write/update-password/resetPassword.command";
 
 @ApiTags('Usuario')
 @Controller('/usuario')
@@ -45,6 +46,18 @@ export class UsuarioController{
                         @Param('id') id:string,
                         @Body() updateUsuarioRequest:UpdateUsuarioRequest) {
         return await this.command.execute(new UpdateUsuarioCommand(id,updateUsuarioRequest, usuario));
+        
+    }
+
+    @ApiInternalServerErrorResponse({ description: 'Error server'})
+    @ApiBearerAuth() 
+    @UseGuards(AuthGuard())
+    @Put('/reset/:id')
+    async resetPasswordUsuario(@GetUser() usuario:Usuario,
+                               @Param('id') id:string
+                               ) {
+                                
+        return await this.command.execute(new ResetPasswordUsuarioCommand(id, usuario));
         
     }
 

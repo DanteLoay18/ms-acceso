@@ -24,4 +24,7 @@ export class UsuarioService{
     bloquearUsuario(id:string, esBloqueado:boolean){
         return this.usuarioRepository.actualizarBloqueo(id, esBloqueado);
     }
+    resetPassword(id:string, usuario:Usuario){
+        return this.usuarioRepository.resetPassword(id,usuario);
+    }
 }

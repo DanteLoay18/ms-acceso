@@ -16,7 +16,16 @@ export class AuthUseCases{
 
     async registerUsuario(registerUsuarioDto:RegisterUsuarioDto, usuarioDto:UsuarioDto){
         try {
-            
+
+           
+            const usuarioEncontradoNombres=await this.findOneByTerm(registerUsuarioDto.nombres)
+            const usuarioEncontradoEmail=await this.findOneByTerm(registerUsuarioDto.email)
+
+            if(usuarioEncontradoEmail || usuarioEncontradoNombres)
+            throw new BadRequestException(`Los datos ingresados ya estan registrados`);
+
+
+            await this.findOneByTerm(registerUsuarioDto.email)
             const usuario = Usuario.create(registerUsuarioDto.nombres, registerUsuarioDto.apellidos, registerUsuarioDto.email, usuarioDto._id);
             
 
@@ -37,7 +46,7 @@ export class AuthUseCases{
     async loginUsuario(loginUsuarioDto:LoginUsuarioDto){
         
             const {email, password} = loginUsuarioDto;
-            const usuario = await this.authService.loginUsuario(email);
+            const usuario = await this.findOneByTerm(email)
 
             if(!usuario)
                 throw new NotFoundException(`Credenciales no validas(email)`);
@@ -88,6 +97,20 @@ export class AuthUseCases{
           
     }
 
+    async findOneByTerm(term:string){
+        try {
+            let usuario=await this.authService.findByName(term.toUpperCase());
+            console.log('validacion',usuario)
+            if(!usuario)
+                usuario= await this.authService.findByEmail(term);
+
+            return usuario;
+
+            
+        } catch (error) {
+            this.handleExceptions(error)
+        }
+    }
     private gwtJwtToken(payload: JwtPayload){
         const token = this.jwtService.sign(payload);
 

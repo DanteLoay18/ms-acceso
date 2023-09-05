@@ -9,6 +9,7 @@ export class MongoUsuarioRepository implements UsuarioRepository {
     
     constructor(@InjectModel(Usuario.name) private usuarioRepository: Model<Usuario>) { }
     
+    
    
     
     
@@ -20,7 +21,7 @@ export class MongoUsuarioRepository implements UsuarioRepository {
         return this.usuarioRepository.find({esEliminado:false});
     }
     updateUsuario(id:string,usuario: Usuario): Promise<Usuario> {
-        console.log(usuario)
+        
         return this.usuarioRepository.findByIdAndUpdate(id, usuario, {new:true})
     }
     
@@ -33,6 +34,10 @@ export class MongoUsuarioRepository implements UsuarioRepository {
 
     }
 
+    resetPassword(id: string, usuario: Usuario): Promise<Usuario> {
+        return  this.usuarioRepository.findByIdAndUpdate(id,usuario, 
+                                                    { new: true });
+    }
     deleteUsuario(id: string): Promise<Usuario> {
         return this.usuarioRepository.findByIdAndUpdate(id, {
                                                         esEliminado:true  

@@ -1,27 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AuthUseCases } from './application/services/auth.useCases';
 import { CqrsModule } from '@nestjs/cqrs';
 import { AUTH_REPOSITORY, AdaptersModule, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
 import { PersistenceModule } from 'src/infraestructure/persistence/persistence.module';
-import { AuthService } from './domain/services/auth.service';
-import { AuthRepository } from './domain/ports/outbound/auth.repository';
-import { RegisterUsuarioCommand, RegisterUsuarioHandler } from './application/feautures/Auth/write/register';
-import { LoginUsuarioCommand, LoginUsuarioHandler } from './application/feautures/Auth/write/login';
-import { JwtService } from '@nestjs/jwt';
-import { UsuarioByIdQuery, UsuarioByIdQueryHandler } from './application/feautures/Usuario/read/usuarioById.query';
-import { UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read/usuariosAll.query';
-import { UsuarioService } from './domain/services/usuario.service';
-import { UsuarioRepository } from './domain/ports/outbound/usuario.repository';
-import { UsuarioUseCases } from './application/services/usuario.useCases';
-import { UpdateUsuarioPasswordCommand } from './application/feautures/Auth/write/update/updatePassword.command';
-import { UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write/update/updatePassword.handler';
-import { UpdateUsuarioCommand } from './application/feautures/Usuario/write/update/updateUsuario.command';
-import { UpdateUsuarioHandler } from './application/feautures/Usuario/write/update/updateUsuario.handler';
-import { DeleteUsuarioCommand } from './application/feautures/Usuario/write/delete/deleteUsuario.command';
-import { DeleteUsuarioHandler } from './application/feautures/Usuario/write/delete/deleteUsuario.handler';
 
-const providers = [
+import { JwtService } from '@nestjs/jwt';
+import { AuthUseCases, UsuarioUseCases } from './application/services';
+import { LoginUsuarioCommand, LoginUsuarioHandler, RegisterUsuarioCommand, RegisterUsuarioHandler, UpdateUsuarioPasswordCommand, UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write';
+import { UsuarioByIdQuery, UsuarioByIdQueryHandler, UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read';
+import { DeleteUsuarioCommand, DeleteUsuarioHandler, ResetPasswordUsuarioCommand, ResetPasswordUsuarioHandler, UpdateUsuarioCommand, UpdateUsuarioHandler } from './application/feautures/Usuario/write';
+import { AuthService, UsuarioService } from './domain/services';
+import { AuthRepository, UsuarioRepository } from './domain/ports/outbound';
+
+
+const USER_PROVIDERS=[
     AuthUseCases,
+    UsuarioUseCases,
     RegisterUsuarioCommand,
     RegisterUsuarioHandler,
     LoginUsuarioCommand,
@@ -35,8 +28,14 @@ const providers = [
     UpdateUsuarioCommand,
     UpdateUsuarioHandler,
     DeleteUsuarioCommand,
-    DeleteUsuarioHandler
-  ]
+    DeleteUsuarioHandler,
+    ResetPasswordUsuarioCommand,
+    ResetPasswordUsuarioHandler
+]
+
+const providers = [
+    ...USER_PROVIDERS
+]
 
 
 

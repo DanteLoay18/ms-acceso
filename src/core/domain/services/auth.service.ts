@@ -9,8 +9,11 @@ export class AuthService{
        return this.authRepository.register(usuario);
     }
 
-    loginUsuario(username:string){
+    findByName(username:string){
         return this.authRepository.findOneByName(username);
+    }
+    findByEmail(email:string){
+        return this.authRepository.findOneByEmail(email);
     }
 
      updatePassword(id:string,usuario:Usuario){

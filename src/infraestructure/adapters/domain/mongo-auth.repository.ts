@@ -11,9 +11,18 @@ export class MongoAuthRepository implements AuthRepository {
     constructor(@InjectModel(Usuario.name) private authRepository: Model<Usuario>) { }
     
     
-   
-    findOneByName(email: string): Promise<Usuario> {
+    findOneByEmail(email: string): Promise<Usuario> {
         return this.authRepository.findOne({email}).populate([
+            {path:'usuarioCreacion',select: 'email nombres apellidos '},
+            {path:'usuarioModificacion',select: 'email nombres apellidos '}
+             ]) ;
+    }
+    
+    
+   
+    findOneByName(nombres: string): Promise<Usuario> {
+        console.log('repository',nombres)
+        return this.authRepository.findOne({nombres}).populate([
                                                                 {path:'usuarioCreacion',select: 'email nombres apellidos '},
                                                                 {path:'usuarioModificacion',select: 'email nombres apellidos '}
                                                                  ]) ;

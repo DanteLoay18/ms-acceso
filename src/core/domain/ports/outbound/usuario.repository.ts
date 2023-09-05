@@ -7,5 +7,6 @@ export interface UsuarioRepository{
     findAll():Promise<Usuario[]>;
     updateUsuario(id:string,usuario:Usuario):Promise<Usuario>;
     actualizarBloqueo(id:string,esBloqueado:boolean):Promise<Usuario>;
+    resetPassword(id:string,usuario:Usuario): Promise<Usuario>;
     deleteUsuario(id:string):Promise<Usuario>;
 }

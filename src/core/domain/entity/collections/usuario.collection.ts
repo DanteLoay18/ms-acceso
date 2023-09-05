@@ -25,7 +25,7 @@ export class Usuario extends Base{
         usuario.fechaModificacion=new Date();
         usuario.usuarioCreacion= usuarioCreacion;
         usuario.usuarioModificacion=usuarioCreacion;
-        usuario.avatarText= this.obtenerIniciales(nombres);
+        usuario.avatarText= this.obtenerIniciales(nombres, apellidos);
         usuario.defaultPassword=password;
         usuario.isDefaultPassword=true;
         return usuario;
@@ -47,24 +47,16 @@ export class Usuario extends Base{
     usuario.email=email;
     usuario.fechaModificacion=new Date();
     usuario.usuarioModificacion=usuarioModificacion;
-    if(usuario.nombres){
-      usuario.avatarText=this.obtenerIniciales(nombres);
+    if(usuario.nombres && usuario.apellidos){
+      usuario.avatarText=this.obtenerIniciales(nombres, apellidos);
     }
     return usuario;
 }
 
-    static obtenerIniciales(nombreCompleto:string) {
-        const palabras = nombreCompleto.split(" ");
-        let iniciales = "";
-      
-        for (let i = 0; i < 2 && i < palabras.length; i++) {
-          const palabra = palabras[i];
-          if (palabra.length > 0) {
-            iniciales += palabra[0].toUpperCase();
-          }
-        }
-      
-        return iniciales;
+    static  obtenerIniciales(nombre:string, apellido:string) {
+      const inicialNombre = nombre.charAt(0).toUpperCase();
+      const inicialApellido = apellido.charAt(0).toUpperCase();
+      return `${inicialNombre}${inicialApellido}`;
     }
     
     static generatePassword() {

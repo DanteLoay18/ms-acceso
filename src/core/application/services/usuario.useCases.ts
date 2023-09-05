@@ -3,6 +3,7 @@ import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UsuarioService } from "src/core/domain/services/usuario.service";
 import { UpdateUsuarioDto } from "src/core/shared/dtos/update-usuario.dto";
 import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -66,6 +67,41 @@ export class UsuarioUseCases{
             this.handleExceptions(error);
         }
     }
+
+    async resetUsuarioPassword(id:string, usuarioModificacion:UsuarioDto){
+        
+        
+        try {
+            
+            const usuarioEncontrado = await this.getUsuarioById(id);
+            
+           
+            if(usuarioEncontrado.esBloqueado)
+                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+
+            await this.bloquearUsuario(id, true);
+
+            const usuario = Usuario.updatePassword(usuarioEncontrado.defaultPassword,usuarioModificacion._id)
+            
+            return await this.usuarioService.resetPassword(id, {
+                ...usuario,
+                password: bcrypt.hashSync(usuario.password,10),
+            });
+
+        } catch (error) {
+            this.handleExceptions(error);
+        }
+        finally{
+            await this.bloquearUsuario(id, false);
+        }
+
+        
+        
+          
+    }
+
+
+
     async bloquearUsuario(id:string, esBloqueado:boolean){
         try {
             return await this.usuarioService.bloquearUsuario(id, esBloqueado);
