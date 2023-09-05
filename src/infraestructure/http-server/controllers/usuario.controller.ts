@@ -1,5 +1,5 @@
 import { ApiBearerAuth, ApiInternalServerErrorResponse, ApiTags } from "@nestjs/swagger";
-import { Controller, UseGuards, Get, Param, Put,Delete ,Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Param, Put,Delete ,Body, ParseUUIDPipe } from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { AuthGuard } from "@nestjs/passport";
 import { UsuariosAllQuery } from "src/core/application/feautures/Usuario/read/usuariosAll.query";
@@ -33,7 +33,7 @@ export class UsuarioController{
     @ApiBearerAuth() 
     @UseGuards(AuthGuard())
     @Get(':id')
-    async findUsuarioById(@Param('id') id:string) {
+    async findUsuarioById(@Param('id', ParseUUIDPipe) id:string) {
         return await this.query.execute(new UsuarioByIdQuery(id));
         
     }
@@ -43,7 +43,7 @@ export class UsuarioController{
     @UseGuards(AuthGuard())
     @Put(':id')
     async updateUsuario(@GetUser() usuario:Usuario,
-                        @Param('id') id:string,
+                        @Param('id', ParseUUIDPipe) id:string,
                         @Body() updateUsuarioRequest:UpdateUsuarioRequest) {
         return await this.command.execute(new UpdateUsuarioCommand(id,updateUsuarioRequest, usuario));
         

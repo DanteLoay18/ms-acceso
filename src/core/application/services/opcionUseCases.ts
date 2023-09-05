@@ -37,9 +37,9 @@ export class OpcionUseCases{
 
     async createOpcion(createOpcionDto:CreateOpcionDto, usuarioDto:UsuarioDto){
         try {
-
-           //Todo : Validar las busquedas por nombre y por icono ya que los dos valores deben ser unicos
-           
+            
+            await this.findOneByTerm(createOpcionDto.nombre)
+            await this.findOneByTerm(createOpcionDto.icono)
 
             const opcion = Opcion.createOpcion(createOpcionDto.nombre, createOpcionDto.icono, createOpcionDto.tieneOpciones, createOpcionDto.esEmergente, usuarioDto._id);
            
@@ -62,7 +62,7 @@ export class OpcionUseCases{
             if(opcionEncontrado.esBloqueado)
                 throw new BadRequestException(`Usuario se encuentra en modificacion`)
 
-            await this.bloquearUsuario(id, true);
+            await this.bloquearOpcion(id, true);
 
             const opcion = Opcion.updateOpcion(updateOpcionDto.nombre,updateOpcionDto.icono,updateOpcionDto.tieneOpciones,updateOpcionDto.esEmergente,usuarioModificacion._id)
             
@@ -72,7 +72,7 @@ export class OpcionUseCases{
             this.handleExceptions(error);
         }
         finally{
-            await this.bloquearUsuario(id, false);
+            await this.bloquearOpcion(id, false);
         }
        
     }
@@ -90,7 +90,7 @@ export class OpcionUseCases{
 
 
 
-    async bloquearUsuario(id:string, esBloqueado:boolean){
+    async bloquearOpcion(id:string, esBloqueado:boolean){
         try {
             return await this.opcionService.bloquearOpcion(id, esBloqueado);
         } catch (error) {
@@ -98,6 +98,26 @@ export class OpcionUseCases{
         }
     }
     
+    private async findOneByTerm(term:string){
+
+        let opcion= await this.opcionService.findOneByNombre(term.toUpperCase());
+
+       
+        if(!opcion){
+            opcion= await this.opcionService.findOneByIcono(term.toUpperCase());
+        }else{
+            throw new BadRequestException(`El nombre ${term} ya esta registrado`)
+        }
+            
+        if(opcion)
+            throw new BadRequestException(`El icono ${term} ya esta registrado`)
+        
+
+        return opcion;
+
+        
+    }
+
     private handleExceptions(error:any){
         
         if(error.code==="23505")

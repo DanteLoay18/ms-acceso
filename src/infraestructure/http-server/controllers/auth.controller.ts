@@ -1,5 +1,5 @@
 import { ApiBearerAuth, ApiInternalServerErrorResponse,  ApiProperty,  ApiTags } from "@nestjs/swagger";
-import { Controller, Post, Body, UseGuards, Put, Param } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Put, Param, ParseUUIDPipe } from '@nestjs/common';
 
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 
@@ -59,7 +59,7 @@ export class UserController{
     @UseGuards(AuthGuard())
     // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
     @Put(':id')
-    async updatePassword(@Param('id') id:string, @Body() {password}:UpdatePasswordRequest, @GetUser() usuario:Usuario,) {
+    async updatePassword(@Param('id', ParseUUIDPipe) id:string, @Body() {password}:UpdatePasswordRequest, @GetUser() usuario:Usuario,) {
 
         return await this.command.execute(new UpdateUsuarioPasswordCommand(id, password, usuario));
         

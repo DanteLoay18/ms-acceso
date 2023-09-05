@@ -98,7 +98,7 @@ export class AuthUseCases{
     async findOneByTerm(term:string){
         try {
             let usuario=await this.authService.findByName(term.toUpperCase());
-            console.log('validacion',usuario)
+            
             if(!usuario)
                 usuario= await this.authService.findByEmail(term);
 

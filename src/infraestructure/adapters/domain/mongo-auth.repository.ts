@@ -21,7 +21,7 @@ export class MongoAuthRepository implements AuthRepository {
     
    
     findOneByName(nombres: string): Promise<Usuario> {
-        console.log('repository',nombres)
+        
         return this.authRepository.findOne({nombres}).populate([
                                                                 {path:'usuarioCreacion',select: 'email nombres apellidos '},
                                                                 {path:'usuarioModificacion',select: 'email nombres apellidos '}

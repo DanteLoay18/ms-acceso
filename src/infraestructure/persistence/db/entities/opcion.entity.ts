@@ -15,6 +15,7 @@ export class Opcion extends Base{
 
     @Prop({
         type:String,
+        unique:true, 
         required:true
     })
     icono: string;

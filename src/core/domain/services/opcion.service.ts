@@ -13,6 +13,15 @@ export class OpcionService{
     findOneById(id:string){
         return this.opcionRepository.findOneById(id);
     }
+    
+    findOneByNombre(nombre:string){
+        return this.opcionRepository.findByNombre(nombre);
+    }
+
+    findOneByIcono(icono:string){
+        return this.opcionRepository.findByIcono(icono);
+    }
+
 
     createOpcion(opcion:Opcion){
         return this.opcionRepository.createOpcion(opcion);

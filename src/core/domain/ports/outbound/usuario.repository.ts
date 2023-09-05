@@ -1,5 +1,4 @@
-import { Usuario } from "../../entity/collections/usuario.collection";
-
+import { Usuario } from "../../entity/collections";
 
 export interface UsuarioRepository{
 

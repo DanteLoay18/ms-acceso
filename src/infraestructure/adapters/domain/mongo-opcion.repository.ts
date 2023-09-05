@@ -10,6 +10,7 @@ import { OpcionRepository } from "src/core/domain/ports/outbound";
 export class MongoOpcionRepository implements OpcionRepository {
     
     constructor(@InjectModel(Opcion.name) private opcionRepository: Model<Opcion>) { }
+   
     
     
     createOpcion(opcion: Opcion): Promise<Opcion> {
@@ -34,7 +35,12 @@ export class MongoOpcionRepository implements OpcionRepository {
                                                                 esBloqueado  
                                                                 }, {new:true})
     }
-    
+    findByNombre(nombre: string): Promise<Opcion> {
+        return this.opcionRepository.findOne({nombre})
+    }
+    findByIcono(icono: string): Promise<Opcion> {
+        return this.opcionRepository.findOne({icono})
+    }
     
    
 }
