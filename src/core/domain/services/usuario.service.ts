@@ -13,8 +13,12 @@ export class UsuarioService{
         return this.usuarioRepository.findOneById(id);
     }
 
-    updateUsuario(usuario:Usuario){
-        return this.usuarioRepository.updateUsuario(usuario);
+    updateUsuario(id:string,usuario:Usuario){
+        return this.usuarioRepository.updateUsuario(id,usuario);
+    }
+
+    deleteUsuario(id:string){
+        return this.usuarioRepository.deleteUsuario(id);
     }
 
     bloquearUsuario(id:string, esBloqueado:boolean){

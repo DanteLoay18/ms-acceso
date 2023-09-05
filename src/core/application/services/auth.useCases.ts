@@ -63,8 +63,7 @@ export class AuthUseCases{
             
             const usuarioEncontrado = await this.usuarioUseCases.getUsuarioById(id);
             
-            if(!usuarioEncontrado)
-                throw new NotFoundException(`Usuario con el ${id} no encontrado`);
+            
             if(usuarioEncontrado.esBloqueado)
                 throw new BadRequestException(`Usuario se encuentra en modificacion`)
 

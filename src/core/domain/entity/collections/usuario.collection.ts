@@ -40,6 +40,19 @@ export class Usuario extends Base{
       return usuario;
   }
 
+  static updateUsuario(nombres:string, apellidos:string, email:string, usuarioModificacion:string){
+    const usuario = new Usuario();
+    usuario.nombres=nombres?.toUpperCase();
+    usuario.apellidos=apellidos?.toUpperCase();
+    usuario.email=email;
+    usuario.fechaModificacion=new Date();
+    usuario.usuarioModificacion=usuarioModificacion;
+    if(usuario.nombres){
+      usuario.avatarText=this.obtenerIniciales(nombres);
+    }
+    return usuario;
+}
+
     static obtenerIniciales(nombreCompleto:string) {
         const palabras = nombreCompleto.split(" ");
         let iniciales = "";

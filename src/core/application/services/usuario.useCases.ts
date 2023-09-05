@@ -1,5 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException,  } from "@nestjs/common";
+import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UsuarioService } from "src/core/domain/services/usuario.service";
+import { UpdateUsuarioDto } from "src/core/shared/dtos/update-usuario.dto";
+import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 
 
 @Injectable()
@@ -10,7 +13,7 @@ export class UsuarioUseCases{
         try{
             const user= await this.usuarioService.findOneById(id);
 
-            if(!user)
+            if(!user || user.esEliminado)
                 throw new NotFoundException(`El usuario con el id ${id} no existe`)
 
             return user;
@@ -29,7 +32,40 @@ export class UsuarioUseCases{
         }
        
     }
+    async updateUsuario(id:string, updateUsarioDto:UpdateUsuarioDto, usuarioModificacion:UsuarioDto ){
+        
+        try {
+            
+            const usuarioEncontrado = await this.getUsuarioById(id);
+            
+            if(usuarioEncontrado.esBloqueado)
+                throw new BadRequestException(`Usuario se encuentra en modificacion`)
 
+            await this.bloquearUsuario(id, true);
+
+            const usuario = Usuario.updateUsuario(updateUsarioDto.nombres,updateUsarioDto.apellidos,updateUsarioDto.email,usuarioModificacion._id)
+            
+            return await this.usuarioService.updateUsuario(id, usuario);
+
+        } catch (error) {
+            this.handleExceptions(error);
+        }
+        finally{
+            await this.bloquearUsuario(id, false);
+        }
+       
+    }
+
+    async deleteUsuario(id:string){
+        try {
+            await this.getUsuarioById(id);
+
+            return await this.usuarioService.deleteUsuario(id);
+
+        } catch (error) {
+            this.handleExceptions(error);
+        }
+    }
     async bloquearUsuario(id:string, esBloqueado:boolean){
         try {
             return await this.usuarioService.bloquearUsuario(id, esBloqueado);
@@ -47,7 +83,6 @@ export class UsuarioUseCases{
         
         
 
-        console.log(error);
-        throw new InternalServerErrorException('Please check server logs')
+        throw new BadRequestException(error.message)
       }
 }

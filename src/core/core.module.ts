@@ -15,6 +15,10 @@ import { UsuarioRepository } from './domain/ports/outbound/usuario.repository';
 import { UsuarioUseCases } from './application/services/usuario.useCases';
 import { UpdateUsuarioPasswordCommand } from './application/feautures/Auth/write/update/updatePassword.command';
 import { UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write/update/updatePassword.handler';
+import { UpdateUsuarioCommand } from './application/feautures/Usuario/write/update/updateUsuario.command';
+import { UpdateUsuarioHandler } from './application/feautures/Usuario/write/update/updateUsuario.handler';
+import { DeleteUsuarioCommand } from './application/feautures/Usuario/write/delete/deleteUsuario.command';
+import { DeleteUsuarioHandler } from './application/feautures/Usuario/write/delete/deleteUsuario.handler';
 
 const providers = [
     AuthUseCases,
@@ -27,7 +31,11 @@ const providers = [
     UsuariosAllQuery,
     UsuariosAllQueryHandler,
     UpdateUsuarioPasswordCommand,
-    UpdateUsuarioPasswordHandler
+    UpdateUsuarioPasswordHandler,
+    UpdateUsuarioCommand,
+    UpdateUsuarioHandler,
+    DeleteUsuarioCommand,
+    DeleteUsuarioHandler
   ]
 
 

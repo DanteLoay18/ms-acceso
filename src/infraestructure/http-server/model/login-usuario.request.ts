@@ -5,13 +5,13 @@ export class LoginUsuarioRequest {
 
    
     @ApiProperty({
-        description: 'Categoria id',
+        description: 'Email Usuario',
     })
     @IsString()
     email: string;
 
     @ApiProperty({
-        description: 'Categoria id',
+        description: 'Password Usuario',
     })
     @IsString()
     password: string;
