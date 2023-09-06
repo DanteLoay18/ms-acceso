@@ -7,7 +7,7 @@ export class MenusDto{
         description: 'Menu Perfil',
     })
     @IsOptional()
-    @IsUUID('4', {each:true})
+    @IsUUID('4')
     menu:string;
 
     

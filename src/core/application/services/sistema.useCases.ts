@@ -37,7 +37,7 @@ export class SistemaUseCases{
     async createSistema(createSistemaDto:CreateSistemaDto, usuarioDto:UsuarioDto){
         try {
             
-            await this.findOneByTerm(createSistemaDto.nombre)
+            await this.findOneByTerm(createSistemaDto.nombre,"")
 
             const sistema = Sistema.createSistema(createSistemaDto.nombre, createSistemaDto.url, createSistemaDto.imagen, createSistemaDto.puerto, usuarioDto._id);
            
@@ -63,7 +63,7 @@ export class SistemaUseCases{
             await this.bloquearSistema(id, true);
 
             if(updateSistemaDto.nombre)
-            await this.findOneByTerm(updateSistemaDto.nombre)
+            await this.findOneByTerm(updateSistemaDto.nombre,id)
 
             const sistema = Sistema.updateSistema(updateSistemaDto.nombre,updateSistemaDto.url,updateSistemaDto.imagen,updateSistemaDto.puerto,usuarioModificacion._id)
             
@@ -99,12 +99,12 @@ export class SistemaUseCases{
         }
     }
     
-    private async findOneByTerm(term:string){
+    private async findOneByTerm(term:string,id:string){
 
         let sistema= await this.sistemaService.findOneByNombre(term.toUpperCase());
 
        
-        if(sistema)
+        if(sistema && sistema._id!==id)
             throw new BadRequestException(`El nombre ${term} ya esta registrado`)
        
         return sistema;

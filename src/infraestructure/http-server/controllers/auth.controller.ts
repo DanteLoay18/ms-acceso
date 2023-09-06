@@ -47,6 +47,7 @@ export class UserController{
         const {token,_doc}=await this.command.execute(new LoginUsuarioCommand(loginUsuarioDto));
         delete _doc.password;
         delete _doc._id;
+
         return {
             token,
             ..._doc

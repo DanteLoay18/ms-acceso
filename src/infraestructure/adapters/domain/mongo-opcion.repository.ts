@@ -35,10 +35,10 @@ export class MongoOpcionRepository implements OpcionRepository {
                                                                 }, {new:true})
     }
     findByNombre(nombre: string): Promise<Opcion> {
-        return this.opcionRepository.findOne({nombre})
+        return this.opcionRepository.findOne({nombre, esEliminado:false})
     }
     findByIcono(icono: string): Promise<Opcion> {
-        return this.opcionRepository.findOne({icono})
+        return this.opcionRepository.findOne({icono, esEliminado:false})
     }
     
    

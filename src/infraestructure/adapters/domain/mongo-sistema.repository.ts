@@ -37,7 +37,7 @@ export class MongoSistemaRepository implements SistemaRepository {
                                                                 }, {new:true})
     }
     findByNombre(nombre: string): Promise<Sistema> {
-        return this.sistemaRepository.findOne({nombre})
+        return this.sistemaRepository.findOne({nombre, esEliminado:false})
     }
     
    

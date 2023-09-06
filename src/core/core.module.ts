@@ -215,9 +215,9 @@ const providers = [
         },
         {
             provide: PerfilUseCases,
-            useFactory: (perfilService:PerfilService) => new PerfilUseCases(perfilService),
+            useFactory: (perfilService:PerfilService, sistemaService:SistemaService, opcionService:OpcionService, menuService:MenuService) => new PerfilUseCases(perfilService, sistemaService, opcionService, menuService),
             inject: [
-                PerfilService
+                PerfilService, SistemaService, OpcionService, MenuService
             ] 
         },
     ],

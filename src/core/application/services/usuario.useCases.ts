@@ -48,12 +48,12 @@ export class UsuarioUseCases{
             await this.bloquearUsuario(id, true);
 
             if(updateUsarioDto.nombres)
-                 await this.findOneByTerm(updateUsarioDto.nombres)
+                 await this.findOneByTerm(updateUsarioDto.nombres,id)
               
                 
 
             if(updateUsarioDto.email)
-              await this.findOneByTerm(updateUsarioDto.email);
+              await this.findOneByTerm(updateUsarioDto.email,id);
 
                 
             
@@ -135,19 +135,15 @@ export class UsuarioUseCases{
         throw new BadRequestException(error.message)
       }
 
-      private async findOneByTerm(term:string){
+      private async findOneByTerm(term:string, id:string){
 
-        let usuario= await this.authService.findByName(term.toUpperCase());
+        let usuario= await this.authService.findByEmail(term.toUpperCase());
 
        
-        if(!usuario){
-            usuario= await this.authService.findByEmail(term.toUpperCase());
-        }else{
-            throw new BadRequestException(`El nombre ${term} ya esta registrado`)
+        if(usuario && usuario._id !== id){
+            throw new BadRequestException(`El email ${term} ya esta registrado`)
         }
             
-        if(usuario)
-            throw new BadRequestException(`El email ${term} ya esta registrado`)
         
 
         return usuario;

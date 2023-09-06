@@ -36,8 +36,8 @@ export class OpcionUseCases{
     async createOpcion(createOpcionDto:CreateOpcionDto, usuarioDto:UsuarioDto){
         try {
             
-            await this.findOneByTerm(createOpcionDto.nombre)
-            await this.findOneByTerm(createOpcionDto.icono)
+            await this.findOneByTerm(createOpcionDto.nombre,"")
+            await this.findOneByTerm(createOpcionDto.icono,"")
 
             const opcion = Opcion.createOpcion(createOpcionDto.nombre, createOpcionDto.icono, createOpcionDto.tieneOpciones, createOpcionDto.esEmergente, usuarioDto._id);
            
@@ -63,10 +63,10 @@ export class OpcionUseCases{
             await this.bloquearOpcion(id, true);
 
             if(updateOpcionDto.nombre)
-            await this.findOneByTerm(updateOpcionDto.nombre);
+            await this.findOneByTerm(updateOpcionDto.nombre,id);
 
             if(updateOpcionDto.icono)
-            await this.findOneByTerm(updateOpcionDto.icono);
+            await this.findOneByTerm(updateOpcionDto.icono,id);
         
             const opcion = Opcion.updateOpcion(updateOpcionDto.nombre,updateOpcionDto.icono,updateOpcionDto.tieneOpciones,updateOpcionDto.esEmergente,usuarioModificacion._id)
             
@@ -102,18 +102,18 @@ export class OpcionUseCases{
         }
     }
     
-    private async findOneByTerm(term:string){
+    private async findOneByTerm(term:string, id:string){
 
         let opcion= await this.opcionService.findOneByNombre(term.toUpperCase());
 
        
-        if(!opcion){
-            opcion= await this.opcionService.findOneByIcono(term.toUpperCase());
+        if(opcion && opcion._id !==id){
+            throw new BadRequestException(`El nombre ${term} ya esta registrado`)        
         }else{
-            throw new BadRequestException(`El nombre ${term} ya esta registrado`)
+            opcion= await this.opcionService.findOneByIcono(term.toUpperCase());
         }
             
-        if(opcion)
+        if(opcion && opcion._id !==id)
             throw new BadRequestException(`El icono ${term} ya esta registrado`)
         
 

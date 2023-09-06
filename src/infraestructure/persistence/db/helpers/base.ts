@@ -7,26 +7,22 @@ export abstract class Base {
     _id: string;
     
     @Prop({
-        type:Boolean,
-        required:true
+        type:Boolean
     })
     esEliminado:boolean;
 
     @Prop({
-        type:Boolean,
-        required:true
+        type:Boolean
     })
     esBloqueado:boolean;
 
     @Prop({
-        type:Date,
-        required:true
+        type:Date
     })
     fechaCreacion:Date;
 
     @Prop({
-        type:Date,
-        required:true
+        type:Date
     })
     fechaModificacion:Date;
 

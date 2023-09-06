@@ -8,7 +8,6 @@ export class Usuario extends Base{
 
     @Prop({
         type:String,
-        unique:true, 
         required:true    
     })
     email: string;

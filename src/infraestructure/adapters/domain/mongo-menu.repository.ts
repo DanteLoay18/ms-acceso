@@ -38,7 +38,7 @@ export class MongoMenuRepository implements MenuRepository {
                                                                 }, {new:true})
     }
     findByNombre(nombre: string): Promise<Menu> {
-        return this.menuRepository.findOne({nombre})
+        return this.menuRepository.findOne({nombre, esEliminado:false})
     }
     
    

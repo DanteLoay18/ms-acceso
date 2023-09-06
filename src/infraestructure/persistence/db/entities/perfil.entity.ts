@@ -6,7 +6,8 @@ import { SistemasDto } from '../helpers/sistemas.dto';
 
 @Schema()
 export class Perfil extends Base {
-  @Prop({ required: true, unique:true })
+  
+  @Prop({ required: true})
   tipo: string;
 
   @Prop()

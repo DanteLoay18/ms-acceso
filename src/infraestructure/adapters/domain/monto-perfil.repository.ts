@@ -33,7 +33,7 @@ export class MongoPerfilRepository implements PerfilRepository {
     }
 
     findByTipo(tipo: string): Promise<Perfil> {
-        return this.perfilRepository.findOne({tipo})
+        return this.perfilRepository.findOne({tipo, esEliminado:false})
     }
    
     actualizarBloqueo(id: string, esBloqueado: boolean): Promise<Perfil> {
@@ -42,7 +42,7 @@ export class MongoPerfilRepository implements PerfilRepository {
                                                                 }, {new:true})
     }
     findByNombre(nombre: string): Promise<Perfil> {
-        return this.perfilRepository.findOne({nombre})
+        return this.perfilRepository.findOne({nombre, esEliminado:false})
     }
     
    

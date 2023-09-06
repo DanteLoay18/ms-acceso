@@ -38,7 +38,7 @@ export class MenuUseCases{
     async createMenu(createMenuDto:CreateMenuDto, usuarioDto:UsuarioDto){
         try {
             
-            await this.findOneByTerm(createMenuDto.nombre)
+            await this.findOneByTerm(createMenuDto.nombre, "")
 
             const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu, usuarioDto._id);
            
@@ -64,7 +64,7 @@ export class MenuUseCases{
             await this.bloquearMenu(id, true);
             
             if(updateMenuDto.nombre)
-            await this.findOneByTerm(updateMenuDto.nombre);
+            await this.findOneByTerm(updateMenuDto.nombre, id);
 
             if(updateMenuDto.sistema){
                 const sistema= await this.sistemaService.findOneById(updateMenuDto.sistema);
@@ -153,11 +153,11 @@ export class MenuUseCases{
         }
     }
     
-    private async findOneByTerm(term:string){
+    private async findOneByTerm(term:string, id:string){
 
         let menu= await this.menuService.findOneByNombre(term.toUpperCase());
             
-        if(menu)
+        if(menu && menu._id !== id)
             throw new BadRequestException(`El nombre ${term} ya esta registrado`)
         
 

@@ -9,9 +9,6 @@ export class AuthService{
        return this.authRepository.register(usuario);
     }
 
-    findByName(username:string){
-        return this.authRepository.findOneByName(username);
-    }
     findByEmail(email:string){
         return this.authRepository.findOneByEmail(email);
     }
