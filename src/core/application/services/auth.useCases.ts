@@ -13,6 +13,7 @@ export class AuthUseCases{
                 private readonly jwtService: JwtService,
                 private readonly usuarioUseCases:UsuarioUseCases){}
 
+
     async registerUsuario(registerUsuarioDto:RegisterUsuarioDto, usuarioDto:UsuarioDto){
         try {
 

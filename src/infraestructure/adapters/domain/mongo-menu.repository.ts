@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Menu } from "src/core/domain/entity/collections/menu.collection";
 
 import { MenuRepository } from "src/core/domain/ports/outbound";
+import { Menu } from "src/infraestructure/persistence/db/entities";
 
 
 @Injectable()

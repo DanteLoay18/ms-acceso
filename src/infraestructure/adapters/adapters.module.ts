@@ -9,18 +9,21 @@ import { MongoUsuarioRepository } from './domain/mongo-usuario.repository';
 import { MongoOpcionRepository } from './domain/mongo-opcion.repository';
 import { MongoSistemaRepository } from './domain/mongo-sistema.repository';
 import { MongoMenuRepository } from './domain/mongo-menu.repository';
+import { MongoPerfilRepository } from './domain/monto-perfil.repository';
 
 export const AUTH_REPOSITORY = 'AUTH_REPOSITORY';
 export const USUARIO_REPOSITORY = 'USUARIO_REPOSITORY';
 export const OPCION_REPOSITORY = 'OPCION_REPOSITORY';
 export const SISTEMA_REPOSITORY = 'SISTEMA_REPOSITORY';
 export const MENU_REPOSITORY = 'MENU_REPOSITORY';
+export const PERFIL_REPOSITORY = 'PERFIL_REPOSITORY';
 const providers = [
     MongoAuthRepository,
     MongoUsuarioRepository,
     MongoOpcionRepository,
     MongoSistemaRepository,
     MongoMenuRepository,
+    MongoPerfilRepository,
     JwtStrategy,
     {
         provide: AUTH_REPOSITORY,
@@ -41,6 +44,10 @@ const providers = [
     {
         provide: MENU_REPOSITORY,
         useExisting: MongoMenuRepository,
+    },
+    {
+        provide: PERFIL_REPOSITORY,
+        useExisting: MongoPerfilRepository,
     }
 ]
 

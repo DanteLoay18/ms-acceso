@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Opcion } from "src/core/domain/entity/collections/opcion.collection";
 import { OpcionRepository } from "src/core/domain/ports/outbound";
+import { Opcion } from "src/infraestructure/persistence/db/entities";
 
 
 @Injectable()

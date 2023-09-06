@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AUTH_REPOSITORY, AdaptersModule, MENU_REPOSITORY, OPCION_REPOSITORY, SISTEMA_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
+import { AUTH_REPOSITORY, AdaptersModule, MENU_REPOSITORY, OPCION_REPOSITORY, PERFIL_REPOSITORY, SISTEMA_REPOSITORY, USUARIO_REPOSITORY } from 'src/infraestructure/adapters/adapters.module';
 import { PersistenceModule } from 'src/infraestructure/persistence/persistence.module';
 
 import { JwtService } from '@nestjs/jwt';
@@ -9,7 +9,7 @@ import { LoginUsuarioCommand, LoginUsuarioHandler, RegisterUsuarioCommand, Regis
 import { UsuarioByIdQuery, UsuarioByIdQueryHandler, UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read';
 import { DeleteUsuarioCommand, DeleteUsuarioHandler, ResetPasswordUsuarioCommand, ResetPasswordUsuarioHandler, UpdateUsuarioCommand, UpdateUsuarioHandler } from './application/feautures/Usuario/write';
 import { AuthService, MenuService, UsuarioService } from './domain/services';
-import { AuthRepository, MenuRepository, OpcionRepository, UsuarioRepository } from './domain/ports/outbound';
+import { AuthRepository, MenuRepository, OpcionRepository, PerfilRepository, UsuarioRepository } from './domain/ports/outbound';
 import { OpcionUseCases } from './application/services/opcionUseCases';
 import { CreateOpcionCommand, CreateOpcionHandler, DeleteOpcionCommand, DeleteOpcionHandler, UpdateOpcionCommand, UpdateOpcionHandler } from './application/feautures/Opcion/write';
 import { OpcionByIdQuery, OpcionByIdQueryHandler, OpcionesAllQuery, OpcionesAllQueryHandler } from './application/feautures/Opcion/read';
@@ -21,6 +21,10 @@ import { SistemaService } from './domain/services/sistema.service';
 import { SistemaRepository } from './domain/ports/outbound/sistema.repository';
 import { CreateMenuCommand, CreateMenuHandler, DeleteMenuCommand, DeleteMenuHandler, UpdateMenuCommand, UpdateMenuHandler } from './application/feautures/Menu/write';
 import { MenuByIdQuery, MenuByIdQueryHandler, MenusAllQuery, MenusAllQueryHandler } from './application/feautures/Menu/read';
+import { PerfilUseCases } from './application/services/perfil.useCases';
+import { CreatePerfilCommand, CreatePerfilHandler, DeletePerfilCommand, DeletePerfilHandler, UpdatePerfilCommand, UpdatePerfilHandler } from './application/feautures/Perfil/write';
+import { PerfilByIdQuery, PerfilByIdQueryHandler, PerfilesAllQuery, PerfilesAllQueryHandler } from './application/feautures/Perfil/read';
+import { PerfilService } from './domain/services/perfil.service';
 
 const USER_PROVIDERS=[
     AuthUseCases,
@@ -85,11 +89,26 @@ const MENU_PROVIDERS=[
     MenusAllQueryHandler
 ]
 
+const PERFIL_PROVIDERS=[
+    PerfilUseCases,
+    CreatePerfilCommand,
+    CreatePerfilHandler,
+    UpdatePerfilCommand,
+    UpdatePerfilHandler,
+    DeletePerfilCommand,
+    DeletePerfilHandler,
+    PerfilByIdQuery,
+    PerfilByIdQueryHandler,
+    PerfilesAllQuery,
+    PerfilesAllQueryHandler
+]
+
 const providers = [
     ...USER_PROVIDERS,
     ...OPCION_PROVIDERS,
     ...SISTEMA_PROVIDERS,
-    ...MENU_PROVIDERS
+    ...MENU_PROVIDERS,
+    ...PERFIL_PROVIDERS
 ]
 
 
@@ -129,9 +148,10 @@ const providers = [
         },
         {
             provide: UsuarioUseCases,
-            useFactory: (usuarioService: UsuarioService) => new UsuarioUseCases(usuarioService),
+            useFactory: (usuarioService: UsuarioService, authService:AuthService) => new UsuarioUseCases(usuarioService,authService),
             inject: [
-                UsuarioService
+                UsuarioService,
+                AuthService
             ] 
         },
         {
@@ -182,6 +202,22 @@ const providers = [
                 MenuService,
                 SistemaService,
                 OpcionService
+            ] 
+        },
+        {
+            provide:PerfilService,
+            useFactory:(
+                perfilRepository:PerfilRepository
+            )=> new PerfilService(perfilRepository),
+            inject:[
+                PERFIL_REPOSITORY
+            ]
+        },
+        {
+            provide: PerfilUseCases,
+            useFactory: (perfilService:PerfilService) => new PerfilUseCases(perfilService),
+            inject: [
+                PerfilService
             ] 
         },
     ],

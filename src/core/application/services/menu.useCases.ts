@@ -15,7 +15,7 @@ export class MenuUseCases{
             const menu= await this.menuService.findOneById(id);
 
             if(!menu || menu.esEliminado)
-                throw new NotFoundException(`El usuario con el id ${id} no existe`)
+                throw new NotFoundException(`El menu con el id ${id} no existe`)
 
             return menu;
 
@@ -59,9 +59,12 @@ export class MenuUseCases{
             const opcionEncontrado = await this.getMenuById(id);
             
             if(opcionEncontrado.esBloqueado)
-                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+                throw new BadRequestException(`Menu se encuentra en modificacion`)
 
             await this.bloquearMenu(id, true);
+            
+            if(updateMenuDto.nombre)
+            await this.findOneByTerm(updateMenuDto.nombre);
 
             if(updateMenuDto.sistema){
                 const sistema= await this.sistemaService.findOneById(updateMenuDto.sistema);
@@ -88,7 +91,7 @@ export class MenuUseCases{
               
                 
                 if (opcionesInvalidas.length > 0) {
-                  opcionesInvalidas.map((resultado) => {throw new NotFoundException(`Opcion con el Id ${resultado.opcionId} no encontrado`)})
+                  opcionesInvalidas.forEach((resultado) => {throw new NotFoundException(`Opcion con el Id ${resultado.opcionId} no encontrado`)})
                   
                 }
               }
@@ -111,12 +114,10 @@ export class MenuUseCases{
               
                 
                 if (menusInvalidos.length > 0) 
-                  menusInvalidos.map((resultado) => {throw new NotFoundException(`Submenu con el Id ${resultado.submenuId} no esta registrado o no es un submenu valido`)})
+                  menusInvalidos.forEach((resultado) => {throw new NotFoundException(`Submenu con el Id ${resultado.submenuId} no esta registrado o no es un submenu valido`)})
 
                 
               }  
-              
-           
 
             const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion._id)
             

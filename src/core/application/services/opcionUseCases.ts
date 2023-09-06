@@ -13,7 +13,7 @@ export class OpcionUseCases{
             const opcion= await this.opcionService.findOneById(id);
 
             if(!opcion || opcion.esEliminado)
-                throw new NotFoundException(`El usuario con el id ${id} no existe`)
+                throw new NotFoundException(`La opcion con el id ${id} no existe`)
 
             return opcion;
 
@@ -58,10 +58,16 @@ export class OpcionUseCases{
             const opcionEncontrado = await this.getOpcionById(id);
             
             if(opcionEncontrado.esBloqueado)
-                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+                throw new BadRequestException(`Opcion se encuentra en modificacion`)
 
             await this.bloquearOpcion(id, true);
 
+            if(updateOpcionDto.nombre)
+            await this.findOneByTerm(updateOpcionDto.nombre);
+
+            if(updateOpcionDto.icono)
+            await this.findOneByTerm(updateOpcionDto.icono);
+        
             const opcion = Opcion.updateOpcion(updateOpcionDto.nombre,updateOpcionDto.icono,updateOpcionDto.tieneOpciones,updateOpcionDto.esEmergente,usuarioModificacion._id)
             
             return await this.opcionService.updateOpcion(id, opcion);

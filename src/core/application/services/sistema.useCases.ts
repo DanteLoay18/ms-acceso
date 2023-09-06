@@ -14,7 +14,7 @@ export class SistemaUseCases{
             const Sistema= await this.sistemaService.findOneById(id);
 
             if(!Sistema || Sistema.esEliminado)
-                throw new NotFoundException(`El usuario con el id ${id} no existe`)
+                throw new NotFoundException(`El sistema con el id ${id} no existe`)
 
             return Sistema;
 
@@ -58,9 +58,12 @@ export class SistemaUseCases{
             const SistemaEncontrado = await this.getSistemaById(id);
             
             if(SistemaEncontrado.esBloqueado)
-                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+                throw new BadRequestException(`Sistema se encuentra en modificacion`)
 
             await this.bloquearSistema(id, true);
+
+            if(updateSistemaDto.nombre)
+            await this.findOneByTerm(updateSistemaDto.nombre)
 
             const sistema = Sistema.updateSistema(updateSistemaDto.nombre,updateSistemaDto.url,updateSistemaDto.imagen,updateSistemaDto.puerto,usuarioModificacion._id)
             

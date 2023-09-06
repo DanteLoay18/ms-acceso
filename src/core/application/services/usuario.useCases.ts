@@ -4,11 +4,13 @@ import { UsuarioService } from "src/core/domain/services/usuario.service";
 import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 import * as bcrypt from 'bcrypt';
 import { UpdateUsuarioDto } from "src/core/shared/dtos";
+import { AuthUseCases } from "./auth.useCases";
+import { AuthService } from "src/core/domain/services";
 
 
 @Injectable()
 export class UsuarioUseCases{
-    constructor(private readonly usuarioService:UsuarioService){}
+    constructor(private readonly usuarioService:UsuarioService, private authService:AuthService){}
 
     async getUsuarioById(id:string){
         try{
@@ -45,6 +47,16 @@ export class UsuarioUseCases{
 
             await this.bloquearUsuario(id, true);
 
+            if(updateUsarioDto.nombres)
+                 await this.findOneByTerm(updateUsarioDto.nombres)
+              
+                
+
+            if(updateUsarioDto.email)
+              await this.findOneByTerm(updateUsarioDto.email);
+
+                
+            
             const usuario = Usuario.updateUsuario(updateUsarioDto.nombres,updateUsarioDto.apellidos,updateUsarioDto.email,usuarioModificacion._id)
             
             return await this.usuarioService.updateUsuario(id, usuario);
@@ -122,4 +134,24 @@ export class UsuarioUseCases{
 
         throw new BadRequestException(error.message)
       }
+
+      private async findOneByTerm(term:string){
+
+        let usuario= await this.authService.findByName(term.toUpperCase());
+
+       
+        if(!usuario){
+            usuario= await this.authService.findByEmail(term.toUpperCase());
+        }else{
+            throw new BadRequestException(`El nombre ${term} ya esta registrado`)
+        }
+            
+        if(usuario)
+            throw new BadRequestException(`El email ${term} ya esta registrado`)
+        
+
+        return usuario;
+
+        
+    }
 }

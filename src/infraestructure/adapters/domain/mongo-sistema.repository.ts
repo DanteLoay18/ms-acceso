@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Sistema } from "src/core/domain/entity/collections";
 import { SistemaRepository } from "src/core/domain/ports/outbound/sistema.repository";
+import { Sistema } from "src/infraestructure/persistence/db/entities";
 
 
 @Injectable()

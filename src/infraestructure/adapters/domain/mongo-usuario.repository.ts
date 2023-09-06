@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UsuarioRepository } from "src/core/domain/ports/outbound/usuario.repository";
+import { Usuario } from "src/infraestructure/persistence/db/entities";
 
 @Injectable()
 export class MongoUsuarioRepository implements UsuarioRepository {
