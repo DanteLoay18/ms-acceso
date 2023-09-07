@@ -1,5 +1,5 @@
 import { Base } from "src/core/shared/domain/base";
-
+import { PerfilesDto } from "../perfiles.dto";
 
 export class Usuario extends Base{
 
@@ -9,6 +9,7 @@ export class Usuario extends Base{
     password:   string;
     apellidos:  string;
     defaultPassword: string;
+    perfiles: PerfilesDto[];
     isDefaultPassword:boolean;
     avatarText:string;
 
@@ -22,9 +23,7 @@ export class Usuario extends Base{
         usuario.esEliminado=false;
         usuario.esBloqueado=false;
         usuario.fechaCreacion= new Date();
-        usuario.fechaModificacion=new Date();
         usuario.usuarioCreacion= usuarioCreacion;
-        usuario.usuarioModificacion=usuarioCreacion;
         usuario.avatarText= this.obtenerIniciales(nombres, apellidos);
         usuario.defaultPassword=password;
         usuario.isDefaultPassword=true;
@@ -40,11 +39,12 @@ export class Usuario extends Base{
       return usuario;
   }
 
-  static updateUsuario(nombres:string, apellidos:string, email:string, usuarioModificacion:string){
+  static updateUsuario(nombres:string, apellidos:string, email:string, perfiles:PerfilesDto[], usuarioModificacion:string){
     const usuario = new Usuario();
     usuario.nombres=nombres?.toUpperCase();
     usuario.apellidos=apellidos?.toUpperCase();
     usuario.email=email;
+    usuario.perfiles=perfiles;
     usuario.fechaModificacion=new Date();
     usuario.usuarioModificacion=usuarioModificacion;
     if(usuario.nombres && usuario.apellidos){

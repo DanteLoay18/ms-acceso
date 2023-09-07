@@ -148,10 +148,11 @@ const providers = [
         },
         {
             provide: UsuarioUseCases,
-            useFactory: (usuarioService: UsuarioService, authService:AuthService) => new UsuarioUseCases(usuarioService,authService),
+            useFactory: (usuarioService: UsuarioService, authService:AuthService, perfilService:PerfilService) => new UsuarioUseCases(usuarioService,authService,perfilService),
             inject: [
                 UsuarioService,
-                AuthService
+                AuthService,
+                PerfilService
             ] 
         },
         {

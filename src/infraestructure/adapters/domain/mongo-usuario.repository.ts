@@ -15,10 +15,18 @@ export class MongoUsuarioRepository implements UsuarioRepository {
     
     
     findOneById(id: string): Promise<Usuario> {
-        return this.usuarioRepository.findById(id);
+        return this.usuarioRepository.findById(id).populate([
+                                                    {path:'usuarioCreacion',select: 'email nombres apellidos '},
+                                                    {path:'usuarioModificacion',select: 'email nombres apellidos '},
+                                                    {path:'perfiles.perfil',select: 'tipo sistemas '}
+                                                    ]) ;
     }
     findAll(): Promise<Usuario[]> {
-        return this.usuarioRepository.find({esEliminado:false});
+        return this.usuarioRepository.find({esEliminado:false}).populate([
+                                                                            {path:'usuarioCreacion',select: 'email nombres apellidos '},
+                                                                            {path:'usuarioModificacion',select: 'email nombres apellidos '},
+                                                                            {path:'perfiles.perfil',select: 'tipo sistemas '}
+                                                                            ]) ;
     }
     updateUsuario(id:string,usuario: Usuario): Promise<Usuario> {
         

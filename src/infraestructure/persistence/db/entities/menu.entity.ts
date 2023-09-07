@@ -10,7 +10,7 @@ export class Menu extends Base{
     @Prop({ required: true })
     nombre: string;
 
-    @Prop({ type:'UUID', ref:'Usuario' })
+    @Prop({ type:'UUID', ref:'Sistema' })
     sistema: string;
 
     @Prop({ type: [{ type: 'UUID', ref: 'Menu' }] })

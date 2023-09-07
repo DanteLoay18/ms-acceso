@@ -20,9 +20,7 @@ export class Menu extends Base{
         menu.esEliminado=false;
         menu.esBloqueado=false;
         menu.fechaCreacion= new Date();
-        menu.fechaModificacion=new Date();
         menu.usuarioCreacion= usuarioCreacion;
-        menu.usuarioModificacion=usuarioCreacion;
         return menu;
     }
 

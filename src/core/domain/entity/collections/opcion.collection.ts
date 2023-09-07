@@ -22,9 +22,7 @@ export class Opcion extends Base{
         opcion.esEliminado=false;
         opcion.esBloqueado=false;
         opcion.fechaCreacion= new Date();
-        opcion.fechaModificacion=new Date();
         opcion.usuarioCreacion= usuarioCreacion;
-        opcion.usuarioModificacion=usuarioCreacion;
         return opcion;
     }
 

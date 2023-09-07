@@ -6,11 +6,13 @@ import * as bcrypt from 'bcrypt';
 import { UpdateUsuarioDto } from "src/core/shared/dtos";
 import { AuthUseCases } from "./auth.useCases";
 import { AuthService } from "src/core/domain/services";
+import { PerfilService } from "src/core/domain/services/perfil.service";
+import { Perfil } from '../../domain/entity/collections/perfil.collection';
 
 
 @Injectable()
 export class UsuarioUseCases{
-    constructor(private readonly usuarioService:UsuarioService, private authService:AuthService){}
+    constructor(private readonly usuarioService:UsuarioService, private authService:AuthService, private perfilService:PerfilService){}
 
     async getUsuarioById(id:string){
         try{
@@ -55,9 +57,31 @@ export class UsuarioUseCases{
             if(updateUsarioDto.email)
               await this.findOneByTerm(updateUsarioDto.email,id);
 
+            if(updateUsarioDto.perfiles?.length>0){
+                const perfilPromises = updateUsarioDto.perfiles.map(async ({perfil}) => {
+                    const perfilEncontrado = await this.perfilService.findOneById(perfil);
+                   
+                    if(!perfilEncontrado || perfilEncontrado.esEliminado ){
+                      return {perfil, valido:false}
+                    }
+                   
+                    return { perfil, valido: true };
+                  });
+                
+                  const perfilesResultados = await Promise.all(perfilPromises);
+                
+                  
+                  const perfilesInvalidos = perfilesResultados.filter((resultado) => !resultado.valido);
+                
+                  
+                  if (perfilesInvalidos.length > 0) 
+                    perfilesInvalidos.forEach((resultado) => {throw new NotFoundException(`Perfil con el Id ${resultado.perfil} no esta registrado`)})
+            }
+
+            
                 
             
-            const usuario = Usuario.updateUsuario(updateUsarioDto.nombres,updateUsarioDto.apellidos,updateUsarioDto.email,usuarioModificacion._id)
+            const usuario = Usuario.updateUsuario(updateUsarioDto.nombres,updateUsarioDto.apellidos,updateUsarioDto.email,updateUsarioDto.perfiles,usuarioModificacion._id)
             
             return await this.usuarioService.updateUsuario(id, usuario);
 

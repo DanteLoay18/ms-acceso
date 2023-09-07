@@ -20,9 +20,7 @@ export class Sistema extends Base{
         sistema.esEliminado=false;
         sistema.esBloqueado=false;
         sistema.fechaCreacion= new Date();
-        sistema.fechaModificacion=new Date();
         sistema.usuarioCreacion= usuarioCreacion;
-        sistema.usuarioModificacion=usuarioCreacion;
         return sistema;
     }
 

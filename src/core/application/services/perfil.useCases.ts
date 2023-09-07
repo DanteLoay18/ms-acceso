@@ -74,16 +74,25 @@ export class PerfilUseCases{
                 await this.validarSistema(sistema);
         
                 if (menus?.length > 0) {
-                  const menusPromises = menus.map(async ({ menu, opciones }) => {
+                  const menusPromises = menus.map(async ({ menu, submenus }) => {
                     await this.validarMenu(menu);
-        
-                    if (opciones?.length > 0) {
-                      const opcionesPromises = opciones.map(async (opcion) => {
-                        await this.validarOpcion(opcion);
-                      });
-        
-                      await Promise.all(opcionesPromises);
+                    
+                    if(submenus?.length > 0){
+                      const submenusPromise = submenus.map( async({submenu, opciones})=>{
+                        await this.validarSubMenu(submenu);
+
+                        if (opciones?.length > 0) {
+                          const opcionesPromises = opciones.map(async (opcion) => {
+                            await this.validarOpcion(opcion);
+                          });
+            
+                          await Promise.all(opcionesPromises);
+                        }
+                      })
+                      await Promise.all(submenusPromise);
                     }
+                    
+                    
                   });
         
                   await Promise.all(menusPromises);
@@ -170,7 +179,17 @@ export class PerfilUseCases{
           throw new NotFoundException(`Menu con el Id ${menuId} no encontrado`);
         }
       }
-    
+      async validarSubMenu(menuId: string) {
+        if (!validate(menuId)) {
+          throw new NotFoundException(`SubMenu con el Id ${menuId} no válido`);
+        }
+       
+        const submenuEncontrado = await this.menuService.findOneById(menuId);
+
+        if (!submenuEncontrado || submenuEncontrado.esEliminado || !submenuEncontrado.esSubmenu) {
+          throw new NotFoundException(`Submenu con el Id ${menuId} no encontrado`);
+        }
+      }
       async validarOpcion(opcionId: string) {
         if (!validate(opcionId)) {
           throw new NotFoundException(`Opcion con el Id ${opcionId} no válido`);

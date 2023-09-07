@@ -14,9 +14,7 @@ export class Perfil extends Base{
         perfil.esEliminado=false;
         perfil.esBloqueado=false;
         perfil.fechaCreacion= new Date();
-        // perfil.fechaModificacion=new Date();
         perfil.usuarioCreacion= usuarioCreacion;
-        // perfil.usuarioModificacion=usuarioCreacion;
         return perfil;
     }
 

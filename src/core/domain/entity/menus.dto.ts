@@ -1,4 +1,6 @@
+import { Submenu } from "./submenu.dto";
+
 export class MenusDto{
     menu:string;
-    opciones:string[]
+    submenus:Submenu[]
 }

@@ -2,6 +2,7 @@
 import { Prop,Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { Base } from '../helpers';
+import { PerfilesDto } from 'src/infraestructure/http-server/model/usuario/perfiles.dto';
 
 @Schema()
 export class Usuario extends Base{
@@ -48,7 +49,14 @@ export class Usuario extends Base{
     })
     avatarText:string;
 
-   
+    @Prop({ type: [
+                    {
+                     perfil: { type: 'UUID', ref: 'Perfil' },
+                     activo:{type:Boolean}
+                    },
+                ],
+          })
+    perfiles: PerfilesDto[];
 
     
 }

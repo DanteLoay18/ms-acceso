@@ -18,11 +18,19 @@ export class MongoMenuRepository implements MenuRepository {
     }
 
     findOneById(id: string): Promise<Menu> {
-        return this.menuRepository.findById(id);
+        return this.menuRepository.findById(id).populate([
+                                                    {path:'sistema',select: 'nombre url imagen puerto '},
+                                                    {path:'submenus',select: 'nombre sistema opciones '},
+                                                    {path:'opciones',select: 'nombre icono tieneOpciones esEmergente '}
+                                                    ]) ;;
     }
 
     findAll(): Promise<Menu[]> {
-        return this.menuRepository.find({esEliminado:false})
+        return this.menuRepository.find({esEliminado:false}).populate([
+                                                            {path:'sistema',select: 'nombre url imagen puerto '},
+                                                            {path:'submenus',select: 'nombre sistema opciones '},
+                                                            {path:'opciones',select: 'nombre icono tieneOpciones esEmergente '}
+                                                            ]) ;;
     }
     updateMenu(id: string, menu: Menu): Promise<Menu> {
         return this.menuRepository.findByIdAndUpdate(id, menu, {new:true})

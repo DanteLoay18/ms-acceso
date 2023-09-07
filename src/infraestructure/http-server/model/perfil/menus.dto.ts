@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsOptional, IsUUID } from "class-validator";
+import { Submenu } from "./submenu.dto";
 
 export class MenusDto{
 
@@ -16,6 +17,5 @@ export class MenusDto{
     })
     @IsOptional()
     @IsArray()
-    @IsUUID('4', {each:true})
-    opciones:string[]
+    submenus:Submenu[]
 }
