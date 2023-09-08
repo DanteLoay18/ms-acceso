@@ -8,7 +8,7 @@ export class UpdateUsuarioCommand {
     constructor(
                 public readonly id:string,
                 public readonly updateUsuarioDto:UpdateUsuarioDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

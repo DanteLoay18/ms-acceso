@@ -6,7 +6,7 @@ export class RegisterUsuarioCommand {
     
     constructor(
                 public readonly registerUsuarioDto: RegisterUsuarioDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

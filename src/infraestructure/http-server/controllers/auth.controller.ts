@@ -11,11 +11,10 @@ import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.de
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UpdateUsuarioPasswordCommand } from "src/core/application/feautures/Auth/write/update/updatePassword.command";
 import { RegisterUsuarioRequest, UpdatePasswordRequest } from "../model";
+import {MessagePattern} from '@nestjs/microservices'
+import { CreateUsuarioRequest } from "../model/usuario/create-usuario.request";
 
-
-
-@ApiTags('Auth')
-@Controller('/auth')
+@Controller()
 export class UserController{
 
     constructor(
@@ -23,15 +22,19 @@ export class UserController{
         private query: QueryBus
     ) {}
     
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    @Post('register')
-    async createUsuario(
-        @GetUser() usuario:Usuario,
-        @Body() registerUserRequest: RegisterUsuarioRequest
-        ) {
-        const {nombres, apellidos, email}=  await this.command.execute(new RegisterUsuarioCommand(registerUserRequest, usuario))
+    
+    @MessagePattern({cmd: 'registro_usuario'})
+    async createUsuario({registerUsuarioRequest, usuario}: CreateUsuarioRequest) {
+        console.log('Desde controlador',registerUsuarioRequest, usuario)
+        const {nombres, apellidos, email, error, message}=  await this.command.execute(new RegisterUsuarioCommand(registerUsuarioRequest, usuario))
+        
+        if(error)
+            return {
+                error,
+                message
+            }
+        
+
         return {
             nombres, 
             apellidos,
@@ -39,12 +42,20 @@ export class UserController{
         }
     }
     
+    @MessagePattern({cmd: 'login_usuario'})
+    async loginUsuario(loginUsuarioDto:LoginUsuarioRequest) {
 
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
-    @Post('login')
-    async loginUsuario(@Body() loginUsuarioDto:LoginUsuarioRequest) {
-        const {token,_doc}=await this.command.execute(new LoginUsuarioCommand(loginUsuarioDto));
+        
+        const {token,_doc, error, message}=await this.command.execute(new LoginUsuarioCommand(loginUsuarioDto));
+        
+        if(error)
+            return {
+                error,
+                message
+            }
+        
+
+        
         delete _doc.password;
         delete _doc._id;
 
@@ -55,14 +66,20 @@ export class UserController{
     }
 
 
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    // @ApiResponse({ description: "Order Created", type: OrderCreatedDto })
-    @Put(':id')
-    async updatePassword(@Param('id', ParseUUIDPipe) id:string, @Body() {password}:UpdatePasswordRequest, @GetUser() usuario:Usuario,) {
+    @MessagePattern({cmd: 'update_password'})
+    async updatePassword({id, password, usuario}:UpdatePasswordRequest) {
 
-        return await this.command.execute(new UpdateUsuarioPasswordCommand(id, password, usuario));
+        const {nombres, email, apellidos, error, message} = await this.command.execute(new UpdateUsuarioPasswordCommand(id, password, usuario));
+
+        if(error)
+        return {
+            error,
+            message
+           }
+       return {
+        nombres, email, apellidos
+       }
+        
         
     }
 }

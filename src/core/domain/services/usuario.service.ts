@@ -17,8 +17,8 @@ export class UsuarioService{
         return this.usuarioRepository.updateUsuario(id,usuario);
     }
 
-    deleteUsuario(id:string){
-        return this.usuarioRepository.deleteUsuario(id);
+    deleteUsuario(id:string, usuario:Usuario){
+        return this.usuarioRepository.deleteUsuario(id,usuario);
     }
 
     bloquearUsuario(id:string, esBloqueado:boolean){

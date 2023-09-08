@@ -46,10 +46,8 @@ export class MongoUsuarioRepository implements UsuarioRepository {
         return  this.usuarioRepository.findByIdAndUpdate(id,usuario, 
                                                     { new: true });
     }
-    deleteUsuario(id: string): Promise<Usuario> {
-        return this.usuarioRepository.findByIdAndUpdate(id, {
-                                                        esEliminado:true  
-                                                        }, {new:true})
+    deleteUsuario(id: string, usuario:Usuario): Promise<Usuario> {
+        return this.usuarioRepository.findByIdAndUpdate(id, usuario, {new:true})
     }
     
    

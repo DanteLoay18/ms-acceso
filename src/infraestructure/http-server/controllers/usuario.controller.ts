@@ -1,18 +1,16 @@
-import { ApiBearerAuth, ApiInternalServerErrorResponse, ApiTags } from "@nestjs/swagger";
-import { Controller, UseGuards, Get, Param, Put,Delete ,Body, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Param } from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
-import { AuthGuard } from "@nestjs/passport";
 import { UsuariosAllQuery } from "src/core/application/feautures/Usuario/read/usuariosAll.query";
 import { UsuarioByIdQuery } from "src/core/application/feautures/Usuario/read/usuarioById.query";
 import { UpdateUsuarioCommand } from "src/core/application/feautures/Usuario/write/update/updateUsuario.command";
-import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.decorator";
-import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { DeleteUsuarioCommand } from "src/core/application/feautures/Usuario/write/delete/deleteUsuario.command";
 import { ResetPasswordUsuarioCommand } from "src/core/application/feautures/Usuario/write/update-password/resetPassword.command";
 import { UpdateUsuarioRequest } from "../model";
+import { MessagePattern } from '@nestjs/microservices';
+import { ResetPasswordDto } from "../model/usuario/reset-password.dto";
 
-@ApiTags('Usuario')
-@Controller('/usuario')
+
+@Controller()
 export class UsuarioController{
 
     constructor(
@@ -20,53 +18,43 @@ export class UsuarioController{
         private query: QueryBus
     ) {}
     
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    @Get('')
+    @MessagePattern({cmd: 'findAll_usuarios'})
     async findAllUsuarios() {
         return await this.query.execute(new UsuariosAllQuery());
         
     }
     
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    @Get(':id')
-    async findUsuarioById(@Param('id', ParseUUIDPipe) id:string) {
-        return await this.query.execute(new UsuarioByIdQuery(id));
+    @MessagePattern({cmd: 'findOne_usuario'})
+    async findUsuarioById(id:string) {
+        const {error, message, nombres, apellidos, email,defaultPassword, isDefaultPassword, avatarText, perfiles } = await this.query.execute(new UsuarioByIdQuery(id));
+        if(error)
+        return {
+            error,message
+         }
+        
+         return {
+            nombres, apellidos, email, defaultPassword, isDefaultPassword, avatarText, perfiles 
+         }
+    }
+    
+    @MessagePattern({cmd: 'update_usuario'})
+    async updateUsuario( {id, usuario, updateUsuarioRequest}:UpdateUsuarioRequest) {
+        
+        return await this.command.execute(new UpdateUsuarioCommand(id,{...updateUsuarioRequest}, usuario));
         
     }
-
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    @Put(':id')
-    async updateUsuario(@GetUser() usuario:Usuario,
-                        @Param('id', ParseUUIDPipe) id:string,
-                        @Body() updateUsuarioRequest:UpdateUsuarioRequest) {
-        return await this.command.execute(new UpdateUsuarioCommand(id,updateUsuarioRequest, usuario));
-        
-    }
-
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    @Put('/reset/:id')
-    async resetPasswordUsuario(@GetUser() usuario:Usuario,
-                               @Param('id') id:string
+    @MessagePattern({cmd: 'reset_password_usuario'})
+    async resetPasswordUsuario({id,usuario} : ResetPasswordDto
                                ) {
                                 
         return await this.command.execute(new ResetPasswordUsuarioCommand(id, usuario));
         
     }
 
-    @ApiInternalServerErrorResponse({ description: 'Error server'})
-    @ApiBearerAuth() 
-    @UseGuards(AuthGuard())
-    @Delete(':id')
-    async deleteUsuario(@Param('id') id:string) {
-        return await this.command.execute(new DeleteUsuarioCommand(id));
+    @MessagePattern({cmd: 'delete_usuario'})
+    async deleteUsuario({id, usuario}:any) {
+
+        return await this.command.execute(new DeleteUsuarioCommand(id, usuario));
         
     }
    

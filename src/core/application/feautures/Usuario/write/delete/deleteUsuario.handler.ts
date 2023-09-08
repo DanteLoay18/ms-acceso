@@ -9,7 +9,7 @@ export class DeleteUsuarioHandler implements ICommandHandler<DeleteUsuarioComman
 
     async execute(command: DeleteUsuarioCommand) {
         
-        return this.usuarioUseCases.deleteUsuario(command.id)
+        return this.usuarioUseCases.deleteUsuario(command.id, command.usuario)
     }
 
 }

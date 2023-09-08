@@ -53,6 +53,15 @@ export class Usuario extends Base{
     return usuario;
 }
 
+  static deleteUsuario( usuarioModificacion:string){
+    const usuario = new Usuario();
+    usuario.fechaModificacion=new Date();
+    usuario.usuarioModificacion=usuarioModificacion;
+    usuario.esEliminado=true;
+    return usuario;
+  }
+
+
     static  obtenerIniciales(nombre:string, apellido:string) {
       const inicialNombre = nombre.charAt(0).toUpperCase();
       const inicialApellido = apellido.charAt(0).toUpperCase();

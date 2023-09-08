@@ -14,7 +14,7 @@ export class UsuarioByIdQueryHandler implements IQueryHandler<UsuarioByIdQuery>{
 
     constructor(private usuarioUseCases: UsuarioUseCases) { }
 
-    execute(query: UsuarioByIdQuery): Promise<Usuario> {
+    execute(query: UsuarioByIdQuery): Promise<Usuario | {error:number, message:string}> {
         
         return this.usuarioUseCases.getUsuarioById(query.id);
     }

@@ -6,7 +6,7 @@ export class ResetPasswordUsuarioCommand {
     
     constructor(
                 public readonly id:string,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

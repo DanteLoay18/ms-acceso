@@ -4,16 +4,16 @@ import { IsString } from "class-validator";
 export class LoginUsuarioRequest {
 
    
-    @ApiProperty({
-        description: 'Email Usuario',
-    })
-    @IsString()
+    // @ApiProperty({
+    //     description: 'Email Usuario',
+    // })
+    // @IsString()
     email: string;
 
-    @ApiProperty({
-        description: 'Password Usuario',
-    })
-    @IsString()
+    // @ApiProperty({
+    //     description: 'Password Usuario',
+    // })
+    // @IsString()
     password: string;
    
     

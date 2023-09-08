@@ -1,22 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class UpdatePasswordRequest {
 
-   
-    @ApiProperty({
-        description: 'Password Usuario',
-    })
-    @IsString()
-    @MinLength(6)
-    @MaxLength(50)
-    @Matches(
-        /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, 
-        {
-        message: 'The password must have a Uppercase, lowercase letter and a number'
-    })
+    id:string;
     password: string;
-
+    usuario:string;
    
     
 

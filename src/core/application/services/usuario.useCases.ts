@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException,  } from "@nestjs/common";
+import { BadRequestException, Injectable, ParseUUIDPipe, NotFoundException,  } from "@nestjs/common";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UsuarioService } from "src/core/domain/services/usuario.service";
 import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
@@ -8,7 +8,8 @@ import { AuthUseCases } from "./auth.useCases";
 import { AuthService } from "src/core/domain/services";
 import { PerfilService } from "src/core/domain/services/perfil.service";
 import { Perfil } from '../../domain/entity/collections/perfil.collection';
-
+import {stringify} from 'uuid'
+import { error } from "console";
 
 @Injectable()
 export class UsuarioUseCases{
@@ -17,9 +18,10 @@ export class UsuarioUseCases{
     async getUsuarioById(id:string){
         try{
             const user= await this.usuarioService.findOneById(id);
-
+            
             if(!user || user.esEliminado)
-                throw new NotFoundException(`El usuario con el id ${id} no existe`)
+            return {error: 404, message: `El usuario con el id ${id} no existe`}
+              
 
             return user;
         }catch(error){
@@ -37,25 +39,37 @@ export class UsuarioUseCases{
         }
        
     }
-    async updateUsuario(id:string, updateUsarioDto:UpdateUsuarioDto, usuarioModificacion:UsuarioDto ){
+    async updateUsuario(id:string, updateUsarioDto:UpdateUsuarioDto, usuarioModificacion:string ){
         
-        //TODO: AGREGAR LOS PERFILES EN LA ACTUALIZACION MAS NO AL CREARLO
         try {
             
             const usuarioEncontrado = await this.getUsuarioById(id);
             
-            if(usuarioEncontrado.esBloqueado)
-                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+            if(usuarioEncontrado['error'])
+                return {error: usuarioEncontrado['error'], message: usuarioEncontrado['message']}
+
+
+            if(usuarioEncontrado['esBloqueado'])
+                return {
+                        error: 400,
+                        message: `Usuario se encuentra en modificacion`
+                        }
+        
 
             await this.bloquearUsuario(id, true);
 
-            if(updateUsarioDto.nombres)
-                 await this.findOneByTerm(updateUsarioDto.nombres,id)
-              
+            
+            if(updateUsarioDto.email){
+                const emailEncontrado= await this.findOneByTerm(updateUsarioDto.email,id);
                 
 
-            if(updateUsarioDto.email)
-              await this.findOneByTerm(updateUsarioDto.email,id);
+                if(emailEncontrado !== null && emailEncontrado['error'])
+                return {
+                    error: emailEncontrado['error'],
+                    message: emailEncontrado['message']
+                    }
+
+            }
 
             if(updateUsarioDto.perfiles?.length>0){
                 const perfilPromises = updateUsarioDto.perfiles.map(async ({perfil}) => {
@@ -75,13 +89,15 @@ export class UsuarioUseCases{
                 
                   
                   if (perfilesInvalidos.length > 0) 
-                    perfilesInvalidos.forEach((resultado) => {throw new NotFoundException(`Perfil con el Id ${resultado.perfil} no esta registrado`)})
+                    return {
+                            status:400,
+                            message:`Perfil con el Id ${perfilesInvalidos[0].perfil} no esta registrado`
+                                }
+                                                                
             }
-
             
-                
             
-            const usuario = Usuario.updateUsuario(updateUsarioDto.nombres,updateUsarioDto.apellidos,updateUsarioDto.email,updateUsarioDto.perfiles,usuarioModificacion._id)
+            const usuario = Usuario.updateUsuario(updateUsarioDto.nombres,updateUsarioDto.apellidos,updateUsarioDto.email,updateUsarioDto.perfiles,usuarioModificacion)
             
             return await this.usuarioService.updateUsuario(id, usuario);
 
@@ -94,18 +110,22 @@ export class UsuarioUseCases{
        
     }
 
-    async deleteUsuario(id:string){
+    async deleteUsuario(id:string, usuarioModificacion:string){
         try {
-            await this.getUsuarioById(id);
+            
+            const usuarioEncontrado = await this.getUsuarioById(id);
 
-            return await this.usuarioService.deleteUsuario(id);
+            if(usuarioEncontrado['error'])
+                return {error: usuarioEncontrado['error'], message: usuarioEncontrado['message']}
+            const usuario = Usuario.deleteUsuario(usuarioModificacion)
+            return await this.usuarioService.deleteUsuario(id, usuario);
 
         } catch (error) {
             this.handleExceptions(error);
         }
     }
 
-    async resetUsuarioPassword(id:string, usuarioModificacion:UsuarioDto){
+    async resetUsuarioPassword(id:string, usuarioModificacion:string){
         
         
         try {
@@ -113,12 +133,12 @@ export class UsuarioUseCases{
             const usuarioEncontrado = await this.getUsuarioById(id);
             
            
-            if(usuarioEncontrado.esBloqueado)
+            if(usuarioEncontrado['esBloqueado'])
                 throw new BadRequestException(`Usuario se encuentra en modificacion`)
 
             await this.bloquearUsuario(id, true);
 
-            const usuario = Usuario.updatePassword(usuarioEncontrado.defaultPassword,usuarioModificacion._id)
+            const usuario = Usuario.updatePassword(usuarioEncontrado['defaultPassword'],usuarioModificacion)
             
             return await this.usuarioService.resetPassword(id, {
                 ...usuario,
@@ -161,11 +181,14 @@ export class UsuarioUseCases{
 
       private async findOneByTerm(term:string, id:string){
 
-        let usuario= await this.authService.findByEmail(term.toUpperCase());
-
-       
+        let usuario= await this.authService.findByEmail(term);
+        
+        
         if(usuario && usuario._id !== id){
-            throw new BadRequestException(`El email ${term} ya esta registrado`)
+            return {
+                error: 400,
+                message: `El email ${term} ya esta registrado`
+            }
         }
             
         

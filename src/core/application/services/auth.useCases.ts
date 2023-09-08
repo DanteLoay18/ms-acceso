@@ -14,15 +14,18 @@ export class AuthUseCases{
                 private readonly usuarioUseCases:UsuarioUseCases){}
 
 
-    async registerUsuario(registerUsuarioDto:RegisterUsuarioDto, usuarioDto:UsuarioDto){
+    async registerUsuario(registerUsuarioDto:RegisterUsuarioDto, usuarioDto:string){
         try {
 
             const usuarioEncontradoEmail=await this.findOneByTerm(registerUsuarioDto.email)
 
             if(usuarioEncontradoEmail)
-            throw new BadRequestException(`El email ${registerUsuarioDto.email}  ya esta registrados`);
-
-            const usuario = Usuario.create(registerUsuarioDto.nombres, registerUsuarioDto.apellidos, registerUsuarioDto.email, usuarioDto._id);
+            return {
+                error: 400,
+                message:`El email ${registerUsuarioDto.email}  ya esta registrados`
+            }
+           
+            const usuario = Usuario.create(registerUsuarioDto.nombres, registerUsuarioDto.apellidos, registerUsuarioDto.email, usuarioDto);
             
 
             return this.authService.registerUsuario(
@@ -40,15 +43,22 @@ export class AuthUseCases{
     }
 
     async loginUsuario(loginUsuarioDto:LoginUsuarioDto){
-        
+        try {
             const {email, password} = loginUsuarioDto;
             const usuario = await this.findOneByTerm(email)
-
+           
             if(!usuario)
-                throw new NotFoundException(`Credenciales no validas(email)`);
+                return {
+                        error: 404,
+                        message:`Credenciales no validas(email)`
+                       }
+                
 
             if( !bcrypt.compareSync(password, usuario.password))
-                throw new NotFoundException(`Credenciales no validas(password)`);
+                return {
+                    error: 404,
+                    message:`Credenciales no validas(password)`
+                }
             
             
 
@@ -57,24 +67,40 @@ export class AuthUseCases{
                     ...usuario,
                     token: this.gwtJwtToken({_id:usuario._id})
                     };
+        } catch (error) {
+            this.handleExceptions(error)
+        }
+            
 
       
     }
 
-    async updatePassword(id:string, password:string, usuarioModificacion:UsuarioDto){
+    async updatePassword(id:string, password:string, usuarioModificacion:string){
         
         
         try {
             
             const usuarioEncontrado = await this.usuarioUseCases.getUsuarioById(id);
             
+           
+            if(usuarioEncontrado['error']){
+                console.log(usuarioEncontrado['error'])
+                return {
+                    error:400,
+                    message:usuarioEncontrado['message']
+                }
+            }
             
-            if(usuarioEncontrado.esBloqueado)
-                throw new BadRequestException(`Usuario se encuentra en modificacion`)
+            if(usuarioEncontrado['esBloqueado'] )
+            return {
+                    error:400,
+                    message:`Usuario se encuentra en modificacion`
+                  }
+               
 
             await this.usuarioUseCases.bloquearUsuario(id, true);
 
-            const usuario = Usuario.updatePassword(password,usuarioModificacion._id)
+            const usuario = Usuario.updatePassword(password,usuarioModificacion)
             
             return await this.authService.updatePassword(id, {
                 ...usuario,
