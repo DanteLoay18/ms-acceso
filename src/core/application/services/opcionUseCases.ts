@@ -59,7 +59,6 @@ export class OpcionUseCases{
             
        
         } catch (error) {
-            console.log(error)
             this.handleExceptions(error);
         }
        

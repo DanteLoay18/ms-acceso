@@ -53,7 +53,6 @@ export class MenuUseCases{
             
        
         } catch (error) {
-            console.log(error)
             this.handleExceptions(error);
         }
        

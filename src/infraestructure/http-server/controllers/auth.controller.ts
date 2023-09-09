@@ -25,7 +25,6 @@ export class UserController{
     
     @MessagePattern({cmd: 'registro_usuario'})
     async createUsuario({registerUsuarioRequest, usuario}: CreateUsuarioRequest) {
-        console.log('Desde controlador',registerUsuarioRequest, usuario)
         const {nombres, apellidos, email, error, message}=  await this.command.execute(new RegisterUsuarioCommand(registerUsuarioRequest, usuario))
         
         if(error)

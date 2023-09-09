@@ -58,7 +58,6 @@ export class PerfilUseCases{
             
        
         } catch (error) {
-            console.log(error)
             this.handleExceptions(error);
         }
        
@@ -286,7 +285,6 @@ export class PerfilUseCases{
         }
       }
       async validarOpcion(opcionId: string) {
-        console.log(opcionId)
         if (!validate(opcionId)) {
           return {
             error:400,

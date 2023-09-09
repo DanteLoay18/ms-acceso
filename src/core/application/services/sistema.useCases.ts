@@ -51,7 +51,6 @@ export class SistemaUseCases{
             
        
         } catch (error) {
-            console.log(error)
             this.handleExceptions(error);
         }
        

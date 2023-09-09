@@ -36,7 +36,6 @@ export class AuthUseCases{
             
        
         } catch (error) {
-            console.log(error)
             this.handleExceptions(error);
         }
        
@@ -84,7 +83,6 @@ export class AuthUseCases{
             
            
             if(usuarioEncontrado['error']){
-                console.log(usuarioEncontrado['error'])
                 return {
                     error:400,
                     message:usuarioEncontrado['message']
