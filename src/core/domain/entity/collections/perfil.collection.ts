@@ -26,4 +26,11 @@ export class Perfil extends Base{
       perfil.usuarioModificacion=usuarioModificacion;
       return perfil;
   }
+  static deletePerfil(usuarioModificacion:string){
+    const perfil = new Perfil();
+    perfil.esEliminado=true;
+    perfil.fechaModificacion=new Date();
+    perfil.usuarioModificacion=usuarioModificacion;
+    return perfil;
+}
 }

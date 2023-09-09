@@ -7,7 +7,7 @@ export class UpdatePerfilCommand {
     constructor(
                 public readonly id:string,
                 public readonly updatePerfilDto:UpdatePerfilDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

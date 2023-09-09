@@ -10,7 +10,7 @@ export class DeletePerfilHandler implements ICommandHandler<DeletePerfilCommand>
 
     async execute(command: DeletePerfilCommand) {
         
-        return this.perfilUseCases.deletePerfil(command.id)
+        return this.perfilUseCases.deletePerfil(command.id,command.usuario)
     }
 
 }

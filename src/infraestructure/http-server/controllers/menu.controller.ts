@@ -7,7 +7,7 @@ import { CreateMenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/cor
 import { MessagePattern } from '@nestjs/microservices';
 
 
-@Controller('/menu')
+@Controller()
 export class MenuController{
 
     constructor(

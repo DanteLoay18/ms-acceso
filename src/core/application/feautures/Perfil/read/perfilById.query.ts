@@ -14,7 +14,7 @@ export class PerfilByIdQueryHandler implements IQueryHandler<PerfilByIdQuery>{
 
     constructor(private perfilUseCases: PerfilUseCases) { }
 
-    execute(query: PerfilByIdQuery): Promise<Perfil> {
+    execute(query: PerfilByIdQuery): Promise<Perfil | {error:number, message:string}> {
         
         return this.perfilUseCases.getPerfilById(query.id);
     }

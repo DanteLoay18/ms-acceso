@@ -25,8 +25,8 @@ export class PerfilService{
         return this.perfilRepository.updatePerfil(id,perfil);
     }
 
-    deletePerfil(id:string){
-        return this.perfilRepository.deletePerfil(id);
+    deletePerfil(id:string, perfil:Perfil){
+        return this.perfilRepository.deletePerfil(id, perfil);
     }
 
     bloquearPerfil(id:string, esBloqueado:boolean){

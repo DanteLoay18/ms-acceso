@@ -4,7 +4,7 @@ export class CreatePerfilCommand {
     
     constructor(
                 public readonly createPerfilDto: CreatePerfilDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }
