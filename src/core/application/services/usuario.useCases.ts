@@ -1,15 +1,10 @@
-import { BadRequestException, Injectable, ParseUUIDPipe, NotFoundException,  } from "@nestjs/common";
+import { BadRequestException, Injectable  } from "@nestjs/common";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { UsuarioService } from "src/core/domain/services/usuario.service";
-import { UsuarioDto } from "src/core/shared/dtos/usuario.dto";
 import * as bcrypt from 'bcrypt';
 import { UpdateUsuarioDto } from "src/core/shared/dtos";
-import { AuthUseCases } from "./auth.useCases";
 import { AuthService } from "src/core/domain/services";
 import { PerfilService } from "src/core/domain/services/perfil.service";
-import { Perfil } from '../../domain/entity/collections/perfil.collection';
-import {stringify} from 'uuid'
-import { error } from "console";
 
 @Injectable()
 export class UsuarioUseCases{

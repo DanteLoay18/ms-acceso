@@ -9,7 +9,7 @@ export class DeleteOpcionHandler implements ICommandHandler<DeleteOpcionCommand>
 
     async execute(command: DeleteOpcionCommand) {
         
-        return this.opcionUseCases.deleteOpcion(command.id)
+        return this.opcionUseCases.deleteOpcion(command.id, command.usuarioDto);
     }
 
 }

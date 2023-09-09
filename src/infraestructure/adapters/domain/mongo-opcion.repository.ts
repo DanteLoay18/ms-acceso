@@ -24,10 +24,8 @@ export class MongoOpcionRepository implements OpcionRepository {
     updateOpcion(id: string, opcion: Opcion): Promise<Opcion> {
         return this.opcionRepository.findByIdAndUpdate(id, opcion, {new:true})
     }
-    deleteOpcion(id: string): Promise<Opcion> {
-        return this.opcionRepository.findByIdAndUpdate(id, {
-                                                            esEliminado:true  
-                                                            }, {new:true})
+    deleteOpcion(id: string, opcion:Opcion): Promise<Opcion> {
+        return this.opcionRepository.findByIdAndUpdate(id, opcion, {new:true})
     }
     actualizarBloqueo(id: string, esBloqueado: boolean): Promise<Opcion> {
         return this.opcionRepository.findByIdAndUpdate(id, {

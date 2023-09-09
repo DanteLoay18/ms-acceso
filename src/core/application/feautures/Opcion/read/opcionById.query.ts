@@ -14,7 +14,7 @@ export class OpcionByIdQueryHandler implements IQueryHandler<OpcionByIdQuery>{
 
     constructor(private opcionUseCases: OpcionUseCases) { }
 
-    execute(query: OpcionByIdQuery): Promise<Opcion> {
+    execute(query: OpcionByIdQuery): Promise<Opcion | {error:number, message:string}> {
         
         return this.opcionUseCases.getOpcionById(query.id);
     }

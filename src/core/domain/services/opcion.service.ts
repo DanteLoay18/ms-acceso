@@ -31,8 +31,8 @@ export class OpcionService{
         return this.opcionRepository.updateOpcion(id,opcion);
     }
 
-    deleteOpcion(id:string){
-        return this.opcionRepository.deleteOpcion(id);
+    deleteOpcion(id:string, opcion:Opcion){
+        return this.opcionRepository.deleteOpcion(id, opcion);
     }
 
     bloquearOpcion(id:string, esBloqueado:boolean){

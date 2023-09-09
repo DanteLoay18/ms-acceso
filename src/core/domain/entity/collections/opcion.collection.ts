@@ -36,4 +36,12 @@ export class Opcion extends Base{
       opcion.usuarioModificacion=usuarioModificacion;
       return opcion;
   }
+  static deleteOpcion(usuarioModificacion:string){
+    const opcion = new Opcion();
+    opcion.esEliminado=true;
+    opcion.fechaModificacion=new Date();
+    opcion.usuarioModificacion=usuarioModificacion;
+    return opcion;
+}
+
 }

@@ -26,15 +26,8 @@ export class UsuarioController{
     
     @MessagePattern({cmd: 'findOne_usuario'})
     async findUsuarioById(id:string) {
-        const {error, message, nombres, apellidos, email,defaultPassword, isDefaultPassword, avatarText, perfiles } = await this.query.execute(new UsuarioByIdQuery(id));
-        if(error)
-        return {
-            error,message
-         }
-        
-         return {
-            nombres, apellidos, email, defaultPassword, isDefaultPassword, avatarText, perfiles 
-         }
+        return await this.query.execute(new UsuarioByIdQuery(id));
+       
     }
     
     @MessagePattern({cmd: 'update_usuario'})

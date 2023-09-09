@@ -8,6 +8,6 @@ export interface OpcionRepository{
     findByNombre(nombre:string):Promise<Opcion>;
     findByIcono(icono:string):Promise<Opcion>;
     updateOpcion(id:string,opcion:Opcion): Promise<Opcion>;
-    deleteOpcion(id:string): Promise<Opcion>;
+    deleteOpcion(id:string, opcion:Opcion): Promise<Opcion>;
     actualizarBloqueo(id:string,esBloqueado:boolean):Promise<Opcion>;
 }

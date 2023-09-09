@@ -4,13 +4,11 @@ import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "src/infraestructure/adapters/jwt/decorators/get-user.decorator";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
-import { CreateOpcionRequest, UpdateOpcionRequest } from "../model";
 import { SistemaByIdQuery, SistemasAllQuery } from "src/core/application/feautures/Sistema/read";
 import { CreateSistemaCommand, DeleteSistemaCommand, UpdateSistemaCommand } from "src/core/application/feautures/Sistema/write";
 import { CreateSistemaRequest, UpdateSistemaRequest } from "../model/sistema";
 
-@ApiTags('Sistema')
-@Controller('/sistema')
+@Controller()
 export class SistemaController{
 
     constructor(

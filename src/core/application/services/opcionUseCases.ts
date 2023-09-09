@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
+import { BadRequestException, Injectable,  } from "@nestjs/common";
 import { OpcionService } from "src/core/domain/services/opcion.service";
 import { Opcion } from "src/core/domain/entity/collections/opcion.collection";
-import { CreateOpcionDto, UpdateOpcionDto, UsuarioDto } from "src/core/shared/dtos";
+import { CreateOpcionDto, UpdateOpcionDto } from "src/core/shared/dtos";
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class OpcionUseCases{
             const opcion= await this.opcionService.findOneById(id);
 
             if(!opcion || opcion.esEliminado)
-                throw new NotFoundException(`La opcion con el id ${id} no existe`)
+            return {error: 404, message: `La opcion con el id ${id} no existe`}
 
             return opcion;
 
@@ -33,13 +33,27 @@ export class OpcionUseCases{
        
     }
 
-    async createOpcion(createOpcionDto:CreateOpcionDto, usuarioDto:UsuarioDto){
+    async createOpcion(createOpcionDto:CreateOpcionDto, usuarioDto:string){
         try {
             
-            await this.findOneByTerm(createOpcionDto.nombre,"")
-            await this.findOneByTerm(createOpcionDto.icono,"")
+            const opcionByNombreEncontrado= await this.findOneByTerm(createOpcionDto.nombre,"");
+                
+            if(opcionByNombreEncontrado !== null && opcionByNombreEncontrado['error'])
+            return {
+                error: opcionByNombreEncontrado['error'],
+                message: opcionByNombreEncontrado['message']
+                }
 
-            const opcion = Opcion.createOpcion(createOpcionDto.nombre, createOpcionDto.icono, createOpcionDto.tieneOpciones, createOpcionDto.esEmergente, usuarioDto._id);
+
+            const opcionByIconoEncontrado= await this.findOneByTerm(createOpcionDto.icono,"");
+
+                if(opcionByIconoEncontrado !== null && opcionByIconoEncontrado['error'])
+                return {
+                    error: opcionByIconoEncontrado['error'],
+                    message: opcionByIconoEncontrado['message']
+                    }
+
+            const opcion = Opcion.createOpcion(createOpcionDto.nombre, createOpcionDto.icono, createOpcionDto.tieneOpciones, createOpcionDto.esEmergente, usuarioDto);
            
             return this.opcionService.createOpcion(opcion);
             
@@ -51,24 +65,47 @@ export class OpcionUseCases{
        
     }
 
-    async updateOpcion(id:string, updateOpcionDto:UpdateOpcionDto, usuarioModificacion:UsuarioDto ){
+    async updateOpcion(id:string, updateOpcionDto:UpdateOpcionDto, usuarioModificacion:string ){
         
         try {
             
             const opcionEncontrado = await this.getOpcionById(id);
             
-            if(opcionEncontrado.esBloqueado)
-                throw new BadRequestException(`Opcion se encuentra en modificacion`)
+            if(opcionEncontrado['error'])
+            return {error: opcionEncontrado['error'], message: opcionEncontrado['message']}
+
+
+            if(opcionEncontrado['esBloqueado'])
+                return {
+                        error: 400,
+                        message: `Opcion se encuentra en modificacion`
+                        }
+    
 
             await this.bloquearOpcion(id, true);
+           
+            if(updateOpcionDto.nombre){
+                const opcionByNombreEncontrado= await this.findOneByTerm(updateOpcionDto.nombre,id);
+                
+                if(opcionByNombreEncontrado !== null && opcionByNombreEncontrado['error'])
+                return {
+                    error: opcionByNombreEncontrado['error'],
+                    message: opcionByNombreEncontrado['message']
+                    }
+            }
+            
 
-            if(updateOpcionDto.nombre)
-            await this.findOneByTerm(updateOpcionDto.nombre,id);
+            if(updateOpcionDto.icono){
+                const opcionByIconoEncontrado= await this.findOneByTerm(updateOpcionDto.icono,id);
 
-            if(updateOpcionDto.icono)
-            await this.findOneByTerm(updateOpcionDto.icono,id);
+                if(opcionByIconoEncontrado !== null && opcionByIconoEncontrado['error'])
+                return {
+                    error: opcionByIconoEncontrado['error'],
+                    message: opcionByIconoEncontrado['message']
+                    }
+            }
         
-            const opcion = Opcion.updateOpcion(updateOpcionDto.nombre,updateOpcionDto.icono,updateOpcionDto.tieneOpciones,updateOpcionDto.esEmergente,usuarioModificacion._id)
+            const opcion = Opcion.updateOpcion(updateOpcionDto.nombre,updateOpcionDto.icono,updateOpcionDto.tieneOpciones,updateOpcionDto.esEmergente,usuarioModificacion)
             
             return await this.opcionService.updateOpcion(id, opcion);
 
@@ -81,11 +118,15 @@ export class OpcionUseCases{
        
     }
 
-    async deleteOpcion(id:string){
+    async deleteOpcion(id:string, usuarioModificacion:string){
         try {
-            await this.getOpcionById(id);
+            const opcionEncontrado = await this.getOpcionById(id);
+            
+            if(opcionEncontrado['error'])
+            return {error: opcionEncontrado['error'], message: opcionEncontrado['message']}
 
-            return await this.opcionService.deleteOpcion(id);
+            const opcion = Opcion.deleteOpcion(usuarioModificacion)
+            return await this.opcionService.deleteOpcion(id, opcion);
 
         } catch (error) {
             this.handleExceptions(error);
@@ -108,14 +149,19 @@ export class OpcionUseCases{
 
        
         if(opcion && opcion._id !==id){
-            throw new BadRequestException(`El nombre ${term} ya esta registrado`)        
+            return {
+                error: 400,
+                message: `El nombre ${term} ya esta registrado`
+            }    
         }else{
             opcion= await this.opcionService.findOneByIcono(term.toUpperCase());
         }
             
         if(opcion && opcion._id !==id)
-            throw new BadRequestException(`El icono ${term} ya esta registrado`)
-        
+        return {
+            error: 400,
+            message: `El icono ${term} ya esta registrado`
+        }    
 
         return opcion;
 
