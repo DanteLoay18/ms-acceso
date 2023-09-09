@@ -7,6 +7,6 @@ export interface MenuRepository{
     findAll():Promise<Menu[]>;
     findByNombre(nombre:string):Promise<Menu>;
     updateMenu(id:string,menu:Menu): Promise<Menu>;
-    deleteMenu(id:string): Promise<Menu>;
+    deleteMenu(id:string, menu:Menu): Promise<Menu>;
     actualizarBloqueo(id:string,esBloqueado:boolean):Promise<Menu>;
 }

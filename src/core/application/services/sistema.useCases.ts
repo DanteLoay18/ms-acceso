@@ -14,7 +14,7 @@ export class SistemaUseCases{
             const Sistema= await this.sistemaService.findOneById(id);
 
             if(!Sistema || Sistema.esEliminado)
-            return {error: 404, message: `La opcion con el id ${id} no existe`}
+            return {error: 404, message: `El sistema con el id ${id} no existe`}
 
             return Sistema;
 

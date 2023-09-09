@@ -7,7 +7,7 @@ export class UpdateMenuCommand {
     constructor(
                 public readonly id:string,
                 public readonly updateMenuDto:UpdateMenuDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

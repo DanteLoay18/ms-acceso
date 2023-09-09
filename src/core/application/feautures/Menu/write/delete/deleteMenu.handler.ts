@@ -9,7 +9,7 @@ export class DeleteMenuHandler implements ICommandHandler<DeleteMenuCommand> {
 
     async execute(command: DeleteMenuCommand) {
         
-        return this.menuUseCases.deleteMenu(command.id)
+        return this.menuUseCases.deleteMenu(command.id,command.usuario)
     }
 
 }

@@ -14,7 +14,7 @@ export class MenuByIdQueryHandler implements IQueryHandler<MenuByIdQuery>{
 
     constructor(private menuUseCases: MenuUseCases) { }
 
-    execute(query: MenuByIdQuery): Promise<Menu> {
+    execute(query: MenuByIdQuery): Promise<Menu | {error:number, message:string}> {
         
         return this.menuUseCases.getMenuById(query.id);
     }

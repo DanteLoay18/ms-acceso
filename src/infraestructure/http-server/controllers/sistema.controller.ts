@@ -21,7 +21,7 @@ export class SistemaController{
     }
     
     @MessagePattern({cmd: 'findOne_sistema'})
-    async findOpcionById(id:string) {
+    async findSistemaById(id:string) {
         return await this.query.execute(new SistemaByIdQuery(id));
         
     }

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
 import { Menu } from "src/core/domain/entity/collections";
 import { MenuService, OpcionService, SistemaService } from "src/core/domain/services";
-import { CreateMenuDto, UpdateMenuDto, UsuarioDto } from "src/core/shared/dtos";
+import { CreateMenuDto, UpdateMenuDto } from "src/core/shared/dtos";
 
 @Injectable()
 export class MenuUseCases{
@@ -15,7 +15,7 @@ export class MenuUseCases{
             const menu= await this.menuService.findOneById(id);
 
             if(!menu || menu.esEliminado)
-                throw new NotFoundException(`El menu con el id ${id} no existe`)
+            return {error: 404, message: `El menu con el id ${id} no existe`}
 
             return menu;
 
@@ -35,12 +35,19 @@ export class MenuUseCases{
        
     }
 
-    async createMenu(createMenuDto:CreateMenuDto, usuarioDto:UsuarioDto){
+    async createMenu(createMenuDto:CreateMenuDto, usuarioDto:string){
         try {
             
-            await this.findOneByTerm(createMenuDto.nombre, "")
+            const menuByNombreEncontrado= await this.findOneByTerm(createMenuDto.nombre,"");
+                
+            if( menuByNombreEncontrado && menuByNombreEncontrado['error'] )
+            return {
+                error: menuByNombreEncontrado['error'],
+                message: menuByNombreEncontrado['message']
+                }
+            
 
-            const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu, usuarioDto._id);
+            const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu, usuarioDto);
            
             return this.menuService.createMenu(menu);
             
@@ -52,27 +59,49 @@ export class MenuUseCases{
        
     }
 
-    async updateMenu(id:string, updateMenuDto:UpdateMenuDto, usuarioModificacion:UsuarioDto ){
+    async updateMenu(id:string, updateMenuDto:UpdateMenuDto, usuarioModificacion:string ){
         
         try {
             
-            const opcionEncontrado = await this.getMenuById(id);
+            const menuEncontrado = await this.getMenuById(id);
             
-            if(opcionEncontrado.esBloqueado)
-                throw new BadRequestException(`Menu se encuentra en modificacion`)
+            if(menuEncontrado['error'])
+            return {error: menuEncontrado['error'], message: menuEncontrado['message']}
+
+
+            if(menuEncontrado['esBloqueado'])
+                return {
+                        error: 400,
+                        message: `Opcion se encuentra en modificacion`
+                        }
 
             await this.bloquearMenu(id, true);
             
-            if(updateMenuDto.nombre)
-            await this.findOneByTerm(updateMenuDto.nombre, id);
+            if(updateMenuDto.nombre){
+                const menuByNombreEncontrado= await this.findOneByTerm(updateMenuDto.nombre,id);
+                if(menuByNombreEncontrado && menuByNombreEncontrado['error'])
+                return {
+                    error: menuByNombreEncontrado['error'],
+                    message: menuByNombreEncontrado['message']
+                    }
+            }
 
             if(updateMenuDto.sistema){
                 const sistema= await this.sistemaService.findOneById(updateMenuDto.sistema);
 
                 if(!sistema || sistema.esEliminado)
-                 throw new NotFoundException(`El sistema con el id ${updateMenuDto.sistema} no existe`)
+                return {
+                        error:400,
+                        message:`El sistema con el id ${updateMenuDto.sistema} no existe`
+                }
             }
             
+            if(updateMenuDto.opciones?.length > 0 && !menuEncontrado['esSubmenu'])
+            return {
+                error:400,
+                message:"El menu no puede tener opciones ya que no es un submenu"
+            }
+
             if (updateMenuDto.opciones?.length > 0 || updateMenuDto.opciones) {
                 const opcionesPromises = updateMenuDto.opciones.map(async (opcionId) => {
                   const opcion = await this.opcionService.findOneById(opcionId);
@@ -91,7 +120,11 @@ export class MenuUseCases{
               
                 
                 if (opcionesInvalidas.length > 0) {
-                  opcionesInvalidas.forEach((resultado) => {throw new NotFoundException(`Opcion con el Id ${resultado.opcionId} no encontrado`)})
+                    return {
+                        error:404,
+                        message:`Opcion con el Id ${opcionesInvalidas[0].opcionId} no encontrado`
+                    }
+                  
                   
                 }
               }
@@ -114,12 +147,16 @@ export class MenuUseCases{
               
                 
                 if (menusInvalidos.length > 0) 
-                  menusInvalidos.forEach((resultado) => {throw new NotFoundException(`Submenu con el Id ${resultado.submenuId} no esta registrado o no es un submenu valido`)})
+                return {
+                    error:404,
+                    message:`Submenu con el Id ${menusInvalidos[0].submenuId} no esta registrado o no es un submenu valido`
+                }
+                 
 
                 
               }  
 
-            const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion._id)
+            const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion)
             
             return await this.menuService.updateMenu(id, menu);
 
@@ -132,11 +169,17 @@ export class MenuUseCases{
        
     }
 
-    async deleteMenu(id:string){
+    async deleteMenu(id:string,usuarioModificacion:string){
         try {
-            await this.getMenuById(id);
+            const MenuEncontrado = await this.getMenuById(id);
+            
+            if(MenuEncontrado['error'])
+            return {error: MenuEncontrado['error'], message: MenuEncontrado['message']}
+            
 
-            return await this.menuService.deleteMenu(id);
+            const menu= Menu.deleteMenu(usuarioModificacion)
+
+            return await this.menuService.deleteMenu(id,menu);
 
         } catch (error) {
             this.handleExceptions(error);
@@ -158,7 +201,10 @@ export class MenuUseCases{
         let menu= await this.menuService.findOneByNombre(term.toUpperCase());
             
         if(menu && menu._id !== id)
-            throw new BadRequestException(`El nombre ${term} ya esta registrado`)
+        return {
+                error:400,
+                message:`El nombre ${term} ya esta registrado`
+            }
         
 
         return menu;

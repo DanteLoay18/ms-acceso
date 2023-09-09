@@ -19,26 +19,24 @@ export class MongoMenuRepository implements MenuRepository {
 
     findOneById(id: string): Promise<Menu> {
         return this.menuRepository.findById(id).populate([
-                                                    {path:'sistema',select: 'nombre url imagen puerto '},
-                                                    {path:'submenus',select: 'nombre sistema opciones '},
-                                                    {path:'opciones',select: 'nombre icono tieneOpciones esEmergente '}
+                                                    {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
+                                                    {path:'submenus',select: 'nombre sistema opciones esEliminado '},
+                                                    {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
                                                     ]) ;;
     }
 
     findAll(): Promise<Menu[]> {
         return this.menuRepository.find({esEliminado:false}).populate([
-                                                            {path:'sistema',select: 'nombre url imagen puerto '},
-                                                            {path:'submenus',select: 'nombre sistema opciones '},
-                                                            {path:'opciones',select: 'nombre icono tieneOpciones esEmergente '}
+                                                            {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
+                                                            {path:'submenus',select: 'nombre sistema opciones esEliminado'},
+                                                            {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
                                                             ]) ;;
     }
     updateMenu(id: string, menu: Menu): Promise<Menu> {
         return this.menuRepository.findByIdAndUpdate(id, menu, {new:true})
     }
-    deleteMenu(id: string): Promise<Menu> {
-        return this.menuRepository.findByIdAndUpdate(id, {
-                                                            esEliminado:true  
-                                                            }, {new:true})
+    deleteMenu(id: string, menu:Menu): Promise<Menu> {
+        return this.menuRepository.findByIdAndUpdate(id, menu, {new:true})
     }
     actualizarBloqueo(id: string, esBloqueado: boolean): Promise<Menu> {
         return this.menuRepository.findByIdAndUpdate(id, {

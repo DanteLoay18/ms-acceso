@@ -4,7 +4,7 @@ export class CreateMenuCommand {
     
     constructor(
                 public readonly createMenuDto: CreateMenuDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

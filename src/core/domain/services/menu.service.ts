@@ -19,16 +19,16 @@ export class MenuService{
         return this.menuRepository.findByNombre(nombre);
     }
 
-    createMenu(opcion:Menu){
-        return this.menuRepository.createMenu(opcion);
+    createMenu(menu:Menu){
+        return this.menuRepository.createMenu(menu);
     }
 
-    updateMenu(id:string,opcion:Menu){
-        return this.menuRepository.updateMenu(id,opcion);
+    updateMenu(id:string,menu:Menu){
+        return this.menuRepository.updateMenu(id,menu);
     }
 
-    deleteMenu(id:string){
-        return this.menuRepository.deleteMenu(id);
+    deleteMenu(id:string, menu:Menu){
+        return this.menuRepository.deleteMenu(id,menu);
     }
 
     bloquearMenu(id:string, esBloqueado:boolean){
