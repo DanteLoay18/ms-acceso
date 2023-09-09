@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
 import { Sistema } from "src/core/domain/entity/collections";
 import { SistemaService } from "src/core/domain/services/sistema.service";
-import { CreateSistemaDto, UpdateSistemaDto, UsuarioDto } from "src/core/shared/dtos";
+import { CreateSistemaDto, UpdateSistemaDto } from "src/core/shared/dtos";
 
 
 
@@ -14,7 +14,7 @@ export class SistemaUseCases{
             const Sistema= await this.sistemaService.findOneById(id);
 
             if(!Sistema || Sistema.esEliminado)
-                throw new NotFoundException(`El sistema con el id ${id} no existe`)
+            return {error: 404, message: `La opcion con el id ${id} no existe`}
 
             return Sistema;
 
@@ -34,12 +34,18 @@ export class SistemaUseCases{
        
     }
 
-    async createSistema(createSistemaDto:CreateSistemaDto, usuarioDto:UsuarioDto){
+    async createSistema(createSistemaDto:CreateSistemaDto, usuarioDto:string){
         try {
             
-            await this.findOneByTerm(createSistemaDto.nombre,"")
+            const sistemaByNombreEncontrado= await this.findOneByTerm(createSistemaDto.nombre,"");
+                
+            if(sistemaByNombreEncontrado !== null && sistemaByNombreEncontrado['error'])
+            return {
+                error: sistemaByNombreEncontrado['error'],
+                message: sistemaByNombreEncontrado['message']
+                }
 
-            const sistema = Sistema.createSistema(createSistemaDto.nombre, createSistemaDto.url, createSistemaDto.imagen, createSistemaDto.puerto, usuarioDto._id);
+            const sistema = Sistema.createSistema(createSistemaDto.nombre, createSistemaDto.url, createSistemaDto.imagen, createSistemaDto.puerto, usuarioDto);
            
             return this.sistemaService.createSistema(sistema);
             
@@ -51,21 +57,35 @@ export class SistemaUseCases{
        
     }
 
-    async updateSistema(id:string, updateSistemaDto:UpdateSistemaDto, usuarioModificacion:UsuarioDto ){
+    async updateSistema(id:string, updateSistemaDto:UpdateSistemaDto, usuarioModificacion:string ){
         
         try {
             
             const SistemaEncontrado = await this.getSistemaById(id);
             
-            if(SistemaEncontrado.esBloqueado)
-                throw new BadRequestException(`Sistema se encuentra en modificacion`)
+            if(SistemaEncontrado['error'])
+            return {error: SistemaEncontrado['error'], message: SistemaEncontrado['message']}
+
+
+            if(SistemaEncontrado['esBloqueado'])
+                return {
+                        error: 400,
+                        message: `Sistema se encuentra en modificacion`
+                        }
 
             await this.bloquearSistema(id, true);
 
-            if(updateSistemaDto.nombre)
-            await this.findOneByTerm(updateSistemaDto.nombre,id)
+            if(updateSistemaDto.nombre){
+                const sistemaByNombreEncontrado= await this.findOneByTerm(updateSistemaDto.nombre,id);
+                
+                if(sistemaByNombreEncontrado !== null && sistemaByNombreEncontrado['error'])
+                return {
+                    error: sistemaByNombreEncontrado['error'],
+                    message: sistemaByNombreEncontrado['message']
+                    }
+            }
 
-            const sistema = Sistema.updateSistema(updateSistemaDto.nombre,updateSistemaDto.url,updateSistemaDto.imagen,updateSistemaDto.puerto,usuarioModificacion._id)
+            const sistema = Sistema.updateSistema(updateSistemaDto.nombre,updateSistemaDto.url,updateSistemaDto.imagen,updateSistemaDto.puerto,usuarioModificacion)
             
             return await this.sistemaService.updateSistema(id, sistema);
 
@@ -78,11 +98,15 @@ export class SistemaUseCases{
        
     }
 
-    async deleteSistema(id:string){
+    async deleteSistema(id:string,usuarioModificacion:string){
         try {
-            await this.getSistemaById(id);
+            const SistemaEncontrado = await this.getSistemaById(id);
+            
+            if(SistemaEncontrado['error'])
+            return {error: SistemaEncontrado['error'], message: SistemaEncontrado['message']}
 
-            return await this.sistemaService.deleteSistema(id);
+            const sistema= Sistema.deleteSistema(usuarioModificacion)
+            return await this.sistemaService.deleteSistema(id,sistema);
 
         } catch (error) {
             this.handleExceptions(error);
@@ -105,7 +129,10 @@ export class SistemaUseCases{
 
        
         if(sistema && sistema._id!==id)
-            throw new BadRequestException(`El nombre ${term} ya esta registrado`)
+        return {
+                error:400,
+                message:`El nombre ${term} ya esta registrado`
+            }
        
         return sistema;
 

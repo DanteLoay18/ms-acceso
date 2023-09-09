@@ -14,7 +14,7 @@ export class SistemaByIdQueryHandler implements IQueryHandler<SistemaByIdQuery>{
 
     constructor(private sistemaUseCases: SistemaUseCases) { }
 
-    execute(query: SistemaByIdQuery): Promise<Sistema> {
+    execute(query: SistemaByIdQuery): Promise<Sistema | {error:number, message:string}> {
         
         return this.sistemaUseCases.getSistemaById(query.id);
     }

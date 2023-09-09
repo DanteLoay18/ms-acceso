@@ -26,8 +26,8 @@ export class SistemaService{
         return this.sistemaRepository.updateSistema(id,sistema);
     }
 
-    deleteSistema(id:string){
-        return this.sistemaRepository.deleteSistema(id);
+    deleteSistema(id:string, sistema:Sistema){
+        return this.sistemaRepository.deleteSistema(id,sistema);
     }
 
     bloquearSistema(id:string, esBloqueado:boolean){

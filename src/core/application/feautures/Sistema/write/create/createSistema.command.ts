@@ -4,7 +4,7 @@ export class CreateSistemaCommand {
     
     constructor(
                 public readonly createSistemaDto: CreateSistemaDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

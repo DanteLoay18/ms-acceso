@@ -7,7 +7,7 @@ export class UpdateSistemaCommand {
     constructor(
                 public readonly id:string,
                 public readonly updateSistemaDto:UpdateSistemaDto,
-                public readonly usuarioDto:UsuarioDto
+                public readonly usuarioDto:string
                 ) { }
     
 }

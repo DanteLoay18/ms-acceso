@@ -9,7 +9,7 @@ export class DeleteSistemaHandler implements ICommandHandler<DeleteSistemaComman
 
     async execute(command: DeleteSistemaCommand) {
         
-        return this.sistemaUseCases.deleteSistema(command.id)
+        return this.sistemaUseCases.deleteSistema(command.id, command.usuarioDto)
     }
 
 }

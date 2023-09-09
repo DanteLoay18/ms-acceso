@@ -26,10 +26,8 @@ export class MongoSistemaRepository implements SistemaRepository {
     updateSistema(id: string, sistema: Sistema): Promise<Sistema> {
         return this.sistemaRepository.findByIdAndUpdate(id, sistema, {new:true})
     }
-    deleteSistema(id: string): Promise<Sistema> {
-        return this.sistemaRepository.findByIdAndUpdate(id, {
-                                                            esEliminado:true  
-                                                            }, {new:true})
+    deleteSistema(id: string, sistema:Sistema): Promise<Sistema> {
+        return this.sistemaRepository.findByIdAndUpdate(id, sistema, {new:true})
     }
     actualizarBloqueo(id: string, esBloqueado: boolean): Promise<Sistema> {
         return this.sistemaRepository.findByIdAndUpdate(id, {
