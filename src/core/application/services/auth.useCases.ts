@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException,Injectable } from "@nestjs/common";
 import { Usuario } from "src/core/domain/entity/collections/usuario.collection";
 import { AuthService } from "src/core/domain/services/auth.service";
 import * as bcrypt from 'bcrypt'
@@ -6,7 +6,7 @@ import { LoginUsuarioDto } from "src/core/shared/dtos/usuario/login-usuario.dto"
 import { JwtPayload } from "src/infraestructure/adapters/jwt/interfaces/jwt-payload.interface";
 import { JwtService } from "@nestjs/jwt";
 import { UsuarioUseCases } from "./usuario.useCases";
-import { RegisterUsuarioDto, UsuarioDto } from "src/core/shared/dtos";
+import { RegisterUsuarioDto } from "src/core/shared/dtos";
 @Injectable()
 export class AuthUseCases{
     constructor(private readonly authService:AuthService,
@@ -98,7 +98,7 @@ export class AuthUseCases{
 
             await this.usuarioUseCases.bloquearUsuario(id, true);
 
-            const usuario = Usuario.updatePassword(password,usuarioModificacion)
+            const usuario = Usuario.updatePassword(password,usuarioModificacion,false)
             
             return await this.authService.updatePassword(id, {
                 ...usuario,
@@ -110,6 +110,36 @@ export class AuthUseCases{
         }
         finally{
             await this.usuarioUseCases.bloquearUsuario(id, false);
+        }
+
+        
+        
+          
+    }
+
+    async checkStatusAuth(usuario:string){
+        
+        
+        try {
+            
+            const usuarioEncontrado = await this.usuarioUseCases.getUsuarioById(usuario);
+            
+           
+            if(usuarioEncontrado['error']){
+                return {
+                    error:400,
+                    message:usuarioEncontrado['message']
+                }
+            }
+            
+        
+            return {
+                ...usuarioEncontrado,
+                token: this.gwtJwtToken({_id:usuario})
+                };
+
+        } catch (error) {
+            this.handleExceptions(error);
         }
 
         

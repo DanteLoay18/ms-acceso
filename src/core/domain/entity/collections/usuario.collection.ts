@@ -30,10 +30,10 @@ export class Usuario extends Base{
         return usuario;
     }
 
-    static updatePassword(password:string, usuarioModificacion:string){
+    static updatePassword(password:string, usuarioModificacion:string, isDefaultPassword:boolean){
       const usuario = new Usuario();
       usuario.password=password;
-      usuario.isDefaultPassword=false;
+      usuario.isDefaultPassword=isDefaultPassword;
       usuario.fechaModificacion=new Date();
       usuario.usuarioModificacion=usuarioModificacion;
       return usuario;

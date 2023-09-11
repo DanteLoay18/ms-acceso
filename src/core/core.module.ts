@@ -5,7 +5,7 @@ import { PersistenceModule } from 'src/infraestructure/persistence/persistence.m
 
 import { JwtService } from '@nestjs/jwt';
 import { AuthUseCases, MenuUseCases, UsuarioUseCases } from './application/services';
-import { LoginUsuarioCommand, LoginUsuarioHandler, RegisterUsuarioCommand, RegisterUsuarioHandler, UpdateUsuarioPasswordCommand, UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write';
+import { CheckStatusUsuarioCommand, CheckStatusUsuarioHandler, LoginUsuarioCommand, LoginUsuarioHandler, RegisterUsuarioCommand, RegisterUsuarioHandler, UpdateUsuarioPasswordCommand, UpdateUsuarioPasswordHandler } from './application/feautures/Auth/write';
 import { UsuarioByIdQuery, UsuarioByIdQueryHandler, UsuariosAllQuery, UsuariosAllQueryHandler } from './application/feautures/Usuario/read';
 import { DeleteUsuarioCommand, DeleteUsuarioHandler, ResetPasswordUsuarioCommand, ResetPasswordUsuarioHandler, UpdateUsuarioCommand, UpdateUsuarioHandler } from './application/feautures/Usuario/write';
 import { AuthService, MenuService, UsuarioService } from './domain/services';
@@ -44,7 +44,9 @@ const USER_PROVIDERS=[
     DeleteUsuarioCommand,
     DeleteUsuarioHandler,
     ResetPasswordUsuarioCommand,
-    ResetPasswordUsuarioHandler
+    ResetPasswordUsuarioHandler,
+    CheckStatusUsuarioCommand,
+    CheckStatusUsuarioHandler
 ]
 
 const OPCION_PROVIDERS=[

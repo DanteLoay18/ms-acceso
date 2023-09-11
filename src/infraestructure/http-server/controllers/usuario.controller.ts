@@ -1,4 +1,4 @@
-import { Controller, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { UsuariosAllQuery } from "src/core/application/feautures/Usuario/read/usuariosAll.query";
 import { UsuarioByIdQuery } from "src/core/application/feautures/Usuario/read/usuarioById.query";

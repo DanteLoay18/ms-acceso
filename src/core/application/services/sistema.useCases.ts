@@ -39,7 +39,7 @@ export class SistemaUseCases{
             
             const sistemaByNombreEncontrado= await this.findOneByTerm(createSistemaDto.nombre,"");
                 
-            if(sistemaByNombreEncontrado !== null && sistemaByNombreEncontrado['error'])
+            if(sistemaByNombreEncontrado?.['error'])
             return {
                 error: sistemaByNombreEncontrado['error'],
                 message: sistemaByNombreEncontrado['message']
@@ -77,7 +77,7 @@ export class SistemaUseCases{
             if(updateSistemaDto.nombre){
                 const sistemaByNombreEncontrado= await this.findOneByTerm(updateSistemaDto.nombre,id);
                 
-                if(sistemaByNombreEncontrado !== null && sistemaByNombreEncontrado['error'])
+                if(sistemaByNombreEncontrado?.['error'])
                 return {
                     error: sistemaByNombreEncontrado['error'],
                     message: sistemaByNombreEncontrado['message']

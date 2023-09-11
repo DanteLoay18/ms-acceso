@@ -38,7 +38,7 @@ export class OpcionUseCases{
             
             const opcionByNombreEncontrado= await this.findOneByTerm(createOpcionDto.nombre,"");
                 
-            if(opcionByNombreEncontrado !== null && opcionByNombreEncontrado['error'])
+            if(opcionByNombreEncontrado?.['error'])
             return {
                 error: opcionByNombreEncontrado['error'],
                 message: opcionByNombreEncontrado['message']
@@ -47,7 +47,7 @@ export class OpcionUseCases{
 
             const opcionByIconoEncontrado= await this.findOneByTerm(createOpcionDto.icono,"");
 
-                if(opcionByIconoEncontrado !== null && opcionByIconoEncontrado['error'])
+                if(opcionByIconoEncontrado?.['error'])
                 return {
                     error: opcionByIconoEncontrado['error'],
                     message: opcionByIconoEncontrado['message']
@@ -86,7 +86,7 @@ export class OpcionUseCases{
             if(updateOpcionDto.nombre){
                 const opcionByNombreEncontrado= await this.findOneByTerm(updateOpcionDto.nombre,id);
                 
-                if(opcionByNombreEncontrado !== null && opcionByNombreEncontrado['error'])
+                if(opcionByNombreEncontrado?.['error'])
                 return {
                     error: opcionByNombreEncontrado['error'],
                     message: opcionByNombreEncontrado['message']
@@ -97,7 +97,7 @@ export class OpcionUseCases{
             if(updateOpcionDto.icono){
                 const opcionByIconoEncontrado= await this.findOneByTerm(updateOpcionDto.icono,id);
 
-                if(opcionByIconoEncontrado !== null && opcionByIconoEncontrado['error'])
+                if(opcionByIconoEncontrado?.['error'])
                 return {
                     error: opcionByIconoEncontrado['error'],
                     message: opcionByIconoEncontrado['message']

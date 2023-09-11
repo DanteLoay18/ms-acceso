@@ -46,7 +46,7 @@ export class PerfilUseCases{
             
           const perfilByTipoEncontrado= await this.findOneByTerm(createPerfilDto.tipo,"");
                 
-          if(perfilByTipoEncontrado && perfilByTipoEncontrado['error'])
+          if(perfilByTipoEncontrado?.['error'])
           return {
               error: perfilByTipoEncontrado['error'],
               message: perfilByTipoEncontrado['message']
@@ -83,7 +83,7 @@ export class PerfilUseCases{
 
           if(updatePerfilDto.tipo){
             const perfilByTipoEncontrado= await this.findOneByTerm(updatePerfilDto.tipo,id);
-            if(perfilByTipoEncontrado && perfilByTipoEncontrado['error'])
+            if(perfilByTipoEncontrado?.['error'])
             return {
                 error: perfilByTipoEncontrado['error'],
                 message: perfilByTipoEncontrado['message']

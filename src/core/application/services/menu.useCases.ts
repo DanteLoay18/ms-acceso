@@ -40,7 +40,7 @@ export class MenuUseCases{
             
             const menuByNombreEncontrado= await this.findOneByTerm(createMenuDto.nombre,"");
                 
-            if( menuByNombreEncontrado && menuByNombreEncontrado['error'] )
+            if(menuByNombreEncontrado?.['error'] )
             return {
                 error: menuByNombreEncontrado['error'],
                 message: menuByNombreEncontrado['message']
@@ -78,7 +78,7 @@ export class MenuUseCases{
             
             if(updateMenuDto.nombre){
                 const menuByNombreEncontrado= await this.findOneByTerm(updateMenuDto.nombre,id);
-                if(menuByNombreEncontrado && menuByNombreEncontrado['error'])
+                if(menuByNombreEncontrado?.['error'])
                 return {
                     error: menuByNombreEncontrado['error'],
                     message: menuByNombreEncontrado['message']

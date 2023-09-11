@@ -58,7 +58,7 @@ export class UsuarioUseCases{
                 const emailEncontrado= await this.findOneByTerm(updateUsarioDto.email,id);
                 
 
-                if(emailEncontrado !== null && emailEncontrado['error'])
+                if(emailEncontrado?.['error'])
                 return {
                     error: emailEncontrado['error'],
                     message: emailEncontrado['message']
@@ -133,7 +133,7 @@ export class UsuarioUseCases{
 
             await this.bloquearUsuario(id, true);
 
-            const usuario = Usuario.updatePassword(usuarioEncontrado['defaultPassword'],usuarioModificacion)
+            const usuario = Usuario.updatePassword(usuarioEncontrado['defaultPassword'],usuarioModificacion, true)
             
             return await this.usuarioService.resetPassword(id, {
                 ...usuario,
