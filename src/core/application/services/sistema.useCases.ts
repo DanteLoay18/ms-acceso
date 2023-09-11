@@ -90,9 +90,9 @@ export class SistemaUseCases{
             const perfiles=await this.perfilService.findAll();
 
             const perfilesFiltrados = perfiles.filter(perfil => {
-                return perfil.sistemas.some(sistema => sistema.id === id);
+                return perfil?.sistemas.some(sistema => sistema?.id === id);
               });
-            perfilesFiltrados.forEach(async (perfil) => {
+            const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                 const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                 perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -109,9 +109,10 @@ export class SistemaUseCases{
                         }
                     }
                 })
+                
                 await this.perfilService.updatePerfil(perfil._id,perfilEntity)
             })
-            
+            await Promise.all(actualizarPerfilPromesas);
             return await this.sistemaService.updateSistema(id, sistema);
 
         } catch (error) {
@@ -135,10 +136,10 @@ export class SistemaUseCases{
             const perfiles=await this.perfilService.findAll();
 
             const perfilesFiltrados = perfiles.filter(perfil => {
-                return perfil.sistemas.some(sistema => sistema.id === id);
+                return perfil?.sistemas.some(sistema => sistema?.id === id);
               });
 
-            perfilesFiltrados.forEach(async (perfil) => {
+            const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                 const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                 perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -149,9 +150,10 @@ export class SistemaUseCases{
                         }
                     }
                 })
+                
                 await this.perfilService.updatePerfil(perfil._id,perfilEntity)
             })
-
+            await Promise.all(actualizarPerfilPromesas);
             return await this.sistemaService.deleteSistema(id,sistema);
 
         } catch (error) {

@@ -165,14 +165,14 @@ export class MenuUseCases{
                 const perfiles=await this.perfilService.findAll();
             
                 const perfilesFiltrados = perfiles.filter(perfil => {
-                    return perfil.sistemas.some(sistema => {
-                    return sistema.menus.some(menu => {
-                        return menu.id === id && sistema.esEliminado === false;
+                    return perfil?.sistemas.some(sistema => {
+                    return sistema?.menus.some(menu => {
+                        return menu?.id === id && sistema?.esEliminado === false;
                     });
                     });
                 });
                 
-                perfilesFiltrados.forEach(async (perfil) => {
+                const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                     const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                     perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -195,21 +195,23 @@ export class MenuUseCases{
                     })
                     await this.perfilService.updatePerfil(perfil._id,perfilEntity)
                 })
+                await Promise.all(actualizarPerfilPromesas);
             }else{
 
                 const perfiles=await this.perfilService.findAll();
-            
+                
                 const perfilesFiltrados = perfiles.filter(perfil => {
-                    return perfil.sistemas.some(sistema => {
-                        return sistema.menus.some(menu => {
-                        return menu.submenus.some(submenu => {
-                            return submenu.id === id && menu.esEliminado === false;
+                    return perfil?.sistemas.some(sistema => {
+                        return sistema?.menus.some(menu => {
+                        return menu?.submenus.some(submenu => {
+                            return submenu?.id === id && menu?.esEliminado === false;
                         });
                         });
                     });
                 });
                 
-                perfilesFiltrados.forEach(async (perfil) => {
+                
+                const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                     const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                     perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -238,6 +240,7 @@ export class MenuUseCases{
                     })
                     await this.perfilService.updatePerfil(perfil._id,perfilEntity)
                 })
+                await Promise.all(actualizarPerfilPromesas);
             }
             
 
@@ -266,14 +269,14 @@ export class MenuUseCases{
                 const perfiles=await this.perfilService.findAll();
             
                 const perfilesFiltrados = perfiles.filter(perfil => {
-                    return perfil.sistemas.some(sistema => {
-                    return sistema.menus.some(menu => {
-                        return menu.id === id && sistema.esEliminado === false;
+                    return perfil?.sistemas.some(sistema => {
+                    return sistema?.menus.some(menu => {
+                        return menu?.id === id && sistema?.esEliminado === false;
                     });
                     });
                 });
                 
-                perfilesFiltrados.forEach(async (perfil) => {
+                const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                     const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                     perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -293,21 +296,22 @@ export class MenuUseCases{
                     })
                     await this.perfilService.updatePerfil(perfil._id,perfilEntity)
                 })
+                await Promise.all(actualizarPerfilPromesas);
             }else{
 
                 const perfiles=await this.perfilService.findAll();
             
                 const perfilesFiltrados = perfiles.filter(perfil => {
-                    return perfil.sistemas.some(sistema => {
-                        return sistema.menus.some(menu => {
-                        return menu.submenus.some(submenu => {
-                            return submenu.id === id && menu.esEliminado === false;
+                    return perfil?.sistemas.some(sistema => {
+                        return sistema?.menus.some(menu => {
+                        return menu?.submenus.some(submenu => {
+                            return submenu?.id === id && menu?.esEliminado === false;
                         });
                         });
                     });
                 });
                 
-                perfilesFiltrados.forEach(async (perfil) => {
+                const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                     const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                     perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -333,6 +337,7 @@ export class MenuUseCases{
                     })
                     await this.perfilService.updatePerfil(perfil._id,perfilEntity)
                 })
+                await Promise.all(actualizarPerfilPromesas);
             }
 
             return await this.menuService.deleteMenu(id,menu);

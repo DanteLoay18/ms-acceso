@@ -118,14 +118,14 @@ export class OpcionUseCases{
                     return sistema?.menus.some(menu => {
                     return menu?.submenus.some(submenu => {
                         return submenu?.opciones.some(opcion=> {
-                            return opcion.id === id && opcion.esEliminado ===false;
+                            return opcion?.id === id && opcion?.esEliminado ===false;
                         });
                     });
                     });
                 });
             });
             
-            perfilesFiltrados.forEach(async (perfil) => {
+            const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                 const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                 perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -161,7 +161,7 @@ export class OpcionUseCases{
                 })
                 await this.perfilService.updatePerfil(perfil._id,perfilEntity)
             })
-            
+            await Promise.all(actualizarPerfilPromesas);
 
             return await this.opcionService.updateOpcion(id, opcion);
 
@@ -190,14 +190,14 @@ export class OpcionUseCases{
                     return sistema?.menus.some(menu => {
                     return menu?.submenus.some(submenu => {
                         return submenu?.opciones.some(opcion=> {
-                            return opcion.id === id && opcion.esEliminado ===false;
+                            return opcion?.id === id && opcion?.esEliminado ===false;
                         });
                     });
                     });
                 });
             });
             
-            perfilesFiltrados.forEach(async (perfil) => {
+            const actualizarPerfilPromesas =perfilesFiltrados.map(async (perfil) => {
                 const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
 
                 perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
@@ -228,7 +228,7 @@ export class OpcionUseCases{
                 })
                 await this.perfilService.updatePerfil(perfil._id,perfilEntity)
             })
-
+            await Promise.all(actualizarPerfilPromesas);
             return await this.opcionService.deleteOpcion(id, opcion);
 
         } catch (error) {

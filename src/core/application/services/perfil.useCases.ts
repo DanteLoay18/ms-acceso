@@ -187,8 +187,7 @@ export class PerfilUseCases{
                 }
                 
 
-                const sistemaDto= Perfil.createSistemaDto(id,sistemaEncontrado, menusDto)
-                  
+                const sistemaDto= Perfil.createSistemaDto(id,sistemaEncontrado, menusDto);  
                 sistemasDto.push(sistemaDto);
               
                 
