@@ -17,21 +17,11 @@ export class MongoPerfilRepository implements PerfilRepository {
     }
 
     findOneById(id: string): Promise<Perfil> {
-        return this.perfilRepository.findById(id).populate([
-                                                            {path:'sistemas.sistema',select: 'nombre url imagen puerto esEliminado '},
-                                                            {path:'sistemas.menus.menu',select: 'nombre sistema opciones esEliminado'},
-                                                            {path:'sistemas.menus.submenus.submenu',select: 'nombre sistema opciones esEliminado'},
-                                                            {path:'sistemas.menus.submenus.opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
-                                                        ]) ;
+        return this.perfilRepository.findById(id);
     }
 
     findAll(): Promise<Perfil[]> {
-        return this.perfilRepository.find({esEliminado:false}).populate([
-                                                                {path:'sistemas.sistema',select: 'nombre url imagen puerto esEliminado'},
-                                                                {path:'sistemas.menus.menu',select: 'nombre sistema opciones esEliminado'},
-                                                                {path:'sistemas.menus.submenus.submenu',select: 'nombre sistema opciones esEliminado'},
-                                                                {path:'sistemas.menus.submenus.opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
-                                                                ]) ;
+        return this.perfilRepository.find({esEliminado:false});
     }
     updatePerfil(id: string, perfil: Perfil): Promise<Perfil> {
         return this.perfilRepository.findByIdAndUpdate(id, perfil, {new:true})

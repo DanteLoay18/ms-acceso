@@ -10,28 +10,7 @@ export class Perfil extends Base {
   @Prop({ required: true})
   tipo: string;
 
-  @Prop({
-    type: [
-      {
-        sistema: { type: 'UUID', ref: 'Sistema' },
-        menus: [
-          {
-            menu: { type: 'UUID', ref: 'Menu' },
-            submenus: [
-              {
-                submenu: { type: 'UUID', ref: 'Menu' },
-                opciones: [
-                  
-                  {type: 'UUID', ref: "Opcion"}
-                  
-                ]
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  })
+  @Prop()
   sistemas: SistemasDto[];
 
  

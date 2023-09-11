@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
-import { Sistema } from "src/core/domain/entity/collections";
+import { Perfil, Sistema } from "src/core/domain/entity/collections";
 import { SistemaService } from "src/core/domain/services/sistema.service";
 import { CreateSistemaDto, UpdateSistemaDto } from "src/core/shared/dtos";
+import { PerfilService } from '../../domain/services/perfil.service';
 
 
 
 @Injectable()
 export class SistemaUseCases{
-    constructor(private readonly sistemaService:SistemaService){}
+    constructor(private readonly sistemaService:SistemaService, private readonly perfilService:PerfilService){}
 
     async getSistemaById(id:string){
         try{
@@ -45,7 +46,7 @@ export class SistemaUseCases{
                 message: sistemaByNombreEncontrado['message']
                 }
 
-            const sistema = Sistema.createSistema(createSistemaDto.nombre, createSistemaDto.url, createSistemaDto.imagen, createSistemaDto.puerto, usuarioDto);
+            const sistema = Sistema.createSistema(createSistemaDto.nombre, createSistemaDto.url, createSistemaDto.imagen, createSistemaDto.puerto,createSistemaDto.icono, usuarioDto);
            
             return this.sistemaService.createSistema(sistema);
             
@@ -84,7 +85,32 @@ export class SistemaUseCases{
                     }
             }
 
-            const sistema = Sistema.updateSistema(updateSistemaDto.nombre,updateSistemaDto.url,updateSistemaDto.imagen,updateSistemaDto.puerto,usuarioModificacion)
+            const sistema = Sistema.updateSistema(updateSistemaDto.nombre,updateSistemaDto.url,updateSistemaDto.imagen,updateSistemaDto.puerto,updateSistemaDto.icono,usuarioModificacion)
+            
+            const perfiles=await this.perfilService.findAll();
+
+            const perfilesFiltrados = perfiles.filter(perfil => {
+                return perfil.sistemas.some(sistema => sistema.id === id);
+              });
+            perfilesFiltrados.forEach(async (perfil) => {
+                const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                    if(sistemaEncontrado.id === id){
+                        return {
+                            id:sistemaEncontrado.id,
+                            imagen:sistema.imagen || sistemaEncontrado.imagen  ,
+                            nombre:sistema.nombre || sistemaEncontrado.nombre,
+                            url: sistema.url || sistemaEncontrado.url,
+                            puerto: sistema.puerto || sistemaEncontrado.puerto,
+                            icono: sistema.icono || sistemaEncontrado.icono,
+                            esEliminado:sistemaEncontrado.esEliminado,
+                            menus:sistemaEncontrado.menus
+                        }
+                    }
+                })
+                await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+            })
             
             return await this.sistemaService.updateSistema(id, sistema);
 
@@ -105,6 +131,27 @@ export class SistemaUseCases{
             return {error: SistemaEncontrado['error'], message: SistemaEncontrado['message']}
 
             const sistema= Sistema.deleteSistema(usuarioModificacion)
+
+            const perfiles=await this.perfilService.findAll();
+
+            const perfilesFiltrados = perfiles.filter(perfil => {
+                return perfil.sistemas.some(sistema => sistema.id === id);
+              });
+
+            perfilesFiltrados.forEach(async (perfil) => {
+                const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                    if(sistemaEncontrado.id === id){
+                        return {
+                            ...sistemaEncontrado,
+                            esEliminado:true
+                        }
+                    }
+                })
+                await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+            })
+
             return await this.sistemaService.deleteSistema(id,sistema);
 
         } catch (error) {

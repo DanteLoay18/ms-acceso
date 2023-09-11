@@ -5,6 +5,10 @@ import { Perfil } from "src/core/domain/entity/collections";
 import { MenuService, OpcionService, SistemaService } from "src/core/domain/services";
 import {validate} from 'uuid'
 import { error } from "console";
+import { SistemasDto } from "src/core/domain/entity/sistemas.dto";
+import { MenusDto } from "src/core/domain/entity/menus.dto";
+import { Submenus } from "src/core/domain/entity/submenu.dto";
+import { Opciones } from "src/core/domain/entity/opciones";
 
 @Injectable()
 export class PerfilUseCases{
@@ -69,6 +73,8 @@ export class PerfilUseCases{
           
           const perfilEncontrado = await this.getPerfilById(id);
           
+          
+
           if(perfilEncontrado['error'])
           return {error: perfilEncontrado['error'], message: perfilEncontrado['message']}
 
@@ -90,91 +96,118 @@ export class PerfilUseCases{
             }
           }
 
+          let sistemasDto:SistemasDto[]=[];
+
           if(updatePerfilDto.sistemas?.length > 0){
             
-            const sistemasPromises = updatePerfilDto.sistemas.map(async ({ sistema, menus }) => {
-                const sistemaEncontrado=await this.validarSistema(sistema);
+            const sistemasPromises = updatePerfilDto.sistemas.map(async ({ id, menus }) => {
+                const sistemaEncontrado=await this.validarSistema(id);
                 
-                if(sistemaEncontrado?.error){
+                if(sistemaEncontrado?.['error']){
                   return sistemaEncontrado;
                 }
+                let menusDto:MenusDto[]=[];
+
                 if (menus?.length > 0) {
-                  const menusPromises = menus.map(async ({ menu, submenus }) => {
-                    const menuEncontrado=await this.validarMenu(menu);
-                    if(menuEncontrado?.error){
+                  const menusPromises = menus.map(async ({ id, submenus }) => {
+                    const menuEncontrado=await this.validarMenu(id);
+                    if(menuEncontrado?.['error']){
                       return menuEncontrado;
                     }
+
+                    let submenusDto:Submenus[]=[];
+
                     if(submenus?.length > 0){
-                      const submenusPromise = submenus.map( async({submenu, opciones})=>{
-                        const submenuEncontrado=await this.validarSubMenu(submenu);
+                      const submenusPromise = submenus.map( async({id, opciones})=>{
+                        const submenuEncontrado=await this.validarSubMenu(id);
                         
-                        if(submenuEncontrado?.error){
+                        if(submenuEncontrado?.['error']){
                           return submenuEncontrado;
                         }
+
+                        let opcionesDto:Opciones[]=[];
+
                         if (opciones?.length > 0) {
-                          const opcionesPromises = opciones.map(async (opcion) => {
-                            const opcionEncontrada=await this.validarOpcion(opcion);
+                          const opcionesPromises = opciones.map(async ({id}) => {
+                            const opcionEncontrada=await this.validarOpcion(id);
                            
-                            if(opcionEncontrada?.error){
+                            if(opcionEncontrada?.['error']){
                               return opcionEncontrada;
                             }
+
+                            const opcionDto=Perfil.createOpcionDto(id, opcionEncontrada);
+                            opcionesDto.push(opcionDto);
 
                           });
             
                           const opcionesErrores = await Promise.all(opcionesPromises);
                           const errorOpciones=opcionesErrores.map(submenu => {
-                                                          if(submenu?.error){
+                                                          if(submenu?.['error']){
                                                             return submenu;
                                                           }
                                                       });
-                          const errores= errorOpciones.filter(error => error?.message);
+                          const errores= errorOpciones.filter(error => error?.['message']);
                           
                           if(errores.length>0)
                           return errores[0]
                         }
+
+                        const submenuDto= Perfil.createSubmenuDto(id, submenuEncontrado,opcionesDto)
+                        submenusDto.push(submenuDto)
+                        
                       });
                       const submenusErrores = await Promise.all(submenusPromise);
                       const errorSubmenus=submenusErrores.map(submenu => {
-                                                      if(submenu?.error){
+                                                      if(submenu?.['error']){
                                                         return submenu;
                                                       }
                                                   });
-                      const errores= errorSubmenus.filter(error => error?.message);
+                      const errores= errorSubmenus.filter(error => error?.['message']);
                       
                       if(errores.length>0)
                       return errores[0]
                     }
-                    
+
+                    const menuDto= Perfil.createMenuDto(id,menuEncontrado,submenusDto)
+                    menusDto.push(menuDto);
                     
                   });
         
                   
                   const menusErrores = await Promise.all(menusPromises);
                   const errorMenus=menusErrores.map(menu => {
-                                                  if(menu?.error){
+                                                  if(menu?.['error']){
                                                     return menu;
                                                   }
                                               });
-                  const errores= errorMenus.filter(error => error?.message);
+                  const errores= errorMenus.filter(error => error?.['message']);
                   
                   if(errores.length>0)
                   return errores[0]
                 }
+                
+
+                const sistemaDto= Perfil.createSistemaDto(id,sistemaEncontrado, menusDto)
+                  
+                sistemasDto.push(sistemaDto);
+              
+                
               });
               const sistemas = await Promise.all(sistemasPromises);
               const errorSistemas=sistemas.map(sistema => {
-                                               if(sistema?.error){
+                                               if(sistema?.['error']){
                                                 return sistema;
                                               }
                                           });
-              const errores= errorSistemas.filter(error => error?.message);
+              const errores= errorSistemas.filter(error => error?.['message']);
               
               if(errores.length>0)
               return errores[0]
              
           }
 
-          const perfil = Perfil.updatePerfil(updatePerfilDto.tipo,updatePerfilDto.sistemas,usuarioModificacion)
+
+          const perfil = Perfil.updatePerfil(updatePerfilDto.tipo,sistemasDto,usuarioModificacion)
         
           return await this.perfilService.updatePerfil(id, perfil);
 
@@ -248,6 +281,7 @@ export class PerfilUseCases{
             message:`Sistema con el Id ${sistemaId} no encontrado`
           };
         }
+        return sistemaEncontrado;
       }
     
       async validarMenu(menuId: string) {
@@ -266,6 +300,8 @@ export class PerfilUseCases{
             message:`Menu con el Id ${menuId} no encontrado`
           };
         }
+
+        return menuEncontrado;
       }
       async validarSubMenu(menuId: string) {
         if (!validate(menuId)) {
@@ -283,6 +319,8 @@ export class PerfilUseCases{
             message:`Submenu con el Id ${menuId} no encontrado`
           };
         }
+
+        return submenuEncontrado;
       }
       async validarOpcion(opcionId: string) {
         if (!validate(opcionId)) {
@@ -299,5 +337,7 @@ export class PerfilUseCases{
             message:`opcion con el Id ${opcionId} no encontrado`
           };
         }
+
+        return opcionEncontrado;
       }
 }

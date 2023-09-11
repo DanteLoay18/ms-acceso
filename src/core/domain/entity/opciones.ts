@@ -1,13 +1,13 @@
-import { Opciones } from "./opciones";
-
-export class Submenus{
+export class Opciones{
     id:string;
     
     nombre: string;
 
-    esSubmenu:boolean;
+    icono:string;
+    
+    tieneOpciones:boolean;
+ 
+    esEmergente:boolean;
 
     esEliminado:boolean; //Este es eliminado es para indicar si lo borraron desde el perfil
-
-    opciones:Opciones[]
 }

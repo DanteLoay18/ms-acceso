@@ -168,9 +168,10 @@ const providers = [
         },
         {
             provide: OpcionUseCases,
-            useFactory: (opcionService: OpcionService) => new OpcionUseCases(opcionService),
+            useFactory: (opcionService: OpcionService, perfilService:PerfilService) => new OpcionUseCases(opcionService,perfilService),
             inject: [
-              OpcionService
+              OpcionService,
+              PerfilService
             ] 
         },
         {
@@ -184,9 +185,10 @@ const providers = [
         },
         {
             provide: SistemaUseCases,
-            useFactory: (sistemaService: SistemaService) => new SistemaUseCases(sistemaService),
+            useFactory: (sistemaService: SistemaService, perfilService:PerfilService) => new SistemaUseCases(sistemaService,perfilService),
             inject: [
-                SistemaService
+                SistemaService,
+                PerfilService
             ] 
         },
         {
@@ -200,11 +202,12 @@ const providers = [
         },
         {
             provide: MenuUseCases,
-            useFactory: (menuService: MenuService, sistemaService:SistemaService, opcionService:OpcionService) => new MenuUseCases(menuService,sistemaService,opcionService),
+            useFactory: (menuService: MenuService, sistemaService:SistemaService, opcionService:OpcionService, perfilService:PerfilService) => new MenuUseCases(menuService,sistemaService,opcionService, perfilService),
             inject: [
                 MenuService,
                 SistemaService,
-                OpcionService
+                OpcionService,
+                PerfilService
             ] 
         },
         {

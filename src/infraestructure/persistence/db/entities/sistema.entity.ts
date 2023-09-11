@@ -18,7 +18,8 @@ export class Sistema extends Base{
     @Prop({ required: true })
     puerto: string;
    
-    
+    @Prop({ required: true })
+    icono: string;
 }
 
 export const SistemaSchema= SchemaFactory.createForClass(Sistema)

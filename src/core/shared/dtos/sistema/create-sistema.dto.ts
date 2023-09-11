@@ -8,6 +8,8 @@ export class CreateSistemaDto{
 
     imagen: string;
 
+    icono:string;
+    
     puerto: string;
     
 }

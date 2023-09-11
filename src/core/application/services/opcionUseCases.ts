@@ -2,11 +2,15 @@ import { BadRequestException, Injectable,  } from "@nestjs/common";
 import { OpcionService } from "src/core/domain/services/opcion.service";
 import { Opcion } from "src/core/domain/entity/collections/opcion.collection";
 import { CreateOpcionDto, UpdateOpcionDto } from "src/core/shared/dtos";
+import { Perfil } from "src/core/domain/entity/collections";
+import { PerfilService } from "src/core/domain/services/perfil.service";
 
 
 @Injectable()
 export class OpcionUseCases{
-    constructor(private readonly opcionService:OpcionService){}
+    constructor(
+               private readonly opcionService:OpcionService,
+               private readonly perfilService:PerfilService){}
 
     async getOpcionById(id:string){
         try{
@@ -106,6 +110,59 @@ export class OpcionUseCases{
         
             const opcion = Opcion.updateOpcion(updateOpcionDto.nombre,updateOpcionDto.icono,updateOpcionDto.tieneOpciones,updateOpcionDto.esEmergente,usuarioModificacion)
             
+            
+            const perfiles=await this.perfilService.findAll();
+        
+            const perfilesFiltrados = perfiles.filter(perfil => {
+                return perfil?.sistemas.some(sistema => {
+                    return sistema?.menus.some(menu => {
+                    return menu?.submenus.some(submenu => {
+                        return submenu?.opciones.some(opcion=> {
+                            return opcion.id === id && opcion.esEliminado ===false;
+                        });
+                    });
+                    });
+                });
+            });
+            
+            perfilesFiltrados.forEach(async (perfil) => {
+                const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                    const menus= sistemaEncontrado.menus.map(menuEncontrado => {
+                                    const submenus= menuEncontrado.submenus.map(submenuEncontrado=> {
+                                            const opciones = submenuEncontrado.opciones.map(opcionEncontrado=>{
+                                                if(opcionEncontrado.id===id){
+                                                  
+                                                    return {
+                                                        id:opcionEncontrado.id,
+                                                        nombre:opcion.nombre || opcionEncontrado.nombre,
+                                                        icono: opcion.icono || opcionEncontrado.icono,
+                                                        tieneOpciones:opcion.tieneOpciones || opcionEncontrado.tieneOpciones,
+                                                        esEmergente:opcion.esEmergente || opcionEncontrado.esEmergente,
+                                                        esEliminado:opcionEncontrado.esEliminado
+                                                    }
+                                                }
+                                            })
+                                            return {
+                                                ...submenuEncontrado,
+                                                opciones
+                                            }
+                                    })
+                                    return {
+                                        ...menuEncontrado,
+                                        submenus
+                                    }
+                                })
+                    return {
+                        ...sistemaEncontrado,
+                        menus
+                    }
+                })
+                await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+            })
+            
+
             return await this.opcionService.updateOpcion(id, opcion);
 
         } catch (error) {
@@ -124,7 +181,54 @@ export class OpcionUseCases{
             if(opcionEncontrado['error'])
             return {error: opcionEncontrado['error'], message: opcionEncontrado['message']}
 
-            const opcion = Opcion.deleteOpcion(usuarioModificacion)
+            const opcion = Opcion.deleteOpcion(usuarioModificacion);
+
+            const perfiles=await this.perfilService.findAll();
+        
+            const perfilesFiltrados = perfiles.filter(perfil => {
+                return perfil?.sistemas.some(sistema => {
+                    return sistema?.menus.some(menu => {
+                    return menu?.submenus.some(submenu => {
+                        return submenu?.opciones.some(opcion=> {
+                            return opcion.id === id && opcion.esEliminado ===false;
+                        });
+                    });
+                    });
+                });
+            });
+            
+            perfilesFiltrados.forEach(async (perfil) => {
+                const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                    const menus= sistemaEncontrado.menus.map(menuEncontrado => {
+                                    const submenus= menuEncontrado.submenus.map(submenuEncontrado=> {
+                                            const opciones = submenuEncontrado.opciones.map(opcionEncontrado=>{
+                                                if(opcionEncontrado.id===id){
+                                                    return {
+                                                       ...opcionEncontrado,
+                                                        esEliminado:true
+                                                    }
+                                                }
+                                            })
+                                            return {
+                                                ...submenuEncontrado,
+                                                opciones
+                                            }
+                                    })
+                                    return {
+                                        ...menuEncontrado,
+                                        submenus
+                                    }
+                                })
+                    return {
+                        ...sistemaEncontrado,
+                        menus
+                    }
+                })
+                await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+            })
+
             return await this.opcionService.deleteOpcion(id, opcion);
 
         } catch (error) {

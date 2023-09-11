@@ -9,6 +9,8 @@ export class CreateSistemaRequest {
 
     puerto: string;
 
+    icono:string;
+
     usuario:string;
 
     

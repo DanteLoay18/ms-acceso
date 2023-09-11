@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
-import { Menu } from "src/core/domain/entity/collections";
+import { Menu, Perfil } from "src/core/domain/entity/collections";
 import { MenuService, OpcionService, SistemaService } from "src/core/domain/services";
+import { PerfilService } from "src/core/domain/services/perfil.service";
 import { CreateMenuDto, UpdateMenuDto } from "src/core/shared/dtos";
 
 @Injectable()
@@ -8,7 +9,9 @@ export class MenuUseCases{
     constructor(
                 private readonly menuService:MenuService,
                 private readonly sistemaService:SistemaService,
-                private readonly opcionService:OpcionService){}
+                private readonly opcionService:OpcionService,
+                private readonly perfilService:PerfilService,
+                ){}
 
     async getMenuById(id:string){
         try{
@@ -155,8 +158,89 @@ export class MenuUseCases{
                 
               }  
 
+            
             const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion)
             
+            if(!menuEncontrado?.['esSubmenu']){
+                const perfiles=await this.perfilService.findAll();
+            
+                const perfilesFiltrados = perfiles.filter(perfil => {
+                    return perfil.sistemas.some(sistema => {
+                    return sistema.menus.some(menu => {
+                        return menu.id === id && sistema.esEliminado === false;
+                    });
+                    });
+                });
+                
+                perfilesFiltrados.forEach(async (perfil) => {
+                    const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                    perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                        const menus= sistemaEncontrado.menus.map(menuEncontrado => {
+                                        if(menuEncontrado.id===id){
+                                            return {
+                                                id:menuEncontrado.id,
+                                                nombre:menu.nombre || menuEncontrado.nombre,
+                                                esSubmenu: menu.esSubmenu || menuEncontrado.esSubmenu,
+                                                esEliminado:menuEncontrado.esEliminado,
+                                                submenus:menuEncontrado.submenus
+                                            }
+                                        }
+                                    })
+
+                        return {
+                            ...sistemaEncontrado,
+                            menus
+                        }
+                    })
+                    await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+                })
+            }else{
+
+                const perfiles=await this.perfilService.findAll();
+            
+                const perfilesFiltrados = perfiles.filter(perfil => {
+                    return perfil.sistemas.some(sistema => {
+                        return sistema.menus.some(menu => {
+                        return menu.submenus.some(submenu => {
+                            return submenu.id === id && menu.esEliminado === false;
+                        });
+                        });
+                    });
+                });
+                
+                perfilesFiltrados.forEach(async (perfil) => {
+                    const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                    perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                        const menus= sistemaEncontrado.menus.map(menuEncontrado => {
+                                        const submenus= menuEncontrado.submenus.map(submenuEncontrado=> {
+                                            if(submenuEncontrado.id===id){
+                                                return {
+                                                    id:submenuEncontrado.id,
+                                                    nombre:menu.nombre || submenuEncontrado.nombre,
+                                                    esSubmenu: menu.esSubmenu || submenuEncontrado.esSubmenu,
+                                                    esEliminado:submenuEncontrado.esEliminado,
+                                                    opciones:submenuEncontrado.opciones
+                                                }
+                                            }
+                                        })
+                                        return {
+                                            ...menuEncontrado,
+                                            submenus
+                                        }
+                                    })
+
+                        return {
+                            ...sistemaEncontrado,
+                            menus
+                        }
+                    })
+                    await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+                })
+            }
+            
+
             return await this.menuService.updateMenu(id, menu);
 
         } catch (error) {
@@ -170,13 +254,86 @@ export class MenuUseCases{
 
     async deleteMenu(id:string,usuarioModificacion:string){
         try {
-            const MenuEncontrado = await this.getMenuById(id);
+            const menuEncontrado = await this.getMenuById(id);
             
-            if(MenuEncontrado['error'])
-            return {error: MenuEncontrado['error'], message: MenuEncontrado['message']}
+            if(menuEncontrado['error'])
+            return {error: menuEncontrado['error'], message: menuEncontrado['message']}
             
 
             const menu= Menu.deleteMenu(usuarioModificacion)
+
+            if(!menuEncontrado?.['esSubmenu']){
+                const perfiles=await this.perfilService.findAll();
+            
+                const perfilesFiltrados = perfiles.filter(perfil => {
+                    return perfil.sistemas.some(sistema => {
+                    return sistema.menus.some(menu => {
+                        return menu.id === id && sistema.esEliminado === false;
+                    });
+                    });
+                });
+                
+                perfilesFiltrados.forEach(async (perfil) => {
+                    const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                    perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                        const menus= sistemaEncontrado.menus.map(menuEncontrado => {
+                                        if(menuEncontrado.id===id){
+                                            return {
+                                                ...menuEncontrado,
+                                                esEliminado:true
+                                            }
+                                        }
+                                    })
+
+                        return {
+                            ...sistemaEncontrado,
+                            menus
+                        }
+                    })
+                    await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+                })
+            }else{
+
+                const perfiles=await this.perfilService.findAll();
+            
+                const perfilesFiltrados = perfiles.filter(perfil => {
+                    return perfil.sistemas.some(sistema => {
+                        return sistema.menus.some(menu => {
+                        return menu.submenus.some(submenu => {
+                            return submenu.id === id && menu.esEliminado === false;
+                        });
+                        });
+                    });
+                });
+                
+                perfilesFiltrados.forEach(async (perfil) => {
+                    const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
+
+                    perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
+                        const menus= sistemaEncontrado.menus.map(menuEncontrado => {
+                                        const submenus= menuEncontrado.submenus.map(submenuEncontrado=> {
+                                            if(submenuEncontrado.id===id){
+                                                return {
+                                                    ...submenuEncontrado,
+                                                    esEliminado:true
+                                                }
+                                            }
+                                        })
+                                        return {
+                                            ...menuEncontrado,
+                                            submenus
+                                        }
+                                    })
+
+                        return {
+                            ...sistemaEncontrado,
+                            menus
+                        }
+                    })
+                    await this.perfilService.updatePerfil(perfil._id,perfilEntity)
+                })
+            }
 
             return await this.menuService.deleteMenu(id,menu);
 
