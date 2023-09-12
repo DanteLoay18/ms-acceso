@@ -74,7 +74,7 @@ export class AuthUseCases{
       
     }
 
-    async updatePassword(id:string, password:string, usuarioModificacion:string){
+    async updatePassword(id:string, password:string, confirmationPassword:string, usuarioModificacion:string){
         
         
         try {
@@ -95,6 +95,11 @@ export class AuthUseCases{
                     message:`Usuario se encuentra en modificacion`
                   }
                
+            if(password!==confirmationPassword)
+            return {
+                error:400,
+                message:`Las contraseñas no coinciden`
+            }
 
             await this.usuarioUseCases.bloquearUsuario(id, true);
 

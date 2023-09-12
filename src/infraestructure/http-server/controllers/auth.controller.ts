@@ -11,13 +11,12 @@ import {  UpdatePasswordRequest } from "../model";
 import {MessagePattern} from '@nestjs/microservices'
 import { CreateUsuarioRequest } from "../model/usuario/create-usuario.request";
 import { CheckStatusUsuarioCommand } from 'src/core/application/feautures/Auth/write/status/checkStatus.command';
-
+import {stringify} from 'uuid'
 @Controller()
 export class UserController{
 
     constructor(
-        private command: CommandBus,
-        private query: QueryBus
+        private command: CommandBus
     ) {}
     
     
@@ -49,12 +48,11 @@ export class UserController{
                 error,
                 message
             }
-        
-
+ 
             
         delete _doc.password;
-        delete _doc._id;
-
+        _doc._id=stringify(_doc._id);
+        
         return {
             token,
             ..._doc
@@ -76,8 +74,7 @@ export class UserController{
 
         
         delete _doc.password;
-        delete _doc._id;
-
+        _doc._id=stringify(_doc._id);
         return {
             token,
             ..._doc
@@ -85,19 +82,10 @@ export class UserController{
     }
 
     @MessagePattern({cmd: 'update_password'})
-    async updatePassword({id, password, usuario}:UpdatePasswordRequest) {
+    async updatePassword({id, password,confirmationPassword, usuario}:UpdatePasswordRequest) {
 
-        const {nombres, email, apellidos, error, message} = await this.command.execute(new UpdateUsuarioPasswordCommand(id, password, usuario));
+        return await this.command.execute(new UpdateUsuarioPasswordCommand(id, password,confirmationPassword,  usuario));
 
-        if(error)
-        return {
-            error,
-            message
-           }
-       return {
-        nombres, email, apellidos
-       }
-        
         
     }
 }

@@ -27,7 +27,9 @@ export class MongoAuthRepository implements AuthRepository {
      async updatePassword(id: string, usuario: Usuario): Promise<Usuario> {
        
         return  this.authRepository.findByIdAndUpdate(id,usuario, 
-                                                    { new: true });
+                                                    { new: true }).populate([
+                                                        {path:'perfiles.perfil',select: 'tipo sistemas '}
+                                                         ]) ;;
       
       }
     

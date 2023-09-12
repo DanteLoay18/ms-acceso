@@ -10,7 +10,7 @@ export class UpdateUsuarioPasswordHandler implements ICommandHandler<UpdateUsuar
 
     async execute(command: UpdateUsuarioPasswordCommand) {
         
-        return this.authUseCases.updatePassword(command.id, command.password, command.usuarioDto)
+        return this.authUseCases.updatePassword(command.id, command.password,command.confirmationPassword, command.usuarioDto)
     }
 
 }
