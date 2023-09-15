@@ -53,6 +53,8 @@ export class Perfil extends Base{
     menusDto.id=id;
     menusDto.nombre=menu?.['nombre'];
     menusDto.esSubmenu=menu?.['esSubmenu'];
+    menusDto.icono=menu?.['icono'];
+    menusDto.url=menu?.['url'];
     menusDto.esEliminado=false;
     menusDto.submenus=submenusDto;
     return {...menusDto};
