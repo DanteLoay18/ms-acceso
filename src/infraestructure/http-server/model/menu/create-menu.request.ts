@@ -1,5 +1,3 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsBoolean } from "class-validator";
 
 export class CreateMenuRequest {
 
@@ -11,6 +9,8 @@ export class CreateMenuRequest {
     
     usuario:string;
       
+    icono:string;
 
+    url:string;
     
 }

@@ -13,6 +13,12 @@ export class Menu extends Base{
     @Prop({ type:'UUID', ref:'Sistema' })
     sistema: string;
 
+    @Prop()
+    icono:string;
+
+    @Prop()
+    url:string;
+    
     @Prop({ type: [{ type: 'UUID', ref: 'Menu' }] })
     submenus: string[];
 

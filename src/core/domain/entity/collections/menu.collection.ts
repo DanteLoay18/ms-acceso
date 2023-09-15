@@ -6,13 +6,17 @@ export class Menu extends Base{
 
     sistema: string;
 
+    icono:string;
+
+    url:string;
+
     submenus: string[];
 
     opciones: string[];
 
     esSubmenu:boolean;
 
-    static createMenu(nombre: string, esSubmenu:boolean, usuarioCreacion:string){
+    static createMenu(nombre: string, esSubmenu:boolean, usuarioCreacion:string,icono:string, url:string){
         const menu = new Menu();;
         
         menu.nombre=nombre.toUpperCase();
@@ -20,11 +24,13 @@ export class Menu extends Base{
         menu.esEliminado=false;
         menu.esBloqueado=false;
         menu.fechaCreacion= new Date();
+        menu.icono=icono.toUpperCase();
+        menu.url=url.toUpperCase();
         menu.usuarioCreacion= usuarioCreacion;
         return menu;
     }
 
-    static updateMenu(nombre: string, esSubmenu:boolean, sistema:string, submenus:string[], opciones:string[], usuarioCreacion:string){
+    static updateMenu(nombre: string, esSubmenu:boolean, sistema:string, submenus:string[], opciones:string[],icono:string, url:string, usuarioCreacion:string){
         const menu = new Menu();
         
         menu.nombre=nombre?.toUpperCase();
@@ -32,6 +38,8 @@ export class Menu extends Base{
         menu.submenus=submenus;
         menu.opciones=opciones;
         menu.esSubmenu=esSubmenu;
+        menu.icono=icono.toUpperCase();
+        menu.url=url.toUpperCase();
         menu.esEliminado=false;
         menu.esBloqueado=false;
         menu.fechaModificacion=new Date();

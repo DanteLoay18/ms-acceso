@@ -50,7 +50,7 @@ export class MenuUseCases{
                 }
             
 
-            const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu, usuarioDto);
+            const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, createMenuDto.icono, createMenuDto.url, );
            
             return this.menuService.createMenu(menu);
             
@@ -159,7 +159,7 @@ export class MenuUseCases{
               }  
 
             
-            const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion)
+            const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion,updateMenuDto.icono,updateMenuDto.url)
             
             if(!menuEncontrado?.['esSubmenu']){
                 const perfiles=await this.perfilService.findAll();
@@ -181,6 +181,8 @@ export class MenuUseCases{
                                             return {
                                                 id:menuEncontrado.id,
                                                 nombre:menu.nombre || menuEncontrado.nombre,
+                                                icono: menu.icono  || menuEncontrado.icono,
+                                                url : menu.url || menuEncontrado.url,
                                                 esSubmenu: menu.esSubmenu || menuEncontrado.esSubmenu,
                                                 esEliminado:menuEncontrado.esEliminado,
                                                 submenus:menuEncontrado.submenus

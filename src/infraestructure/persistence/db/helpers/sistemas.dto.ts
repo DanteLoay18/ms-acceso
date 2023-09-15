@@ -22,6 +22,10 @@ export interface MenusDto{
     nombre: string;
 
     esSubmenu:boolean;
+
+    icono:string;
+    
+    url:string;
     
     esEliminado:boolean; //Este es eliminado es para indicar si lo borraron desde el perfil
 

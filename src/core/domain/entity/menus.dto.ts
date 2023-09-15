@@ -5,6 +5,10 @@ export class MenusDto{
 
     nombre: string;
 
+    icono:string;
+
+    url:string;
+
     esSubmenu:boolean;
     
     esEliminado:boolean; //Este es eliminado es para indicar si lo borraron desde el perfil

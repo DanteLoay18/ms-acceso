@@ -6,4 +6,7 @@ export class CreateMenuDto{
    
     esSubmenu: boolean;
     
+    icono:string;
+
+    url:string;
 }
