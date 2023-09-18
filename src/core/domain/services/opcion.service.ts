@@ -6,9 +6,6 @@ import { OpcionRepository } from "../ports/outbound";
 export class OpcionService{
     constructor(private readonly opcionRepository:OpcionRepository){}
 
-    findAll(){
-       return this.opcionRepository.findAll();
-    }
 
     findOneById(id:string){
         return this.opcionRepository.findOneById(id);
@@ -22,6 +19,13 @@ export class OpcionService{
         return this.opcionRepository.findByIcono(icono);
     }
 
+     getOpcionesSlice(limit: number, offset: number) {
+        return this.opcionRepository.findBySlice(limit, offset)
+    }
+
+    getOpcionesCount() {
+        return this.opcionRepository.count()
+    }
 
     createOpcion(opcion:Opcion){
         return this.opcionRepository.createOpcion(opcion);

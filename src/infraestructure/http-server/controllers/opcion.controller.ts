@@ -1,10 +1,11 @@
 
-import { Controller, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { OpcionByIdQuery, OpcionesAllQuery } from "src/core/application/feautures/Opcion/read";
 import { CreateOpcionCommand, DeleteOpcionCommand, UpdateOpcionCommand } from "src/core/application/feautures/Opcion/write";
 import { CreateOpcionRequest, UpdateOpcionRequest } from "../model";
 import { MessagePattern } from '@nestjs/microservices';
+import { OpcionesPaginado } from '../model/opcion/opcionesPaginado.request';
 
 @Controller()
 export class OpcionController{
@@ -15,8 +16,8 @@ export class OpcionController{
     ) {}
     
     @MessagePattern({cmd: 'findAll_opciones'})
-    async findAllOpciones() {
-        return await this.query.execute(new OpcionesAllQuery());
+    async findAllOpciones(opcionesPaginado:OpcionesPaginado) {
+        return await this.query.execute(new OpcionesAllQuery(opcionesPaginado.page, opcionesPaginado.pageSize));
         
     }
     

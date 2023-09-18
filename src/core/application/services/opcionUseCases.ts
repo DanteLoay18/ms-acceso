@@ -4,7 +4,12 @@ import { Opcion } from "src/core/domain/entity/collections/opcion.collection";
 import { CreateOpcionDto, UpdateOpcionDto } from "src/core/shared/dtos";
 import { Perfil } from "src/core/domain/entity/collections";
 import { PerfilService } from "src/core/domain/services/perfil.service";
+import { Paginated } from "../utils/Paginated";
 
+export interface GetOpcionRequest {
+    page: number;
+    pageSize: number;   
+}
 
 @Injectable()
 export class OpcionUseCases{
@@ -27,10 +32,19 @@ export class OpcionUseCases{
         
     }
 
-    async getAllOpciones(){
+    async getAllOpciones(getOpcion:GetOpcionRequest){
         
         try{
-            return await this.opcionService.findAll();
+            const offset = getOpcion.page - 1 // define offset for query
+            const opciones = await this.opcionService.getOpcionesSlice(getOpcion.pageSize, offset)
+            const total = await this.opcionService.getOpcionesCount();
+
+            return Paginated.create({
+                ...getOpcion,
+                items: opciones,
+                total: total
+            });
+
         }catch(error){
             this.handleExceptions(error)
         }

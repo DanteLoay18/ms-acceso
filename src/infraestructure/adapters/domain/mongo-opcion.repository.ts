@@ -9,7 +9,19 @@ import { Opcion } from "src/infraestructure/persistence/db/entities";
 export class MongoOpcionRepository implements OpcionRepository {
     
     constructor(@InjectModel(Opcion.name) private opcionRepository: Model<Opcion>) { }
-   
+    
+    
+     findBySlice(limit: number, offset: number): Promise<Opcion[]> {
+        
+        return this.opcionRepository.find({esEliminado:false})
+            .limit(limit)
+            .skip(offset)
+        
+    }
+    
+    count(): Promise<number> {
+        return this.opcionRepository.countDocuments({esEliminado:false})
+    }
     
     
     createOpcion(opcion: Opcion): Promise<Opcion> {
@@ -17,9 +29,6 @@ export class MongoOpcionRepository implements OpcionRepository {
     }
     findOneById(id: string): Promise<Opcion> {
         return this.opcionRepository.findById(id);
-    }
-    findAll(): Promise<Opcion[]> {
-        return this.opcionRepository.find({esEliminado:false})
     }
     updateOpcion(id: string, opcion: Opcion): Promise<Opcion> {
         return this.opcionRepository.findByIdAndUpdate(id, opcion, {new:true})
