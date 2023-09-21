@@ -5,6 +5,7 @@ import { CreateOpcionDto, UpdateOpcionDto } from "src/core/shared/dtos";
 import { Perfil } from "src/core/domain/entity/collections";
 import { PerfilService } from "src/core/domain/services/perfil.service";
 import { Paginated } from "../utils/Paginated";
+import { get } from "http";
 
 export interface GetOpcionRequest {
     page: number;
@@ -35,7 +36,7 @@ export class OpcionUseCases{
     async getAllOpciones(getOpcion:GetOpcionRequest){
         
         try{
-            const offset = getOpcion.page - 1 // define offset for query
+            const offset = (getOpcion.page - 1 )*getOpcion.pageSize;
             const opciones = await this.opcionService.getOpcionesSlice(getOpcion.pageSize, offset)
             const total = await this.opcionService.getOpcionesCount();
 
