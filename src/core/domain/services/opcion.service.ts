@@ -27,6 +27,14 @@ export class OpcionService{
         return this.opcionRepository.count()
     }
 
+    getOpcionesByBusquedaSlice(nombre:string, icono:string, esEmergente:boolean,limit: number, offset: number) {
+        return this.opcionRepository.findByBusquedaSlice(nombre, icono, esEmergente,limit, offset)
+    }
+
+    getOpcionesByBusquedaCount(nombre:string, icono:string, esEmergente:boolean, limit:number) {
+        return this.opcionRepository.findByBusquedaSlice(nombre, icono, esEmergente,limit, 0)
+    }
+
     createOpcion(opcion:Opcion){
         return this.opcionRepository.createOpcion(opcion);
     }

@@ -11,7 +11,32 @@ export class MongoOpcionRepository implements OpcionRepository {
     constructor(@InjectModel(Opcion.name) private opcionRepository: Model<Opcion>) { }
     
     
-     findBySlice(limit: number, offset: number): Promise<Opcion[]> {
+    findByBusquedaSlice(nombre: string, icono: string, esEmergente: boolean, limit: number, offset: number): Promise<Opcion[]> {
+        let query = {};
+
+        if (nombre) {
+        query['nombre'] = { $regex: nombre }; 
+        }
+
+        if (icono) {
+        query['icono'] = { $regex: icono };
+        }
+        if (esEmergente) {
+            query['esEmergente'] = esEmergente;
+        }
+
+        const opciones =  this.opcionRepository.find({
+            ...query,
+            esEliminado: false
+        })
+          .limit(limit)
+          .skip(offset).exec();
+
+        return opciones;
+    }
+    
+    
+    findBySlice(limit: number, offset: number): Promise<Opcion[]> {
         
         return this.opcionRepository.find({esEliminado:false})
             .limit(limit)

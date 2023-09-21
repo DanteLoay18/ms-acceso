@@ -5,7 +5,7 @@ import { CreateOpcionDto, UpdateOpcionDto } from "src/core/shared/dtos";
 import { Perfil } from "src/core/domain/entity/collections";
 import { PerfilService } from "src/core/domain/services/perfil.service";
 import { Paginated } from "../utils/Paginated";
-import { get } from "http";
+import { OpcionBusquedaDto } from "src/core/shared/dtos/opcion/opcion-busqueda.dto";
 
 export interface GetOpcionRequest {
     page: number;
@@ -27,6 +27,24 @@ export class OpcionUseCases{
 
             return opcion;
 
+        }catch(error){
+            this.handleExceptions(error)
+        }
+        
+    }
+
+    async getOpcionByBusqueda(opcionBusquedaDto:OpcionBusquedaDto){
+        try{
+            const opciones = await this.opcionService.getOpcionesByBusquedaSlice(opcionBusquedaDto.nombre, opcionBusquedaDto.icono, opcionBusquedaDto.esEmergente,opcionBusquedaDto.pageSize, 0)
+            const totalRegistros = await this.opcionService.getOpcionesCount();
+            const total = await this.opcionService.getOpcionesByBusquedaCount(opcionBusquedaDto.nombre, opcionBusquedaDto.icono, opcionBusquedaDto.esEmergente,totalRegistros);
+
+           return Paginated.create({
+             page:1,
+             pageSize:opcionBusquedaDto.pageSize,
+             items: opciones,
+             total: total.length
+           })
         }catch(error){
             this.handleExceptions(error)
         }

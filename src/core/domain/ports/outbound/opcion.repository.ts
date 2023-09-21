@@ -7,6 +7,8 @@ export interface OpcionRepository{
     findByNombre(nombre:string):Promise<Opcion>;
     findByIcono(icono:string):Promise<Opcion>;
     findBySlice(limit: number, offset: number): Promise<Opcion[]>
+    findByBusquedaSlice(nombre:string, icono:string, esEmergente:boolean,limit: number, offset: number):Promise<Opcion[]>
+    // countEncontradosByBusqueda(): Promise<number>
     count(): Promise<number>
     updateOpcion(id:string,opcion:Opcion): Promise<Opcion>;
     deleteOpcion(id:string, opcion:Opcion): Promise<Opcion>;
