@@ -10,4 +10,5 @@ export class OpcionBusquedaDto{
 
     pageSize:number;
     
+    page:number;
 }

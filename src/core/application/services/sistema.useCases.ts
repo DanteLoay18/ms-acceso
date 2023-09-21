@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
+import { BadRequestException, Injectable,  } from "@nestjs/common";
 import { Perfil, Sistema } from "src/core/domain/entity/collections";
 import { SistemaService } from "src/core/domain/services/sistema.service";
 import { CreateSistemaDto, UpdateSistemaDto } from "src/core/shared/dtos";

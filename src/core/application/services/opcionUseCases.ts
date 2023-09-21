@@ -35,12 +35,13 @@ export class OpcionUseCases{
 
     async getOpcionByBusqueda(opcionBusquedaDto:OpcionBusquedaDto){
         try{
-            const opciones = await this.opcionService.getOpcionesByBusquedaSlice(opcionBusquedaDto.nombre, opcionBusquedaDto.icono, opcionBusquedaDto.esEmergente,opcionBusquedaDto.pageSize, 0)
+            const offset = (opcionBusquedaDto.page - 1 )*opcionBusquedaDto.pageSize;
+            const opciones = await this.opcionService.getOpcionesByBusquedaSlice(opcionBusquedaDto.nombre, opcionBusquedaDto.icono, opcionBusquedaDto.esEmergente,opcionBusquedaDto.pageSize, offset)
             const totalRegistros = await this.opcionService.getOpcionesCount();
             const total = await this.opcionService.getOpcionesByBusquedaCount(opcionBusquedaDto.nombre, opcionBusquedaDto.icono, opcionBusquedaDto.esEmergente,totalRegistros);
 
            return Paginated.create({
-             page:1,
+             page:opcionBusquedaDto.page,
              pageSize:opcionBusquedaDto.pageSize,
              items: opciones,
              total: total.length

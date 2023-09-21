@@ -3,4 +3,5 @@ export interface BuscarOpcionesRequest{
     icono:string;
     esEmergente:boolean;
     pageSize:number;
+    page:number;
 }
