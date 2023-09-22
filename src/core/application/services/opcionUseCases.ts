@@ -168,10 +168,9 @@ export class OpcionUseCases{
                     });
                 });
             });
-            
+
             const actualizarPerfilPromesas=perfilesFiltrados.map(async (perfil) => {
                 const perfilEntity= Perfil.updatePerfil(perfil.tipo, perfil.sistemas, usuarioModificacion);
-
                 perfilEntity.sistemas=perfilEntity.sistemas.map(sistemaEncontrado=> {
                     const menus= sistemaEncontrado.menus.map(menuEncontrado => {
                                     const submenus= menuEncontrado.submenus.map(submenuEncontrado=> {
@@ -187,6 +186,7 @@ export class OpcionUseCases{
                                                         esEliminado:opcionEncontrado.esEliminado
                                                     }
                                                 }
+                                                return opcionEncontrado
                                             })
                                             return {
                                                 ...submenuEncontrado,
