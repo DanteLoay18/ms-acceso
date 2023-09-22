@@ -108,6 +108,7 @@ export class SistemaUseCases{
                             menus:sistemaEncontrado.menus
                         }
                     }
+                    return sistemaEncontrado;
                 })
                 
                 await this.perfilService.updatePerfil(perfil._id,perfilEntity)
@@ -149,6 +150,7 @@ export class SistemaUseCases{
                             esEliminado:true
                         }
                     }
+                    return sistemaEncontrado;
                 })
                 
                 await this.perfilService.updatePerfil(perfil._id,perfilEntity)

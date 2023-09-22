@@ -188,6 +188,7 @@ export class MenuUseCases{
                                                 submenus:menuEncontrado.submenus
                                             }
                                         }
+                                        return menuEncontrado;
                                     })
 
                         return {
@@ -228,6 +229,7 @@ export class MenuUseCases{
                                                     opciones:submenuEncontrado.opciones
                                                 }
                                             }
+                                            return submenuEncontrado;
                                         })
                                         return {
                                             ...menuEncontrado,
@@ -289,6 +291,7 @@ export class MenuUseCases{
                                                 esEliminado:true
                                             }
                                         }
+                                        return menuEncontrado;
                                     })
 
                         return {
@@ -325,6 +328,7 @@ export class MenuUseCases{
                                                     esEliminado:true
                                                 }
                                             }
+                                            return submenuEncontrado;
                                         })
                                         return {
                                             ...menuEncontrado,

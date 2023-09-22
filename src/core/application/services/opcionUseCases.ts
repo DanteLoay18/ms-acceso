@@ -254,6 +254,7 @@ export class OpcionUseCases{
                                                         esEliminado:true
                                                     }
                                                 }
+                                                return opcionEncontrado;
                                             })
                                             return {
                                                 ...submenuEncontrado,
