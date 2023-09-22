@@ -59,6 +59,16 @@ export class OpcionUseCases{
             const opciones = await this.opcionService.getOpcionesSlice(getOpcion.pageSize, offset)
             const total = await this.opcionService.getOpcionesCount();
 
+            if(opciones.length === 0 && getOpcion.page !==1){
+                const offset = (getOpcion.page - 2 )*getOpcion.pageSize;
+                const opciones = await this.opcionService.getOpcionesSlice(getOpcion.pageSize, offset);
+                return {
+                    page:getOpcion.page-1,
+                    pageSize:getOpcion.pageSize,
+                    items: opciones,
+                    total: total
+                }
+            }
             return Paginated.create({
                 ...getOpcion,
                 items: opciones,
