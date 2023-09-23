@@ -9,6 +9,43 @@ import { Sistema } from "src/infraestructure/persistence/db/entities";
 export class MongoSistemaRepository implements SistemaRepository {
     
     constructor(@InjectModel(Sistema.name) private sistemaRepository: Model<Sistema>) { }
+
+
+    findBySlice(limit: number, offset: number): Promise<Sistema[]> {
+        return this.sistemaRepository.find({esEliminado:false})
+            .limit(limit)
+            .skip(offset)
+    }
+    
+    findByBusquedaSlice(nombre: string, icono: string, puerto: string, url: string, limit: number, offset: number): Promise<Sistema[]> {
+        let query = {};
+
+        if (nombre) {
+        query['nombre'] = { $regex: nombre }; 
+        }
+
+        if (icono) {
+        query['icono'] = { $regex: icono };
+        }
+        if (puerto) {
+            query['puerto'] = { $regex: puerto };
+        }
+        if (url) {
+            query['url'] = { $regex: url };
+        }
+
+        const sistemas =  this.sistemaRepository.find({
+            ...query,
+            esEliminado: false
+        })
+          .limit(limit)
+          .skip(offset).exec();
+
+        return sistemas;
+    }
+    count(): Promise<number> {
+        return this.sistemaRepository.countDocuments({esEliminado:false})
+    }
    
     
     

@@ -18,6 +18,22 @@ export class SistemaService{
         return this.sistemaRepository.findByNombre(nombre);
     }
 
+    getSistemasSlice(limit: number, offset: number) {
+        return this.sistemaRepository.findBySlice(limit, offset)
+    }
+
+    getSistemasCount() {
+        return this.sistemaRepository.count()
+    }
+
+    getSistemasByBusquedaSlice(nombre:string, icono:string, puerto:string, url:string,limit: number, offset: number) {
+        return this.sistemaRepository.findByBusquedaSlice(nombre, icono, puerto, url,limit, offset)
+    }
+
+    getSistemasByBusquedaCount(nombre:string, icono:string, puerto:string, url:string, limit:number) {
+        return this.sistemaRepository.findByBusquedaSlice(nombre, icono, puerto, url,limit, 0)
+    }
+
     createSistema(sistema:Sistema){
         return this.sistemaRepository.createSistema(sistema);
     }

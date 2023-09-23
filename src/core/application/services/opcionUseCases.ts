@@ -6,11 +6,9 @@ import { Perfil } from "src/core/domain/entity/collections";
 import { PerfilService } from "src/core/domain/services/perfil.service";
 import { Paginated } from "../utils/Paginated";
 import { OpcionBusquedaDto } from "src/core/shared/dtos/opcion/opcion-busqueda.dto";
+import { OpcionesPaginadoDto } from "src/core/shared/dtos/opcion/opciones-paginado.dto";
 
-export interface GetOpcionRequest {
-    page: number;
-    pageSize: number;   
-}
+
 
 @Injectable()
 export class OpcionUseCases{
@@ -52,25 +50,25 @@ export class OpcionUseCases{
         
     }
 
-    async getAllOpciones(getOpcion:GetOpcionRequest){
+    async getAllOpciones(opcionesPaginadoDto:OpcionesPaginadoDto){
         
         try{
-            const offset = (getOpcion.page - 1 )*getOpcion.pageSize;
-            const opciones = await this.opcionService.getOpcionesSlice(getOpcion.pageSize, offset)
+            const offset = (opcionesPaginadoDto.page - 1 )*opcionesPaginadoDto.pageSize;
+            const opciones = await this.opcionService.getOpcionesSlice(opcionesPaginadoDto.pageSize, offset)
             const total = await this.opcionService.getOpcionesCount();
 
-            if(opciones.length === 0 && getOpcion.page !==1){
-                const offset = (getOpcion.page - 2 )*getOpcion.pageSize;
-                const opciones = await this.opcionService.getOpcionesSlice(getOpcion.pageSize, offset);
+            if(opciones.length === 0 && opcionesPaginadoDto.page !==1){
+                const offset = (opcionesPaginadoDto.page - 2 )*opcionesPaginadoDto.pageSize;
+                const opciones = await this.opcionService.getOpcionesSlice(opcionesPaginadoDto.pageSize, offset);
                 return {
-                    page:getOpcion.page-1,
-                    pageSize:getOpcion.pageSize,
+                    page:opcionesPaginadoDto.page-1,
+                    pageSize:opcionesPaginadoDto.pageSize,
                     items: opciones,
                     total: total
                 }
             }
             return Paginated.create({
-                ...getOpcion,
+                ...opcionesPaginadoDto,
                 items: opciones,
                 total: total
             });

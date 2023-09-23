@@ -1,12 +1,11 @@
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { OpcionUseCases } from "src/core/application/services/opcionUseCases";
 import { SistemaUseCases } from "src/core/application/services/sistema.useCases";
+import { Paginated } from "src/core/application/utils/Paginated";
 import { Sistema } from "src/core/domain/entity/collections";
-import { Opcion } from "src/core/domain/entity/collections/opcion.collection";
 
 
 export class SistemasAllQuery {
-    
+    constructor(public readonly page: number, public readonly  pageSize: number){}
 }
 
 
@@ -15,9 +14,9 @@ export class SistemasAllQueryHandler implements IQueryHandler<SistemasAllQuery>{
 
     constructor(private sistemaUseCases: SistemaUseCases) { }
 
-    execute(query: SistemasAllQuery): Promise<Sistema[]> {
+    execute(query: SistemasAllQuery): Promise<Paginated<Sistema>> {
         
-        return this.sistemaUseCases.getAllSistemas();
+        return this.sistemaUseCases.getAllSistemas(query);
     }
 
 }

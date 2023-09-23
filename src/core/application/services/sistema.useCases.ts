@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable,  } from "@nestjs/common";
 import { Perfil, Sistema } from "src/core/domain/entity/collections";
 import { SistemaService } from "src/core/domain/services/sistema.service";
-import { CreateSistemaDto, UpdateSistemaDto } from "src/core/shared/dtos";
+import { CreateSistemaDto, SistemaBusquedaDto, UpdateSistemaDto } from "src/core/shared/dtos";
 import { PerfilService } from '../../domain/services/perfil.service';
+import { SistemasPaginadoDto } from "src/core/shared/dtos/sistema/sistemas-paginado.dto";
+import { Paginated } from "../utils/Paginated";
 
 
 
@@ -24,11 +26,48 @@ export class SistemaUseCases{
         }
         
     }
+    async getOpcionByBusqueda(sistemaBusquedaDto:SistemaBusquedaDto){
+        try{
+            const offset = (sistemaBusquedaDto.page - 1 )*sistemaBusquedaDto.pageSize;
+            const opciones = await this.sistemaService.getSistemasByBusquedaSlice(sistemaBusquedaDto.nombre, sistemaBusquedaDto.icono, sistemaBusquedaDto.puerto ,sistemaBusquedaDto.url,sistemaBusquedaDto.pageSize, offset)
+            const totalRegistros = await this.sistemaService.getSistemasCount();
+            const total = await this.sistemaService.getSistemasByBusquedaCount(sistemaBusquedaDto.nombre, sistemaBusquedaDto.icono,  sistemaBusquedaDto.puerto ,sistemaBusquedaDto.url,totalRegistros);
 
-    async getAllSistemas(){
+           return Paginated.create({
+             page:sistemaBusquedaDto.page,
+             pageSize:sistemaBusquedaDto.pageSize,
+             items: opciones,
+             total: total.length
+           })
+        }catch(error){
+            this.handleExceptions(error)
+        }
+        
+    }
+
+    async getAllSistemas(sistemasPadinadoDto:SistemasPaginadoDto){
         
         try{
-            return await this.sistemaService.findAll();
+            const offset = (sistemasPadinadoDto.page - 1 )*sistemasPadinadoDto.pageSize;
+            const opciones = await this.sistemaService.getSistemasSlice(sistemasPadinadoDto.pageSize, offset)
+            const total = await this.sistemaService.getSistemasCount();
+
+            if(opciones.length === 0 && sistemasPadinadoDto.page !==1){
+                const offset = (sistemasPadinadoDto.page - 2 )*sistemasPadinadoDto.pageSize;
+                const opciones = await this.sistemaService.getSistemasSlice(sistemasPadinadoDto.pageSize, offset);
+                return {
+                    page:sistemasPadinadoDto.page-1,
+                    pageSize:sistemasPadinadoDto.pageSize,
+                    items: opciones,
+                    total: total
+                }
+            }
+            return Paginated.create({
+                ...sistemasPadinadoDto,
+                items: opciones,
+                total: total
+            });
+
         }catch(error){
             this.handleExceptions(error)
         }

@@ -26,6 +26,7 @@ import { CreatePerfilCommand, CreatePerfilHandler, DeletePerfilCommand, DeletePe
 import { PerfilByIdQuery, PerfilByIdQueryHandler, PerfilesAllQuery, PerfilesAllQueryHandler } from './application/feautures/Perfil/read';
 import { PerfilService } from './domain/services/perfil.service';
 import { OpcionByBusquedaQuery, OpcionByBusquedaQueryHandler } from './application/feautures/Opcion/read/opcionByBusqueda';
+import { SistemaByBusquedaQuery, SistemaByBusquedaQueryHandler } from './application/feautures/Sistema/read/sistemaByBusqueda';
 
 const USER_PROVIDERS=[
     AuthUseCases,
@@ -77,7 +78,9 @@ const SISTEMA_PROVIDERS=[
     SistemaByIdQuery,
     SistemaByIdQueryHandler,
     SistemasAllQuery,
-    SistemasAllQueryHandler
+    SistemasAllQueryHandler,
+    SistemaByBusquedaQuery,
+    SistemaByBusquedaQueryHandler
 ]
 
 const MENU_PROVIDERS=[

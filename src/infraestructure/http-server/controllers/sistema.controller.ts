@@ -5,6 +5,9 @@ import { SistemaByIdQuery, SistemasAllQuery } from "src/core/application/feautur
 import { CreateSistemaCommand, DeleteSistemaCommand, UpdateSistemaCommand } from "src/core/application/feautures/Sistema/write";
 import { CreateSistemaRequest, UpdateSistemaRequest } from "../model/sistema";
 import { MessagePattern } from "@nestjs/microservices";
+import { SistemasPaginado } from '../model/sistema/sistemas-paginado.request';
+import { BuscarSistemasRequest } from '../model/sistema/buscar-sistema.request';
+import { SistemaByBusquedaQuery } from 'src/core/application/feautures/Sistema/read/sistemaByBusqueda';
 
 @Controller()
 export class SistemaController{
@@ -15,14 +18,21 @@ export class SistemaController{
     ) {}
     
     @MessagePattern({cmd: 'findAll_sistemas'})
-    async findAllSistemas() {
-        return await this.query.execute(new SistemasAllQuery());
+    async findAllSistemas(sistemasPaginado:SistemasPaginado) {
+        return await this.query.execute(new SistemasAllQuery(sistemasPaginado.page, sistemasPaginado.pageSize));
         
     }
     
     @MessagePattern({cmd: 'findOne_sistema'})
     async findSistemaById(id:string) {
         return await this.query.execute(new SistemaByIdQuery(id));
+        
+    }
+
+    @MessagePattern({cmd: 'findByBusqueda_sistema'})
+    async findSistemaByBusqueda(buscarSistemaRquest:BuscarSistemasRequest) {
+        return await this.query.execute(new SistemaByBusquedaQuery(buscarSistemaRquest));
+
         
     }
 
