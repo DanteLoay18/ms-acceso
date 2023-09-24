@@ -20,7 +20,7 @@ import { SistemaByIdQuery, SistemaByIdQueryHandler, SistemasAllQuery, SistemasAl
 import { SistemaService } from './domain/services/sistema.service';
 import { SistemaRepository } from './domain/ports/outbound/sistema.repository';
 import { CreateMenuCommand, CreateMenuHandler, DeleteMenuCommand, DeleteMenuHandler, UpdateMenuCommand, UpdateMenuHandler } from './application/feautures/Menu/write';
-import { MenuByIdQuery, MenuByIdQueryHandler, MenusAllQuery, MenusAllQueryHandler } from './application/feautures/Menu/read';
+import { MenuByBusquedaQuery, MenuByBusquedaQueryHandler, MenuByIdQuery, MenuByIdQueryHandler, MenusAllQuery, MenusAllQueryHandler } from './application/feautures/Menu/read';
 import { PerfilUseCases } from './application/services/perfil.useCases';
 import { CreatePerfilCommand, CreatePerfilHandler, DeletePerfilCommand, DeletePerfilHandler, UpdatePerfilCommand, UpdatePerfilHandler } from './application/feautures/Perfil/write';
 import { PerfilByIdQuery, PerfilByIdQueryHandler, PerfilesAllQuery, PerfilesAllQueryHandler } from './application/feautures/Perfil/read';
@@ -94,7 +94,9 @@ const MENU_PROVIDERS=[
     MenuByIdQuery,
     MenuByIdQueryHandler,
     MenusAllQuery,
-    MenusAllQueryHandler
+    MenusAllQueryHandler,
+    MenuByBusquedaQuery,
+    MenuByBusquedaQueryHandler
 ]
 
 const PERFIL_PROVIDERS=[

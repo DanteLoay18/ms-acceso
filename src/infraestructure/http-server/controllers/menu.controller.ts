@@ -2,10 +2,11 @@
 import { Controller} from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateMenuRequest, UpdateMenuRequest } from "../model";
-import { MenuByIdQuery, MenusAllQuery } from "src/core/application/feautures/Menu/read";
+import { MenuByBusquedaQuery, MenuByIdQuery, MenusAllQuery } from "src/core/application/feautures/Menu/read";
 import { CreateMenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/core/application/feautures/Menu/write";
 import { MessagePattern } from '@nestjs/microservices';
 import { MenuPaginado } from '../model/menu/menu-paginado.request';
+import { BuscarMenusRequest } from '../model/menu/buscar-menu.request';
 
 
 @Controller()
@@ -25,6 +26,13 @@ export class MenuController{
     @MessagePattern({cmd: 'findOne_menu'})
     async findMenuById(id:string) {
         return await this.query.execute(new MenuByIdQuery(id));
+        
+    }
+
+    @MessagePattern({cmd: 'findByBusqueda_menu'})
+    async findMenuByBusqueda(buscarMenuRequest:BuscarMenusRequest) {
+        return await this.query.execute(new MenuByBusquedaQuery(buscarMenuRequest));
+
         
     }
 

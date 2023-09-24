@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException,  } from "@nestjs/common";
+import { BadRequestException, Injectable,  } from "@nestjs/common";
 import { Menu, Perfil } from "src/core/domain/entity/collections";
 import { MenuService, OpcionService, SistemaService } from "src/core/domain/services";
 import { PerfilService } from "src/core/domain/services/perfil.service";
 import { CreateMenuDto, UpdateMenuDto } from "src/core/shared/dtos";
 import { MenuPaginadoDto } from "src/core/shared/dtos/menu/menu-paginado.dto";
 import { Paginated } from "../utils/Paginated";
+import { MenuBusquedaDto } from "src/core/shared/dtos/menu/menu-busqueda.dto";
 
 @Injectable()
 export class MenuUseCases{
@@ -57,6 +58,25 @@ export class MenuUseCases{
             this.handleExceptions(error)
         }
        
+    }
+
+    async getOpcionByBusqueda(menuBusquedaDto:MenuBusquedaDto){
+        try{
+            const offset = (menuBusquedaDto.page - 1 )*menuBusquedaDto.pageSize;
+            const opciones = await this.menuService.getMenusByBusquedaSlice(menuBusquedaDto.nombre, menuBusquedaDto.icono,menuBusquedaDto.url, menuBusquedaDto.esSubmenu,menuBusquedaDto.pageSize, offset)
+            const totalRegistros = await this.menuService.getMenusCount(menuBusquedaDto.esSubmenu);
+            const total = await this.menuService.getMenusByBusquedaCount(menuBusquedaDto.nombre, menuBusquedaDto.icono,menuBusquedaDto.url, menuBusquedaDto.esSubmenu,totalRegistros);
+
+           return Paginated.create({
+             page:menuBusquedaDto.page,
+             pageSize:menuBusquedaDto.pageSize,
+             items: opciones,
+             total: total.length
+           })
+        }catch(error){
+            this.handleExceptions(error)
+        }
+        
     }
 
     async createMenu(createMenuDto:CreateMenuDto, usuarioDto:string){

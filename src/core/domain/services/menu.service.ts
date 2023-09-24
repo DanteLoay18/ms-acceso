@@ -27,6 +27,13 @@ export class MenuService{
         return this.menuRepository.count(esSubmenu)
     }
 
+    getMenusByBusquedaSlice(nombre:string, icono:string, url:string,esSubmenu:boolean,limit: number, offset: number) {
+        return this.menuRepository.findByBusquedaSlice(nombre, icono, url,esSubmenu,limit, offset)
+    }
+
+    getMenusByBusquedaCount(nombre:string, icono:string,  url:string,esSubmenu:boolean, limit:number) {
+        return this.menuRepository.findByBusquedaSlice(nombre, icono, url,esSubmenu,limit, 0)
+    }
     createMenu(menu:Menu){
         return this.menuRepository.createMenu(menu);
     }

@@ -17,8 +17,29 @@ export class MongoMenuRepository implements MenuRepository {
                                                                         .limit(limit)
                                                                         .skip(offset)
     }
-    findByBusquedaSlice(nombre: string, icono: string, url: string, limit: number, offset: number): Promise<Menu[]> {
-        throw new Error("Method not implemented.");
+    findByBusquedaSlice(nombre: string, icono: string, url: string, esSubmenu:boolean, limit: number, offset: number): Promise<Menu[]> {
+        let query = {};
+
+        if (nombre) {
+        query['nombre'] = { $regex: nombre }; 
+        }
+
+        if (icono) {
+        query['icono'] = { $regex: icono };
+        }
+        if (url) {
+            query['url'] = { $regex: url };
+        }
+
+        const sistemas =  this.menuRepository.find({
+            ...query,
+            esEliminado: false,
+            esSubmenu
+        })
+          .limit(limit)
+          .skip(offset).exec();
+
+        return sistemas;
     }
     count(esSubmenu:boolean): Promise<number> {
         return this.menuRepository.countDocuments({esEliminado:false, esSubmenu})
