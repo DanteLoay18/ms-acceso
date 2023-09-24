@@ -38,8 +38,8 @@ export class Menu extends Base{
         menu.submenus=submenus;
         menu.opciones=opciones;
         menu.esSubmenu=esSubmenu;
-        menu.icono=icono.toUpperCase();
-        menu.url=url.toUpperCase();
+        menu.icono=icono?.toUpperCase();
+        menu.url=url?.toUpperCase();
         menu.esEliminado=false;
         menu.esBloqueado=false;
         menu.fechaModificacion=new Date();

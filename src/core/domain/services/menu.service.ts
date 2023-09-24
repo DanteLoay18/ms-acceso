@@ -34,6 +34,7 @@ export class MenuService{
     getMenusByBusquedaCount(nombre:string, icono:string,  url:string,esSubmenu:boolean, limit:number) {
         return this.menuRepository.findByBusquedaSlice(nombre, icono, url,esSubmenu,limit, 0)
     }
+    
     createMenu(menu:Menu){
         return this.menuRepository.createMenu(menu);
     }

@@ -89,9 +89,19 @@ export class MenuUseCases{
                 error: menuByNombreEncontrado['error'],
                 message: menuByNombreEncontrado['message']
                 }
-            
+            if(!createMenuDto.esSubmenu && (!createMenuDto.url || !createMenuDto.icono)){
+                return {
+                    error: 400,
+                    message: 'El menu no tiene el formato correcto(menu y icono)'
+                    }
+            }
+            let menu:any;
 
-            const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, createMenuDto.icono, createMenuDto.url, );
+            if(!createMenuDto.esSubmenu){
+                menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, createMenuDto.icono, createMenuDto.url, );
+            }else{
+                menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, "", "" );
+            }
            
             return this.menuService.createMenu(menu);
             
@@ -120,6 +130,7 @@ export class MenuUseCases{
 
             await this.bloquearMenu(id, true);
             
+
             if(updateMenuDto.nombre){
                 const menuByNombreEncontrado= await this.findOneByTerm(updateMenuDto.nombre,id);
                 if(menuByNombreEncontrado?.['error'])
@@ -143,6 +154,12 @@ export class MenuUseCases{
             return {
                 error:400,
                 message:"El menu no puede tener opciones ya que no es un submenu"
+            }
+
+            if(updateMenuDto.submenus?.length > 0 && menuEncontrado['esSubmenu'])
+            return {
+                error:400,
+                message:"El submenu no puede tener submenus ya que no es un Menu"
             }
 
             if (updateMenuDto.opciones?.length > 0 || updateMenuDto.opciones) {
@@ -170,7 +187,7 @@ export class MenuUseCases{
                   
                   
                 }
-              }
+            }
 
             if (updateMenuDto.submenus?.length > 0 || updateMenuDto.submenus) {
                 const menusPromises = updateMenuDto.submenus.map(async (submenuId) => {
@@ -199,8 +216,13 @@ export class MenuUseCases{
                 
               }  
 
-            
-            const menu = Menu.updateMenu(updateMenuDto.nombre,updateMenuDto.esSubmenu,updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion,updateMenuDto.icono,updateMenuDto.url)
+            if(menuEncontrado?.['esSubmenu'] && (updateMenuDto.icono || updateMenuDto.url) ){
+                return {
+                    error:404,
+                    message:`El submenu no cumple con el formato`
+                }
+            }
+            const menu = Menu.updateMenu(updateMenuDto.nombre,menuEncontrado?.['esSubmenu'],updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion,updateMenuDto.icono,updateMenuDto.url)
             
             if(!menuEncontrado?.['esSubmenu']){
                 const perfiles=await this.perfilService.findAll();
