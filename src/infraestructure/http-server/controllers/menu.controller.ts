@@ -5,6 +5,7 @@ import { CreateMenuRequest, UpdateMenuRequest } from "../model";
 import { MenuByIdQuery, MenusAllQuery } from "src/core/application/feautures/Menu/read";
 import { CreateMenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/core/application/feautures/Menu/write";
 import { MessagePattern } from '@nestjs/microservices';
+import { MenuPaginado } from '../model/menu/menu-paginado.request';
 
 
 @Controller()
@@ -16,8 +17,8 @@ export class MenuController{
     ) {}
     
     @MessagePattern({cmd: 'findAll_menus'})
-    async findAllMenus() {
-        return await this.query.execute(new MenusAllQuery());
+    async findAllMenus(menuPaginado:MenuPaginado) {
+        return await this.query.execute(new MenusAllQuery(menuPaginado.page, menuPaginado.pageSize, menuPaginado.esSubmenu));
         
     }
     

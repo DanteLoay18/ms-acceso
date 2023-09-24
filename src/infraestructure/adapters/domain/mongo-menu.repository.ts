@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-
 import { MenuRepository } from "src/core/domain/ports/outbound";
 import { Menu } from "src/infraestructure/persistence/db/entities";
 
@@ -10,6 +9,20 @@ import { Menu } from "src/infraestructure/persistence/db/entities";
 export class MongoMenuRepository implements MenuRepository {
     
     constructor(@InjectModel(Menu.name) private menuRepository: Model<Menu>) { }
+
+
+
+    findBySlice(limit: number, offset: number, esSubmenu: boolean): Promise<Menu[]> {
+        return this.menuRepository.find({esEliminado:false, esSubmenu})
+                                                                        .limit(limit)
+                                                                        .skip(offset)
+    }
+    findByBusquedaSlice(nombre: string, icono: string, url: string, limit: number, offset: number): Promise<Menu[]> {
+        throw new Error("Method not implemented.");
+    }
+    count(esSubmenu:boolean): Promise<number> {
+        return this.menuRepository.countDocuments({esEliminado:false, esSubmenu})
+    }
    
     
     

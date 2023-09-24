@@ -19,6 +19,14 @@ export class MenuService{
         return this.menuRepository.findByNombre(nombre);
     }
 
+    getMenusSlice(limit: number, offset: number, esSubmenu:boolean) {
+        return this.menuRepository.findBySlice(limit, offset,esSubmenu)
+    }
+
+    getMenusCount(esSubmenu:boolean) {
+        return this.menuRepository.count(esSubmenu)
+    }
+
     createMenu(menu:Menu){
         return this.menuRepository.createMenu(menu);
     }

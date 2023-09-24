@@ -3,6 +3,8 @@ import { Menu, Perfil } from "src/core/domain/entity/collections";
 import { MenuService, OpcionService, SistemaService } from "src/core/domain/services";
 import { PerfilService } from "src/core/domain/services/perfil.service";
 import { CreateMenuDto, UpdateMenuDto } from "src/core/shared/dtos";
+import { MenuPaginadoDto } from "src/core/shared/dtos/menu/menu-paginado.dto";
+import { Paginated } from "../utils/Paginated";
 
 @Injectable()
 export class MenuUseCases{
@@ -28,10 +30,29 @@ export class MenuUseCases{
         
     }
 
-    async getAllMenus(){
+    async getAllMenus(menuPaginadoDto:MenuPaginadoDto){
         
         try{
-            return await this.menuService.findAll();
+            const offset = (menuPaginadoDto.page - 1 )*menuPaginadoDto.pageSize;
+            const opciones = await this.menuService.getMenusSlice(menuPaginadoDto.pageSize, offset, menuPaginadoDto.esSubmenu)
+            const total = await this.menuService.getMenusCount(menuPaginadoDto.esSubmenu);
+
+            if(opciones.length === 0 && menuPaginadoDto.page !==1){
+                const offset = (menuPaginadoDto.page - 2 )*menuPaginadoDto.pageSize;
+                const opciones = await this.menuService.getMenusSlice(menuPaginadoDto.pageSize, offset,menuPaginadoDto.esSubmenu);
+                return {
+                    page:menuPaginadoDto.page-1,
+                    pageSize:menuPaginadoDto.pageSize,
+                    items: opciones,
+                    total: total
+                }
+            }
+            return Paginated.create({
+                ...menuPaginadoDto,
+                items: opciones,
+                total: total
+            });
+
         }catch(error){
             this.handleExceptions(error)
         }
