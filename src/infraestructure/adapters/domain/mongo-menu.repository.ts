@@ -15,7 +15,11 @@ export class MongoMenuRepository implements MenuRepository {
     findBySlice(limit: number, offset: number, esSubmenu: boolean): Promise<Menu[]> {
         return this.menuRepository.find({esEliminado:false, esSubmenu})
                                                                         .limit(limit)
-                                                                        .skip(offset)
+                                                                        .skip(offset).populate([
+                                                                                        {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
+                                                                                        {path:'submenus',select: 'nombre sistema opciones esEliminado'},
+                                                                                        {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
+                                                                                        ]).exec();
     }
     findByBusquedaSlice(nombre: string, icono: string, url: string, esSubmenu:boolean, limit: number, offset: number): Promise<Menu[]> {
         let query = {};
@@ -37,7 +41,11 @@ export class MongoMenuRepository implements MenuRepository {
             esSubmenu
         })
           .limit(limit)
-          .skip(offset).exec();
+          .skip(offset).populate([
+            {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
+            {path:'submenus',select: 'nombre sistema opciones esEliminado'},
+            {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
+            ]).exec();
 
         return sistemas;
     }

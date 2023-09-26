@@ -7,6 +7,7 @@ import { CreateMenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/cor
 import { MessagePattern } from '@nestjs/microservices';
 import { MenuPaginado } from '../model/menu/menu-paginado.request';
 import { BuscarMenusRequest } from '../model/menu/buscar-menu.request';
+import { DeleteMenuSistemaCommand } from 'src/core/application/feautures/Menu/write/deleteMenuSistema/deleteMenuSistema.command';
 
 
 @Controller()
@@ -54,5 +55,10 @@ export class MenuController{
         return await this.command.execute(new DeleteMenuCommand(id,usuario));
         
     }
-   
+    
+    @MessagePattern({cmd: 'delete_menusistema'})
+    async deleteMenuSistema({id,idSistema,usuario}:any) {
+        return await this.command.execute(new DeleteMenuSistemaCommand(id,idSistema,usuario));
+        
+    }
 }

@@ -222,7 +222,8 @@ export class MenuUseCases{
                     message:`El submenu no cumple con el formato`
                 }
             }
-            const menu = Menu.updateMenu(updateMenuDto.nombre,menuEncontrado?.['esSubmenu'],updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,usuarioModificacion,updateMenuDto.icono,updateMenuDto.url)
+            
+            const menu = Menu.updateMenu(updateMenuDto.nombre,menuEncontrado?.['esSubmenu'],updateMenuDto.sistema,updateMenuDto.submenus,updateMenuDto.opciones,updateMenuDto.icono,updateMenuDto.url, usuarioModificacion)
             
             if(!menuEncontrado?.['esSubmenu']){
                 const perfiles=await this.perfilService.findAll();
@@ -408,6 +409,33 @@ export class MenuUseCases{
                 })
                 await Promise.all(actualizarPerfilPromesas);
             }
+
+            return await this.menuService.deleteMenu(id,menu);
+
+        } catch (error) {
+            this.handleExceptions(error);
+        }
+    }
+
+
+    async deleteMenuSistema(id:string,idSistema:string,usuarioModificacion:string){
+        try {
+
+            const menuEncontrado = await this.getMenuById(id);
+            
+            if(menuEncontrado['error'])
+            return {error: menuEncontrado['error'], message: menuEncontrado['message']}
+
+            const sistema=this.sistemaService.findOneById(idSistema);
+
+            if(!sistema){
+                return {
+                    error:400,
+                    message:`El id ${idSistema} del sistema no fue encontrado`
+                }
+            }
+
+            const menu= Menu.deleteMenuSistema(usuarioModificacion)
 
             return await this.menuService.deleteMenu(id,menu);
 

@@ -53,4 +53,12 @@ export class Menu extends Base{
         menu.usuarioModificacion=usuarioCreacion;
         return menu;
     }
+
+    static deleteMenuSistema( usuarioCreacion:string){
+        const menu = new Menu();
+        menu.sistema=null;
+        menu.fechaModificacion=new Date();
+        menu.usuarioModificacion=usuarioCreacion;
+        return menu;
+    }
 }
