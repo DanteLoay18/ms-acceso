@@ -3,11 +3,12 @@ import { Controller} from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateMenuRequest, UpdateMenuRequest } from "../model";
 import { MenuByBusquedaQuery, MenuByIdQuery, MenusAllQuery, SubmenusByMenu } from "src/core/application/feautures/Menu/read";
-import { CreateMenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/core/application/feautures/Menu/write";
+import { CreateMenuCommand, CreateSubmenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/core/application/feautures/Menu/write";
 import { MessagePattern } from '@nestjs/microservices';
 import { MenuPaginado } from '../model/menu/menu-paginado.request';
 import { BuscarMenusRequest } from '../model/menu/buscar-menu.request';
 import { DeleteMenuSistemaCommand } from 'src/core/application/feautures/Menu/write/deleteMenuSistema/deleteMenuSistema.command';
+import { CreateSubmenuRequest } from '../model/menu/create-submenu.request';
 
 
 @Controller()
@@ -43,6 +44,11 @@ export class MenuController{
         
     }
 
+    @MessagePattern({cmd: 'create_submenu'})
+    async createSubmenu({usuario,...createSubmenuRequest}:CreateSubmenuRequest) {
+        return await this.command.execute(new CreateSubmenuCommand(createSubmenuRequest, usuario));
+        
+    }
 
     @MessagePattern({cmd: 'update_menu'})
     async updateMenu({id,usuario,...updateMenuRequest}:UpdateMenuRequest) {

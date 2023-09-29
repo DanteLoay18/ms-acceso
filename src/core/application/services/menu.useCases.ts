@@ -2,7 +2,7 @@ import { BadRequestException, Injectable,  } from "@nestjs/common";
 import { Menu, Perfil } from "src/core/domain/entity/collections";
 import { MenuService, OpcionService, SistemaService } from "src/core/domain/services";
 import { PerfilService } from "src/core/domain/services/perfil.service";
-import { CreateMenuDto, UpdateMenuDto } from "src/core/shared/dtos";
+import { CreateMenuDto, CreateSubmenuDto, UpdateMenuDto } from "src/core/shared/dtos";
 import { MenuPaginadoDto } from "src/core/shared/dtos/menu/menu-paginado.dto";
 import { Paginated } from "../utils/Paginated";
 import { MenuBusquedaDto } from "src/core/shared/dtos/menu/menu-busqueda.dto";
@@ -119,25 +119,63 @@ export class MenuUseCases{
                 error: menuByNombreEncontrado['error'],
                 message: menuByNombreEncontrado['message']
                 }
-            if(!createMenuDto.esSubmenu && (!createMenuDto.url || !createMenuDto.icono)){
-                return {
-                    error: 400,
-                    message: 'El menu no tiene el formato correcto(menu y icono)'
-                    }
-            }
-            let menu:any;
-
-            if(!createMenuDto.esSubmenu){
-                menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, createMenuDto.icono, createMenuDto.url, );
-            }else{
-                menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, "", "" );
-            }
+           
+            const menu = Menu.createMenu(createMenuDto.nombre, createMenuDto.esSubmenu,usuarioDto, createMenuDto.icono, createMenuDto.url, );
+           
            
             return this.menuService.createMenu(menu);
             
        
         } catch (error) {
             this.handleExceptions(error);
+        }
+       
+    }
+
+    async createSubmenu(createSubmenuDto:CreateSubmenuDto, usuarioDto:string){
+        try{
+            
+            const menuEncontrado = await this.getMenuById(createSubmenuDto.idMenu);
+            
+            if(menuEncontrado['error'])
+            return {error: menuEncontrado['error'], message: menuEncontrado['message']};
+
+            if(menuEncontrado['esBloqueado'])
+            return {
+                    error: 400,
+                    message: `Opcion se encuentra en modificacion`
+                    }
+            
+            await this.bloquearMenu(createSubmenuDto.idMenu, true);
+
+            const menusNombreRepetido=menuEncontrado?.['submenus'].filter(({esEliminado})=>!esEliminado).filter(({nombre})=> nombre===createSubmenuDto.nombre);
+            
+            if(menusNombreRepetido.length>0){
+                return {
+                    error:400,
+                    message:`El nombre: ${createSubmenuDto.nombre} ya se encuentra en este listado`
+                }
+            }
+            
+            const submenu =Menu.createSubmenu(createSubmenuDto.nombre,menuEncontrado?.['sistema']._id, usuarioDto)
+           
+            const {_id}= await this.menuService.createMenu(submenu);
+
+            const submenusIds= menuEncontrado?.['submenus'].map(({_id})=>{
+                return _id
+            })
+            submenusIds.push(_id);
+
+            const menu= Menu.updateMenuSubmenus(submenusIds, usuarioDto);
+
+            return this.menuService.updateMenu(createSubmenuDto.idMenu, menu)
+                                                                                                                 
+
+       
+        } catch (error) {
+            this.handleExceptions(error);
+        }finally{
+            await this.bloquearMenu(createSubmenuDto.idMenu, false);
         }
        
     }
@@ -177,7 +215,10 @@ export class MenuUseCases{
                 return {
                         error:400,
                         message:`El sistema con el id ${updateMenuDto.sistema} no existe`
-                }
+                };
+
+
+                //todo : agregar el sistema a los submenus de menu
             }
             
             if(updateMenuDto.opciones?.length > 0 && !menuEncontrado['esSubmenu'])

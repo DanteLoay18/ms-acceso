@@ -1,3 +1,5 @@
+export * from './create-submenu/create-submenu.command';
+export * from './create-submenu/create-submenu.handler';
 export * from './create/createMenu.command';
 export * from './create/createMenu.handler';
 export * from './delete/deleteMenu.command';

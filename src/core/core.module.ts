@@ -19,7 +19,7 @@ import { CreateSistemaCommand, CreateSistemaHandler, DeleteSistemaCommand, Delet
 import { SistemaByIdQuery, SistemaByIdQueryHandler, SistemasAllQuery, SistemasAllQueryHandler } from './application/feautures/Sistema/read';
 import { SistemaService } from './domain/services/sistema.service';
 import { SistemaRepository } from './domain/ports/outbound/sistema.repository';
-import { CreateMenuCommand, CreateMenuHandler, DeleteMenuCommand, DeleteMenuHandler, DeleteMenuSistemaCommand, DeleteMenuSistemaHandler, UpdateMenuCommand, UpdateMenuHandler } from './application/feautures/Menu/write';
+import { CreateMenuCommand, CreateMenuHandler, CreateSubmenuCommand, CreateSubmenuHandler, DeleteMenuCommand, DeleteMenuHandler, DeleteMenuSistemaCommand, DeleteMenuSistemaHandler, UpdateMenuCommand, UpdateMenuHandler } from './application/feautures/Menu/write';
 import { MenuByBusquedaQuery, MenuByBusquedaQueryHandler, MenuByIdQuery, MenuByIdQueryHandler, MenusAllQuery, MenusAllQueryHandler, SubmenusByMenu, SubmenusByMenuHandler } from './application/feautures/Menu/read';
 import { PerfilUseCases } from './application/services/perfil.useCases';
 import { CreatePerfilCommand, CreatePerfilHandler, DeletePerfilCommand, DeletePerfilHandler, UpdatePerfilCommand, UpdatePerfilHandler } from './application/feautures/Perfil/write';
@@ -100,7 +100,9 @@ const MENU_PROVIDERS=[
     DeleteMenuSistemaCommand,
     DeleteMenuSistemaHandler,
     SubmenusByMenu,
-    SubmenusByMenuHandler
+    SubmenusByMenuHandler,
+    CreateSubmenuCommand,
+    CreateSubmenuHandler
 ]
 
 const PERFIL_PROVIDERS=[
