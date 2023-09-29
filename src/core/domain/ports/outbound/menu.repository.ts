@@ -8,6 +8,7 @@ export interface MenuRepository{
     findByNombre(nombre:string):Promise<Menu>;
     findBySlice(limit: number, offset: number, esSubmenu:boolean): Promise<Menu[]>
     findByBusquedaSlice(nombre:string, icono:string, url:string,esSubmenu:boolean, limit: number, offset: number):Promise<Menu[]>
+    findSubmenusByMenuSlice(id:string, esSubmenu:boolean): Promise<Menu>
     count(esSubmenu:boolean): Promise<number>
     updateMenu(id:string,menu:Menu): Promise<Menu>;
     deleteMenu(id:string, menu:Menu): Promise<Menu>;

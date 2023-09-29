@@ -6,6 +6,7 @@ import { CreateMenuDto, UpdateMenuDto } from "src/core/shared/dtos";
 import { MenuPaginadoDto } from "src/core/shared/dtos/menu/menu-paginado.dto";
 import { Paginated } from "../utils/Paginated";
 import { MenuBusquedaDto } from "src/core/shared/dtos/menu/menu-busqueda.dto";
+import { SubmenuByMenuPaginadoDto } from "src/core/shared/dtos/menu/submenu-menu-busqueda.dto";
 
 @Injectable()
 export class MenuUseCases{
@@ -35,23 +36,52 @@ export class MenuUseCases{
         
         try{
             const offset = (menuPaginadoDto.page - 1 )*menuPaginadoDto.pageSize;
-            const opciones = await this.menuService.getMenusSlice(menuPaginadoDto.pageSize, offset, menuPaginadoDto.esSubmenu)
+            const menus = await this.menuService.getMenusSlice(menuPaginadoDto.pageSize, offset, menuPaginadoDto.esSubmenu)
             const total = await this.menuService.getMenusCount(menuPaginadoDto.esSubmenu);
 
-            if(opciones.length === 0 && menuPaginadoDto.page !==1){
+            if(menus.length === 0 && menuPaginadoDto.page !==1){
                 const offset = (menuPaginadoDto.page - 2 )*menuPaginadoDto.pageSize;
-                const opciones = await this.menuService.getMenusSlice(menuPaginadoDto.pageSize, offset,menuPaginadoDto.esSubmenu);
+                const menus = await this.menuService.getMenusSlice(menuPaginadoDto.pageSize, offset,menuPaginadoDto.esSubmenu);
                 return {
                     page:menuPaginadoDto.page-1,
                     pageSize:menuPaginadoDto.pageSize,
-                    items: opciones,
+                    items: menus,
                     total: total
                 }
             }
             return Paginated.create({
                 ...menuPaginadoDto,
-                items: opciones,
+                items: menus,
                 total: total
+            });
+
+        }catch(error){
+            this.handleExceptions(error)
+        }
+       
+    }
+
+    async getSubmenusByMenu(submenuByMenuPaginadoDto:SubmenuByMenuPaginadoDto){
+        
+        try{
+            const startIndex = (submenuByMenuPaginadoDto.page - 1 )*submenuByMenuPaginadoDto.pageSize;
+            const endIndex = startIndex + submenuByMenuPaginadoDto.pageSize;
+            const {submenus} = await this.menuService.getSubmenusByMenuSlice(submenuByMenuPaginadoDto.id,submenuByMenuPaginadoDto.esSubmenu)
+
+            if(submenus.length === 0 && submenuByMenuPaginadoDto.page !==1){
+                const startIndex = (submenuByMenuPaginadoDto.page - 2 )*submenuByMenuPaginadoDto.pageSize;
+                const endIndex = startIndex + submenuByMenuPaginadoDto.pageSize;
+                return {
+                    page:submenuByMenuPaginadoDto.page-1,
+                    pageSize:submenuByMenuPaginadoDto.pageSize,
+                    items: submenus.slice(startIndex,endIndex),
+                    total: submenus.length
+                }
+            }
+            return Paginated.create({
+                ...submenuByMenuPaginadoDto,
+                items: submenus.slice(startIndex,endIndex),
+                total: submenus.length
             });
 
         }catch(error){
@@ -63,14 +93,14 @@ export class MenuUseCases{
     async getOpcionByBusqueda(menuBusquedaDto:MenuBusquedaDto){
         try{
             const offset = (menuBusquedaDto.page - 1 )*menuBusquedaDto.pageSize;
-            const opciones = await this.menuService.getMenusByBusquedaSlice(menuBusquedaDto.nombre, menuBusquedaDto.icono,menuBusquedaDto.url, menuBusquedaDto.esSubmenu,menuBusquedaDto.pageSize, offset)
+            const menus = await this.menuService.getMenusByBusquedaSlice(menuBusquedaDto.nombre, menuBusquedaDto.icono,menuBusquedaDto.url, menuBusquedaDto.esSubmenu,menuBusquedaDto.pageSize, offset)
             const totalRegistros = await this.menuService.getMenusCount(menuBusquedaDto.esSubmenu);
             const total = await this.menuService.getMenusByBusquedaCount(menuBusquedaDto.nombre, menuBusquedaDto.icono,menuBusquedaDto.url, menuBusquedaDto.esSubmenu,totalRegistros);
 
            return Paginated.create({
              page:menuBusquedaDto.page,
              pageSize:menuBusquedaDto.pageSize,
-             items: opciones,
+             items: menus,
              total: total.length
            })
         }catch(error){

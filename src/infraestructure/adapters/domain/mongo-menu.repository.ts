@@ -11,13 +11,22 @@ export class MongoMenuRepository implements MenuRepository {
     constructor(@InjectModel(Menu.name) private menuRepository: Model<Menu>) { }
 
 
+    findSubmenusByMenuSlice(id: string, esSubmenu: boolean): Promise<Menu> {
+        return this.menuRepository.findOne({esEliminado:false, esSubmenu, _id:id}).populate([
+                                                                                        {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
+                                                                                        {path:'submenus',select: 'nombre sistema opciones esSubmenu  esEliminado'},
+                                                                                        {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
+                                                                                        ]).exec();
+    }
+
+
 
     findBySlice(limit: number, offset: number, esSubmenu: boolean): Promise<Menu[]> {
         return this.menuRepository.find({esEliminado:false, esSubmenu})
                                                                         .limit(limit)
                                                                         .skip(offset).populate([
                                                                                         {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
-                                                                                        {path:'submenus',select: 'nombre sistema opciones esEliminado'},
+                                                                                        {path:'submenus',select: 'nombre sistema opciones esSubmenu esEliminado'},
                                                                                         {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
                                                                                         ]).exec();
     }
@@ -43,7 +52,7 @@ export class MongoMenuRepository implements MenuRepository {
           .limit(limit)
           .skip(offset).populate([
             {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
-            {path:'submenus',select: 'nombre sistema opciones esEliminado'},
+            {path:'submenus',select: 'nombre sistema opciones esSubmenu esEliminado'},
             {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
             ]).exec();
 
@@ -62,7 +71,7 @@ export class MongoMenuRepository implements MenuRepository {
     findOneById(id: string): Promise<Menu> {
         return this.menuRepository.findById(id).populate([
                                                     {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
-                                                    {path:'submenus',select: 'nombre sistema opciones esEliminado '},
+                                                    {path:'submenus',select: 'nombre sistema opciones esSubmenu esEliminado '},
                                                     {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
                                                     ]) ;;
     }
@@ -70,7 +79,7 @@ export class MongoMenuRepository implements MenuRepository {
     findAll(): Promise<Menu[]> {
         return this.menuRepository.find({esEliminado:false}).populate([
                                                             {path:'sistema',select: 'nombre url imagen puerto esEliminado '},
-                                                            {path:'submenus',select: 'nombre sistema opciones esEliminado'},
+                                                            {path:'submenus',select: 'nombre sistema opciones esSubmenu esEliminado'},
                                                             {path:'opciones',select: 'nombre icono tieneOpciones esEmergente esEliminado'}
                                                             ]) ;;
     }

@@ -2,7 +2,7 @@
 import { Controller} from '@nestjs/common';
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateMenuRequest, UpdateMenuRequest } from "../model";
-import { MenuByBusquedaQuery, MenuByIdQuery, MenusAllQuery } from "src/core/application/feautures/Menu/read";
+import { MenuByBusquedaQuery, MenuByIdQuery, MenusAllQuery, SubmenusByMenu } from "src/core/application/feautures/Menu/read";
 import { CreateMenuCommand, DeleteMenuCommand, UpdateMenuCommand } from "src/core/application/feautures/Menu/write";
 import { MessagePattern } from '@nestjs/microservices';
 import { MenuPaginado } from '../model/menu/menu-paginado.request';
@@ -60,5 +60,10 @@ export class MenuController{
     async deleteMenuSistema({id,idSistema,usuario}:any) {
         return await this.command.execute(new DeleteMenuSistemaCommand(id,idSistema,usuario));
         
+    }
+
+    @MessagePattern({cmd: 'find_submenus_by_menu'})
+    async findSubmenusByMeny({id, page, pageSize, esSubmenu}) {
+        return await this.query.execute(new SubmenusByMenu(id,page, pageSize, esSubmenu));
     }
 }
