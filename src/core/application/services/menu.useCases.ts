@@ -169,8 +169,7 @@ export class MenuUseCases{
                 }
             }
             
-            const submenu =Menu.createSubmenu(createSubmenuDto.nombre,menuEncontrado?.['sistema']._id, usuarioDto)
-           
+            const submenu =Menu.createSubmenu(createSubmenuDto.nombre,menuEncontrado?.['sistema']?._id, usuarioDto)
             const {_id}= await this.menuService.createMenu(submenu);
 
             let submenusIds:string[]=[];
