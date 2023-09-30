@@ -61,14 +61,26 @@ export class MenuUseCases{
        
     }
 
-    async getSubmenusByMenu(submenuByMenuPaginadoDto:SubmenuByMenuPaginadoDto){
+    async getSubmenusByMenu(submenuByMenuPaginadoDto:SubmenuByMenuPaginadoDto) :Promise<Paginated<string>>{
         
         try{
+
             const startIndex = (submenuByMenuPaginadoDto.page - 1 )*submenuByMenuPaginadoDto.pageSize;
             const endIndex = startIndex + submenuByMenuPaginadoDto.pageSize;
-            const {submenus} = await this.menuService.getSubmenusByMenuSlice(submenuByMenuPaginadoDto.id,submenuByMenuPaginadoDto.esSubmenu)
+            let {submenus} =  await this.menuService.getSubmenusByMenuSlice(submenuByMenuPaginadoDto.id,submenuByMenuPaginadoDto.esSubmenu)
 
-            if(submenus.length === 0 && submenuByMenuPaginadoDto.page !==1){
+            if(submenus===undefined){
+                return {
+                    page:1,
+                    pageSize:10,
+                    items: [],
+                    total: 0
+                }
+            }
+            
+            submenus =submenus.filter(({esEliminado})=> !esEliminado);
+
+            if(submenus?.length === 0 && submenuByMenuPaginadoDto.page !==1){
                 const startIndex = (submenuByMenuPaginadoDto.page - 2 )*submenuByMenuPaginadoDto.pageSize;
                 const endIndex = startIndex + submenuByMenuPaginadoDto.pageSize;
                 return {
@@ -161,9 +173,13 @@ export class MenuUseCases{
            
             const {_id}= await this.menuService.createMenu(submenu);
 
-            const submenusIds= menuEncontrado?.['submenus'].map(({_id})=>{
-                return _id
-            })
+            let submenusIds:string[]=[];
+            if(menuEncontrado?.['submenus'].length>0){
+                submenusIds=menuEncontrado?.['submenus']?.map(({_id})=>{
+                    return _id
+                });
+            }
+             
             submenusIds.push(_id);
 
             const menu= Menu.updateMenuSubmenus(submenusIds, usuarioDto);

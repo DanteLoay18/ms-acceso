@@ -35,7 +35,7 @@ export class MenuService{
         return this.menuRepository.findByBusquedaSlice(nombre, icono, url,esSubmenu,limit, 0)
     }
 
-    getSubmenusByMenuSlice(id:string, esSubmenu:boolean) {
+    getSubmenusByMenuSlice(id:string, esSubmenu:boolean): any{
         return this.menuRepository.findSubmenusByMenuSlice(id,esSubmenu)
     }
 

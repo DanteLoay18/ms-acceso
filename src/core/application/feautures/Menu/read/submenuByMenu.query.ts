@@ -14,7 +14,7 @@ export class SubmenusByMenuHandler implements IQueryHandler<SubmenusByMenu>{
 
     constructor(private menuUseCases: MenuUseCases) { }
 
-    execute(query: SubmenusByMenu): Promise<Paginated<string>> {
+    execute(query: SubmenusByMenu): Promise<Paginated<any>> {
         
         return this.menuUseCases.getSubmenusByMenu(query);
     }
