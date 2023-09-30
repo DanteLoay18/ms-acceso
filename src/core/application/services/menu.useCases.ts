@@ -224,7 +224,7 @@ export class MenuUseCases{
             }
 
             if(menuEncontrado?.['esSubmenu']){
-                if(!updateMenuDto.idMenu){
+                if(!updateMenuDto.idMenu && updateMenuDto.nombre){
                     return {
                         error:400,
                         message:"Al actualizar un submenu necesita un id Menu"
