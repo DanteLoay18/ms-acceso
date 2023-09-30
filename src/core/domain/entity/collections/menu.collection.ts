@@ -91,11 +91,19 @@ export class Menu extends Base{
         return menu;
     }
 
-    static deleteMenuSistema( usuarioCreacion:string){
+    static deleteMenuSistema( usuarioModificacion:string){
         const menu = new Menu();
         menu.sistema=null;
         menu.fechaModificacion=new Date();
-        menu.usuarioModificacion=usuarioCreacion;
+        menu.usuarioModificacion=usuarioModificacion;
+        return menu;
+    }
+
+    static deleteSubmenuOpcion( opciones:string[], usuarioModificacion:string){
+        const menu = new Menu();
+        menu.opciones=opciones;
+        menu.fechaModificacion=new Date();
+        menu.usuarioModificacion=usuarioModificacion;
         return menu;
     }
 }

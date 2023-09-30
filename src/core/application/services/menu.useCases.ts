@@ -566,6 +566,34 @@ export class MenuUseCases{
         }
     }
 
+    async deleteSubmenuOpcion(id:string,idOpcion:string,usuarioModificacion:string){
+        try {
+
+            const menuEncontrado = await this.getMenuById(id);
+            
+            if(menuEncontrado['error'])
+            return {error: menuEncontrado['error'], message: menuEncontrado['message']}
+
+            const opcion=this.opcionService.findOneById(idOpcion);
+
+            if(!opcion){
+                return {
+                    error:400,
+                    message:`El id ${idOpcion} de la opcion no fue encontrado`
+                }
+            }
+            const opciones= menuEncontrado?.['opciones'].filter(({esEliminado})=>!esEliminado).filter(({_id})=> _id !== idOpcion).map(({_id})=> _id);
+
+
+            const submenu= Menu.deleteSubmenuOpcion(opciones,usuarioModificacion)
+
+            return await this.menuService.deleteMenu(id,submenu);
+
+        } catch (error) {
+            this.handleExceptions(error);
+        }
+    }
+
 
 
     async bloquearMenu(id:string, esBloqueado:boolean){

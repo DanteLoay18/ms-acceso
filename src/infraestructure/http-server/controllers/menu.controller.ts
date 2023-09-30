@@ -9,6 +9,7 @@ import { MenuPaginado } from '../model/menu/menu-paginado.request';
 import { BuscarMenusRequest } from '../model/menu/buscar-menu.request';
 import { DeleteMenuSistemaCommand } from 'src/core/application/feautures/Menu/write/deleteMenuSistema/deleteMenuSistema.command';
 import { CreateSubmenuRequest } from '../model/menu/create-submenu.request';
+import { DeleteSubmenuOpcionCommand } from 'src/core/application/feautures/Menu/write/deleteSubmenuOpcion/delete-submenu-opcion.command';
 
 
 @Controller()
@@ -71,5 +72,12 @@ export class MenuController{
     @MessagePattern({cmd: 'find_submenus_by_menu'})
     async findSubmenusByMeny({id, page, pageSize, esSubmenu}) {
         return await this.query.execute(new SubmenusByMenu(id,page, pageSize, esSubmenu));
+    }
+
+    
+    @MessagePattern({cmd: 'delete_submenuopcion'})
+    async deleteSubmenuOpcion({id,idOpcion,usuario}:any) {
+        return await this.command.execute(new DeleteSubmenuOpcionCommand(id,idOpcion,usuario));
+        
     }
 }
