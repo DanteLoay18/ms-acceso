@@ -9,5 +9,7 @@ export class UpdateMenuDto extends PartialType(CreateMenuDto){
     submenus: string[];
 
     opciones: string[];
+
+    idMenu:string;
     
 }

@@ -11,7 +11,7 @@ export class UpdateMenuRequest extends PartialType(CreateMenuRequest){
     
     opciones: string[];
 
-    
+    idMenu:string;
 
 }
     

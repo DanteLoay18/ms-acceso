@@ -214,13 +214,35 @@ export class MenuUseCases{
             await this.bloquearMenu(id, true);
             
 
-            if(updateMenuDto.nombre){
+            if(updateMenuDto.nombre && !menuEncontrado?.['esSubmenu']){
                 const menuByNombreEncontrado= await this.findOneByTerm(updateMenuDto.nombre,id);
                 if(menuByNombreEncontrado?.['error'])
                 return {
                     error: menuByNombreEncontrado['error'],
                     message: menuByNombreEncontrado['message']
                     }
+            }
+
+            if(menuEncontrado?.['esSubmenu']){
+                if(!updateMenuDto.idMenu){
+                    return {
+                        error:400,
+                        message:"Al actualizar un submenu necesita un id Menu"
+                    }
+                }
+                if(updateMenuDto.nombre){
+                    const menuEncontrado = await this.getMenuById(updateMenuDto.idMenu);
+
+                    const menusNombreRepetido=menuEncontrado?.['submenus'].filter(({esEliminado})=>!esEliminado).filter(({nombre})=> nombre===updateMenuDto.nombre);
+
+                    if(menusNombreRepetido.length>0){
+                        return {
+                            error:400,
+                            message:`El nombre: ${updateMenuDto.nombre} ya se encuentra en este listado`
+                        }
+                    }
+
+                }
             }
 
             if(updateMenuDto.sistema){
