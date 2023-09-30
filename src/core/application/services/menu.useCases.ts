@@ -233,7 +233,14 @@ export class MenuUseCases{
                 };
 
 
-                //todo : agregar el sistema a los submenus de menu
+               const submenus= menuEncontrado?.['submenus'].filter(({esEliminado})=>!esEliminado).map(({_id})=> _id);
+                
+               submenus.forEach(async (id) => {
+                    const submenu = Menu.updateSistemaSubmenu(updateMenuDto.sistema, usuarioModificacion)
+                    await this.menuService.updateMenu(id,submenu)
+                });
+
+
             }
             
             if(updateMenuDto.opciones?.length > 0 && !menuEncontrado['esSubmenu'])
@@ -520,6 +527,13 @@ export class MenuUseCases{
                     message:`El id ${idSistema} del sistema no fue encontrado`
                 }
             }
+
+            const submenus= menuEncontrado?.['submenus'].filter(({esEliminado})=>!esEliminado).map(({_id})=> _id);
+                
+            submenus.forEach(async (id) => {
+                 const submenu = Menu.deleteMenuSistema(usuarioModificacion)
+                 await this.menuService.updateMenu(id,submenu)
+             });
 
             const menu= Menu.deleteMenuSistema(usuarioModificacion)
 

@@ -61,6 +61,18 @@ export class Menu extends Base{
         return menu;
     }
 
+    static updateSistemaSubmenu(sistema:string,usuarioModificacion:string){
+        const menu = new Menu();
+        
+    
+        menu.sistema=sistema;
+        menu.esEliminado=false;
+        menu.esBloqueado=false;
+        menu.fechaModificacion=new Date();
+        menu.usuarioModificacion=usuarioModificacion;
+        return menu;
+    }
+
     static updateMenuSubmenus(submenus:string[], usuarioModificacion:string){
         const menu = new Menu();
         
